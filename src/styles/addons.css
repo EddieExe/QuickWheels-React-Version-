@@ -1,0 +1,390 @@
+/* ---------- 1. SECTION CONTAINER ---------- */
+.addons-section {
+    padding: 0px 30px 30px 30px;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #0a0a0f !important;
+    background-image: none !important;
+    position: relative;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Blue Light Effect - Top Glow */
+.addons-section::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(4, 0, 255, 0.25), rgba(76, 227, 247, 0.1), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: breathe 4s ease-in-out infinite;
+}
+
+/* ---------- 2. TITLE SECTION ---------- */
+.addons_title {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #ffffff 30%, #4ce3f7, #0400ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+    animation: fadeInDown 0.8s ease-out, gradientShift 4s ease infinite;
+    position: relative;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.addons_title::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0400ff, #4ce3f7);
+    border-radius: 3px;
+    animation: widthExpand 0.8s ease-out 0.3s forwards;
+}
+
+@keyframes widthExpand {
+    from { width: 0; opacity: 0; }
+    to { width: 200px; opacity: 1; }
+}
+
+.addons_description {
+    text-align: center;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 50px;
+    animation: fadeInUp 0.6s ease-out 0.1s forwards;
+    opacity: 0;
+}
+
+/* ---------- 3. ADDONS GRID ---------- */
+#addons-list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 300px;    /* 👈 fixed card width */
+    gap: 25px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0px auto 30px auto;
+}
+
+/* ---------- 4. ADDON CARD (Glassmorphism) ---------- */
+.addon_card {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    cursor: pointer;
+    position: relative;
+    height: 100%;
+    animation: cardReveal 0.6s cubic-bezier(0.23, 1, 0.32, 1) backwards;
+}
+
+/* Stagger Animation for Cards */
+.addon_card:nth-child(1) { animation-delay: 0.05s; }
+.addon_card:nth-child(2) { animation-delay: 0.1s; }
+.addon_card:nth-child(3) { animation-delay: 0.15s; }
+.addon_card:nth-child(4) { animation-delay: 0.2s; }
+
+@keyframes cardReveal {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Card Top Glow Effect */
+.addon_card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    right: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #4ce3f7, #0400ff, transparent);
+    transition: all 0.5s ease;
+}
+
+.addon_card:hover::before {
+    left: -50%;
+    right: -50%;
+}
+
+/* Card Glow on Hover */
+.addon_card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(76, 227, 247, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    border-radius: 20px;
+}
+
+.addon_card:hover::after {
+    opacity: 1;
+}
+
+.addon_card:hover {
+    transform: translateY(-8px);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(76, 227, 247, 0.4);
+    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 20px rgba(76, 227, 247, 0.1);
+}
+
+/* Selected Card State */
+.addon_card.addon_selected {
+    border-color: rgba(76, 227, 247, 0.6);
+    background: rgba(76, 227, 247, 0.08);
+    box-shadow: 0 0 20px rgba(76, 227, 247, 0.2);
+}
+
+.addon_card.addon_selected::before {
+    opacity: 1;
+    left: -50%;
+    right: -50%;
+}
+
+/* Card Image */
+.addon_image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.addon_card:hover .addon_image {
+    transform: scale(1.05);
+}
+
+/* Card Content */
+.addon_content {
+    padding: 10px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.addon_title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 15px 0 10px 0;
+    position: relative;
+    display: inline-block;
+}
+
+.addon_description {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    margin: 10px auto;
+}
+
+/* Price Styling */
+.addon_content strong {
+    font-size: 1.2rem;
+}
+
+/* Selected Badge */
+.addon_content p:last-child {
+    margin-top: 10px;
+    font-weight: 600;
+    animation: fadeInUp 0.3s ease;
+}
+
+.addon_content p:last-child[style*="green"] {
+    color: #4ce3f7 !important;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.addon_content p:last-child[style*="green"]::before {
+    content: '✓';
+    font-size: 1rem;
+}
+
+/* ---------- 5. BUTTONS SECTION ---------- */
+.buttons {
+    display: flex;
+    gap: 20px;
+    animation: fadeInUp 0.6s ease-out 0.3s forwards;
+    opacity: 0;
+    height: 40px;
+}
+
+.skip_btn {
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Skip Button Hover Effect */
+.skip_btn:last-child {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.skip_btn:last-child:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(76, 227, 247, 0.3);
+    color: #fff;
+}
+
+/* ---------- 6. ANIMATIONS ---------- */
+@keyframes fadeInDown {
+    from { 
+        opacity: 0; 
+        transform: translateY(-40px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes fadeInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(40px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* ---------- 7. RESPONSIVE DESIGN ---------- */
+@media (max-width: 1024px) {
+    #addons-list {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .addons-section {
+        padding: 40px 16px;
+    }
+    
+    .addons_title {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+    
+    .addons_description {
+        font-size: 1rem;
+        margin-bottom: 35px;
+        padding: 0 20px;
+    }
+    
+    #addons-list {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .addon_image {
+        height: 180px;
+    }
+    
+    .addon_title {
+        font-size: 1.2rem;
+    }
+    
+    .buttons {
+        flex-direction: column;
+        gap: 15px;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .skip_btn {
+        width: 100%;
+        padding: 12px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .addon_image {
+        height: 160px;
+    }
+    
+    .addon_content {
+        padding: 16px;
+    }
+    
+    .addon_title {
+        font-size: 1.1rem;
+    }
+    
+    .addon_description {
+        font-size: 0.85rem;
+    }
+    
+    .addon_content strong {
+        font-size: 1rem;
+    }
+}
+
+/* ---------- 8. CUSTOM SCROLLBAR ---------- */
+.addons-section::-webkit-scrollbar {
+    width: 8px;
+}
+
+.addons-section::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.addons-section::-webkit-scrollbar-thumb {
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    border-radius: 10px;
+}
+
+.addons-section::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(30deg, #0300cc, #3bcce6);
+}
+
+/* ---------- 9. EMPTY STATE (if needed) ---------- */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.empty-state svg {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}

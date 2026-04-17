@@ -1,0 +1,101 @@
+.how_it_works_section {
+    padding: 30px 20px;
+    background-color: #f5f5f5;
+    text-align: center;
+    width: auto;
+    height: 90vh;
+}
+
+.section_title {
+    font-size: 3rem;
+    color: #333;
+    margin: 0px auto;
+    text-align: center;
+}
+
+.blueline3 {
+    background-image: linear-gradient(30deg, #0400ff, #4ce3f7);;
+    width: 20%;
+    height: 5px;
+    border-radius: 5px;
+    border: none;
+}
+
+.section_description {
+    font-size: large;
+    font-weight: 500;
+    text-align: center;
+    margin: 40px auto 60px auto;
+    color: #555;
+    width: 90%;
+}
+
+.steps_container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3rem;
+}
+
+.step_card {
+    background-image: url('../Images/5559852.jpg');
+    background-position: center;
+    background-size: cover;
+    box-shadow: 0px 10px 20px rgba(37, 100, 235, 0.6);
+    padding: 5px;
+    max-width: 300px;
+    text-align: left;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.step_card:hover {
+    transform: translateY(-20px);
+    box-shadow: 0px 20px 20px rgba(37, 100, 235, 0.8);
+}
+
+.step_image {
+    width: 100%;
+    height: auto;
+}
+
+.step_content {
+    padding: 20px;
+}
+
+.step_title {
+    font-size: 22px;
+    margin: 0px ;
+    color: white;
+}
+
+.step_description {
+    font-size: medium;
+    color: white;
+}
+
+
+/* Small Smartphones */
+@media only screen and (max-width: 320px) {
+    .section_title {
+        font-size: 1.5rem;
+    }
+
+    .section_description {
+        font-size: small;
+        margin: 20px auto 40px auto;
+    }
+
+    .steps_container {
+        gap: 1rem
+    }
+
+    .step_title {
+        font-size: 18px;
+    }
+
+    .step_description {
+        font-size: small;
+    }
+}

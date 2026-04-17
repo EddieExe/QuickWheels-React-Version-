@@ -1,0 +1,130 @@
+/* copied to css/ */
+.review_section {
+    padding-top: 50px;
+    margin: 0;
+    text-align: center;
+    width: auto;
+}
+
+.review_title {
+    font-size: 3rem;
+    margin: 0;
+}
+
+.blueline4 {
+    background-image: linear-gradient(30deg, #0400ff, #4ce3f7);;
+    width: 40%;
+    height: 5px;
+    border-radius: 5px;
+    border: none;
+    margin: 10px auto;
+}
+
+.review_description {
+    font-size: large;
+    font-weight: 500;
+    margin: 20px auto;
+}
+
+.reviews_container_wrapper {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.reviews_container {
+    display: flex;
+    padding: 0px 10px;
+    transition: transform 0.5s ease-in-out;
+    flex-wrap: nowrap;
+}
+
+.review_content {
+    padding: 20px;
+}
+
+.review_card {
+    flex: 0 0 275px;
+    height: 420px;
+    margin: 20px 12px;
+    background-image: url('../Images/5559852.jpg');
+    background-position: center;
+    background-size: cover;
+    box-shadow: 0px 10px 10px rgba(37, 100, 235, 0.8);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.review_card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0px 15px 15px rgba(37, 100, 235, 0.8);
+}
+
+.customer_image {
+    height: 120px;
+    border-radius: 50%;
+}
+
+.customer_name {
+    margin-bottom: 0;
+    color: white;
+}
+
+.customer_location {
+    margin-top: 5px;
+    color: white;
+}
+
+.customer_review {
+    color: white;
+}
+
+.arrow {
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: white;
+    padding: 10px;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.arrow_left {
+    left: 5px;
+}
+
+.arrow_right {
+    right: 10px;
+}
+
+.star_rating {
+    display: flex;
+    justify-content: center;
+    height: 20px;
+    color: #ffb400;
+}
+
+.review_image {
+    width: 100%;
+    height: auto;
+    background-color: #e5e5e5;
+}
+
+.review_image img {
+    height: 100px;
+}
+
+
+/* Small Smartphones */
+@media only screen and (max-width: 320px) {
+    .review_title {
+        font-size: 1.5rem;
+    }
+
+    .review_description {
+        font-size: small;
+    }
+}

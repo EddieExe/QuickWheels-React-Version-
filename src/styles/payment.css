@@ -1,0 +1,432 @@
+.payment_container {
+    padding: 0px 30px 30px 30px;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #0a0a0f !important;
+    background-image: none !important;
+    position: relative;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Blue Light Effect - Top Glow */
+.payment_container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(4, 0, 255, 0.25), rgba(76, 227, 247, 0.1), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: breathe 4s ease-in-out infinite;
+}
+
+/* Secondary Ambient Glow */
+.payment_container::after {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle at 70% 100%, rgba(76, 227, 247, 0.08), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Content above background */
+.payment_container > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Breathe Animation for Blue Light */
+@keyframes breathe {
+    0%, 100% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ---------- TITLE SECTION (EXACT MATCH WITH ADDONS) ---------- */
+.payment_title {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.payment_title h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 30%, #4ce3f7, #0400ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+    animation: gradientShift 4s ease infinite;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.payment_title h1::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0400ff, #4ce3f7);
+    border-radius: 3px;
+    animation: widthExpand 0.8s ease-out 0.3s forwards;
+}
+
+@keyframes widthExpand {
+    from { width: 0; opacity: 0; }
+    to { width: 200px; opacity: 1; }
+}
+
+/* Two Column Grid */
+.payment_grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.1s forwards;
+    opacity: 0;
+}
+
+/* Cards */
+.driver_info_card,
+.booking_summary_card {
+    background: rgba(20, 25, 45, 0.85);
+    backdrop-filter: blur(15px);
+    border-radius: 24px;
+    border: 1px solid rgba(76, 227, 247, 0.2);
+    overflow: hidden;
+    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.2s forwards;
+    opacity: 0;
+}
+
+/* Card Header */
+.card_header {
+    padding: 20px 25px 0 25px;
+    border-bottom: 1px solid rgba(76, 227, 247, 0.15);
+}
+
+.card_header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.blueline {
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(90deg, #0400ff, #4ce3f7);
+    border: none;
+    border-radius: 3px;
+    margin-bottom: 15px;
+}
+
+/* Driver Info */
+.driver_form {
+    padding: 20px 25px 25px 25px;
+}
+
+.info_row {
+    margin-bottom: 18px;
+}
+
+.info_row label {
+    display: block;
+    color: #4ce3f7;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.disabled_input {
+    font-family: quicksand;
+    width: 93%;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(76, 227, 247, 0.15);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: not-allowed;
+}
+
+.disabled_input:disabled {
+    color: #fff;
+    opacity: 1;
+}
+
+/* Booking Content */
+.booking_content {
+    padding: 20px 25px 25px 25px;
+}
+
+.payment_booking_section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(76, 227, 247, 0.1);
+}
+
+.payment_booking_section h3 {
+    color: #4ce3f7;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+/* Car Info */
+.payment_car_info {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.summary_car_image {
+    height: 100px;
+    object-fit: contain;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.car_model_name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.car_price {
+    font-size: 1rem;
+    font-weight: 700;
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Trip Info */
+.trip_info {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+.trip_row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.trip_row strong {
+    color: #4ce3f7;
+}
+
+/* Add-ons */
+.addons_list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.addon_row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9rem;
+}
+
+.addon_row strong {
+    color: #4ce3f7;
+    font-size: 0.9rem;
+}
+
+/* Price Summary */
+.price_summary {
+    background: rgba(4, 0, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin: 15px 0;
+    border: 1px solid rgba(76, 227, 247, 0.15);
+}
+
+.price_row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.price_row.total {
+    padding-top: 10px;
+    margin-top: 6px;
+    border-top: 1px solid rgba(76, 227, 247, 0.15);
+    font-size: 1rem;
+}
+
+.price_row.total strong {
+    font-size: 1.3rem;
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Confirm Button */
+.confirm_btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.confirm_btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.confirm_btn:hover::before {
+    left: 100%;
+}
+
+.confirm_btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(4, 0, 255, 0.4);
+}
+
+.confirm_btn:active {
+    transform: translateY(0);
+}
+
+/* Modal */
+.modal-content {
+    background: rgba(20, 25, 45, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 24px;
+    border: 1px solid rgba(76, 227, 247, 0.3);
+    padding: 30px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    margin: auto;
+    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.modal-content h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #fff, #4ce3f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.modal-content p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 10px 0;
+}
+
+.order_btn {
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 28px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+}
+
+.order_btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(4, 0, 255, 0.3);
+}
+
+/* Animation Keyframes */
+@keyframes fadeInDown {
+    from { 
+        opacity: 0; 
+        transform: translateY(-40px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+@keyframes fadeInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(40px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .payment_grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        max-width: 450px;
+    }
+    
+    .payment_container {
+        padding: 20px 16px;
+    }
+    
+    .payment_title h1 {
+        font-size: 2rem;
+    }
+}

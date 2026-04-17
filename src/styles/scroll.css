@@ -1,0 +1,108 @@
+/* --- BACK TO TOP BUTTON --- */
+.back_to_top {
+  all: unset;
+  font-family: 'Quicksand', sans-serif;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 9999;
+  width: 50px;
+  height: 50px;
+  background: #0f172a;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.back_to_top:hover {
+  width: 160px;
+  border-color: #3b82f6;
+  background: #162035;
+}
+
+/* --- THE SVG ICON --- */
+.back_to_top svg {
+  width: 20px;
+  height: 20px;
+  margin: auto 15px;
+  flex-shrink: 0;    /* CRITICAL: Prevents SVG from squishing */
+  fill: #fff;
+  transition: all 0.5s ease;
+  transform: rotate(-45deg);
+}
+
+.back_to_top:hover svg {
+  transform: rotate(0deg);
+  fill: #3b82f6;
+}
+
+/* --- THE TEXT CONTAINER --- */
+.text_container {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.5s ease;
+  pointer-events: none;
+}
+
+.back_to_top:hover .text_container {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* --- THE WAVY TEXT LOGIC --- */
+.word_wrapper {
+  display: block;
+  position: relative;
+  height: 20px;
+  overflow: hidden;
+}
+
+.word_wrapper span {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Color Setup */
+.word_wrapper .text { 
+  color: #fff; 
+  position: relative;
+  top: 0;
+}
+
+.word_wrapper .clone { 
+  color: #3b82f6;
+  position: absolute;
+  top: 100%;  /* Start below the visible area */
+  left: 0;
+}
+
+/* The Slide Up Motion - only move the clone up */
+.back_to_top:hover .word_wrapper .clone {
+  transform: translateY(-100%);  /* Moves up into view */
+}
+
+/* Keep the original text in place */
+.back_to_top:hover .word_wrapper .text {
+  transform: translateY(0);  /* No movement needed */
+}
+
+/* Staggered Delays - apply to the clone only */
+.back_to_top:hover .word_wrapper:nth-child(1) .clone { 
+  transition-delay: 0.10s; 
+}
+.back_to_top:hover .word_wrapper:nth-child(2) .clone { 
+  transition-delay: 0.15s; 
+}
+.back_to_top:hover .word_wrapper:nth-child(3) .clone { 
+  transition-delay: 0.20s; 
+}

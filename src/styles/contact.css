@@ -1,0 +1,244 @@
+/* --- SHARED BODY STYLES --- */
+body {
+    margin: 0;
+    font-family: "Quicksand", sans-serif;
+    background-color: #0f172a;
+}
+
+/* --- CONTACT SECTION (Background & Blur) --- */
+
+.contact {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /* THIS IS KEY: Stacks text on top of the box */
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    background-image: url('../Images/Car-Hero_1920x800.webp');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+    position: relative;
+}
+
+.contact::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1;
+}
+
+/* --- WRAPPER (The Glass Container) --- */
+.contact_info {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    margin: 0 auto;
+    max-width: 1100px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+}
+
+.contact_image {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.contact_image img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    margin-top: 20px;
+}
+
+.contact_title {
+    font-size: 3rem;
+    color: #fff;
+    margin: 0 auto 20px auto;
+    text-align: left;
+}
+
+/* Add this to style the text container on top */
+.contact_header_text {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 40px;
+    max-width: 800px;
+}
+
+.blueline5 {
+    background-image: linear-gradient(30deg, #0400ff, #4ce3f7);
+    ;
+    width: 250px;
+    height: 5px;
+    border: none;
+    border-radius: 2px;
+}
+
+.contact_description {
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    margin-bottom: 30px;
+    text-align: left;
+}
+
+/* --- RIGHT SIDE (The Form) --- */
+
+.contact_content {
+    padding: 10px 40px;
+    background: rgba(0, 0, 0, 0.2);
+    /* Slightly darker for contrast */
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    /* Subtle separator line */
+}
+
+.contact_content h2 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+.contact_form .form_group {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.contact_form input,
+.contact_form textarea {
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    font-size: 1rem;
+    color: #fff;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.contact_form input:focus,
+.contact_form textarea:focus {
+    border-color: #2563eb;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
+}
+
+/* Label Styling (Floating Effect) */
+.contact_form label {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.contact_form input:focus~label,
+.contact_form input:valid~label,
+.contact_form textarea:focus~label,
+.contact_form textarea:valid~label {
+    top: -12px;
+    left: 10px;
+    font-size: 0.85rem;
+    color: #2563eb;
+    background: #1e293b;
+    padding: 0 8px;
+    border-radius: 4px;
+}
+
+
+/* Social Links */
+.social_links {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    justify-content: center;
+}
+
+.social_icon {
+    width: 40px;
+    height: 40px;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+
+.social_icon:hover {
+    opacity: 1;
+    transform: translateY(-5px);
+}
+
+/* Responsive Fix */
+
+@media only screen and (max-width: 320px) {
+    .contact {
+        width: 280px;
+    }
+
+    .contact_info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .contact_title {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .blueline5 {
+        height: 3px;
+    }
+
+    .contact_header_text {
+        margin-bottom: 30px;
+    }
+
+    .contact_image {
+        padding: 20px;
+    }
+
+    .contact_image img {
+        margin: 0;
+    }
+
+    .contact_description {
+        font-size: small;
+        margin: 10px auto 20px auto;
+    }
+
+    .contact_content {
+        padding: 20px;
+    }
+
+    .contact_content h2 {
+        font-size: 1rem;
+    }
+
+    .contact_form input,
+    .contact_form textarea {
+        padding: 5px 10px;
+        font-size: medium;
+    }
+
+    .contact_form input:focus~label,
+    .contact_form input:valid~label,
+    .contact_form textarea:focus~label,
+    .contact_form textarea:valid~label {
+        font-size: small;
+    }
+
+}

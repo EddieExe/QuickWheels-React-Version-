@@ -1,0 +1,175 @@
+/* General footer styling */
+footer {
+    background-color: #0f172a;
+    color: #fff;
+    padding: 20px;
+    font-family: "Quicksand", sans-serif;
+}
+
+/* Footer content container */
+.footer_content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 0 auto;
+}
+
+
+/* Left section styling */
+.footer_left {
+    flex: 0 0 60%;
+}
+
+.brand_info {
+    margin: 30px 50px 30px 30px;
+}
+
+.brand_info h1 {
+    font-size: 2rem;
+}
+
+.brand_info p {
+    font-size: medium;
+    line-height: 1.6;
+}
+
+.footer_logo {
+    width: 200px;
+}
+
+.download_options {
+    display: flex;
+    gap: 10px;
+}
+
+.download_option {
+    height: 45px;
+    margin: 10px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.download_option:hover {
+    transform: scale(1.1);
+}
+
+.social_links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto;
+    gap: 20px;
+}
+
+.social_icon {
+    display: inline-block;
+    width: 45px;
+    height: 45px;
+    transition: transform 0.3s;
+}
+
+.social_icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.social_icon:hover {
+    transform: scale(1.2);
+}
+
+
+/* Right section styling */
+.footer_right {
+    flex: 0 0 40%;
+}
+
+.footer_links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer_section {
+    flex: 1 1 calc(50% - 20px);
+}
+
+.footer_heading {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #e2e8f0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer_location li {
+    margin-bottom: 5px;
+}
+
+.footer_location a, .main_links a, .cars_links a, .que a, .reviews a {
+    color: #9ca3af;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.footer_location a:hover, .main_links a:hover, .cars_links a:hover, .que a:hover, .reviews a:hover {
+    color: white;
+    text-shadow: 0 0 5px white;
+}
+
+/* Footer Copyright Styling */
+.footer-copyright {
+    font-size: medium;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    color: white;
+}
+
+
+/* Responsive styling */
+@media (max-width: 768px) {
+    .footer_content {
+        flex-direction: column;
+    }
+
+    .footer_left,
+    .footer_right {
+        flex: 1 1 100%;
+    }
+
+    .footer_links {
+        flex-direction: column;
+    }
+
+    .footer_section {
+        flex: 1 1 100%;
+    }
+}
+
+
+@media only screen and (max-width: 320px) {
+    .brand_info {
+        margin: 0px;
+    }
+
+    .brand_info h1 {
+        font-size: 1.5rem;
+    }
+
+    .brand_info p {
+        font-size: small;
+    }
+
+    .footer-copyright {
+        font-size: x-small;
+        text-align: center;
+    }
+}

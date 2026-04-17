@@ -1,0 +1,135 @@
+.our_cars {
+    margin: 0;
+    padding: 0;
+    align-items: center;
+}
+
+.cars_content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 90%;
+    margin: 0 auto;
+    gap: 2rem;
+    flex-direction: column;
+}
+
+.cars_title {
+    font-size: 3rem;
+    margin-bottom: 0;
+}
+
+.cars_description {
+    font-size: large;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.download_options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.download_option {
+    height: 50px;
+    width: auto;
+    display: block;
+    transition: transform 0.3s;    
+}
+
+.download_option:hover {
+    transform: scale(1.1);
+}
+
+.blueline2 {
+    width: 20%;
+    height: 5px;
+    background-color: #2563eb;
+    border-radius: 5px;
+    border: none;
+    margin-top: 30px;
+}
+
+.car_on_right {
+    text-align: center;
+}
+
+.car_on_right img {
+    max-width: 100%;
+}
+
+.cars_types {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 4rem;
+    padding: 0 3rem;
+    margin: 30px auto;
+}
+
+.car_img {
+    width: 160px;
+    height: auto;
+    margin: 0 auto;
+    transition: transform 0.3s; 
+}
+
+.car_img:hover {
+    transform: translateX(-15px) scale(1.1);
+}
+
+.cars_types a {
+    text-decoration: none;
+}
+
+.car_title p {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+/* Media Queries */
+
+/* Small Smartphones */
+@media only screen and (max-width: 320px) {
+    /* Styles for small smartphones like iPhone SE */
+    .cars_content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .cars_title {
+        font-size: 1.5rem;
+    }
+
+    .cars_description {
+        font-size: small;
+        margin: 0;
+        width: 90%;
+    }
+
+    .download_options {
+        gap: 0.5rem;
+    }
+
+    .download_option {
+        height: 40px;
+    }
+
+    .cars_types {
+        flex-direction: column;
+        padding: 0 1rem;
+        gap: 0.5rem
+    }
+
+    .car_img {
+        height: 100px;
+        width: auto;
+    }
+}

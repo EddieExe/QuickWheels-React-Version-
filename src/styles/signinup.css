@@ -1,0 +1,295 @@
+/* ---------- 1. CONTAINER ---------- */
+.auth-container {
+    padding: 40px 2%;
+    width: 100%;
+    min-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0a0a0f !important;
+    background-image: none !important;
+    position: relative;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Blue Light Effect - Top Glow */
+.auth-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(4, 0, 255, 0.25), rgba(76, 227, 247, 0.1), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: breathe 4s ease-in-out infinite;
+}
+
+/* Secondary Ambient Glow */
+.auth-container::after {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle at 70% 100%, rgba(76, 227, 247, 0.08), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Content above background */
+.auth-container>* {
+    position: relative;
+    z-index: 1;
+}
+
+/* Breathe Animation */
+@keyframes breathe {
+
+    0%,
+    100% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ---------- 2. FORM CARD ---------- */
+.auth-container form {
+    background: rgba(20, 25, 45, 0.85);
+    backdrop-filter: blur(15px);
+    border-radius: 24px;
+    border: 1px solid rgba(76, 227, 247, 0.2);
+    padding: 40px;
+    max-width: 400px;
+    width: 100%;
+    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.auth-container form:hover {
+    border-color: rgba(76, 227, 247, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- 3. TITLE ---------- */
+.auth-container h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    margin: 20px auto;
+    background: linear-gradient(135deg, #ffffff 30%, #4ce3f7, #0400ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+    animation: gradientShift 4s ease infinite;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+@keyframes gradientShift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.auth-container h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #0400ff, #4ce3f7);
+    border-radius: 3px;
+    animation: widthExpand 0.8s ease-out 0.3s forwards;
+}
+
+@keyframes widthExpand {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+
+    to {
+        width: 120px;
+        opacity: 1;
+    }
+}
+
+/* ---------- 4. ERROR MESSAGE (Styled like logout button) ---------- */
+.error-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background-color: #ec003f;
+    margin: 0 auto 20px auto;
+    animation: slideInError 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.error-message span {
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Error Message Animation */
+@keyframes slideInError {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ---------- 5. FORM FIELDS ---------- */
+.auth-container label {
+    display: block;
+    color: #4ce3f7;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.auth-container label:first-of-type {
+    margin-top: 0;
+}
+
+.auth-container input {
+    font-family: 'Quicksand', sans-serif;
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(76, 227, 247, 0.15);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    box-sizing: border-box;
+}
+
+.auth-container input:focus {
+    outline: none;
+    border-color: rgba(76, 227, 247, 0.5);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 3px rgba(76, 227, 247, 0.1);
+}
+
+.auth-container input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* ---------- 6. SIGN IN BUTTON ---------- */
+.signin_btn {
+    margin: 10px auto;
+}
+
+/* ---------- 7. SIGN UP LINK ---------- */
+.auth-container p {
+    text-align: center;
+    margin: 0 auto;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.auth-container a {
+    color: #4ce3f7;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.auth-container a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* ---------- 8. ANIMATIONS ---------- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------- 9. RESPONSIVE ---------- */
+@media (max-width: 550px) {
+    .auth-container {
+        padding: 20px 16px;
+    }
+
+    .auth-container form {
+        padding: 30px 20px;
+    }
+
+    .auth-container h2 {
+        font-size: 1.6rem;
+    }
+
+    .auth-container input {
+        padding: 12px 14px;
+    }
+
+    .signin_btn {
+        padding: 12px;
+    }
+
+    .error-message {
+        padding: 10px 16px;
+    }
+
+    .error-message span {
+        font-size: 0.8rem;
+    }
+}
+
+/* ---------- 10. SCROLLBAR ---------- */
+.auth-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.auth-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.auth-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    border-radius: 10px;
+}
+
+.auth-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(30deg, #0300cc, #3bcce6);
+}

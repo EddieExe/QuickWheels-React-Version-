@@ -1,0 +1,316 @@
+/* Part 1 */
+
+/* --- SECTION BACKGROUND --- */
+.location {
+    position: relative;
+    padding: 20px 20px 60px;
+    background: url('../Images/5559852.jpg') center/cover no-repeat;
+    overflow: hidden;
+}
+
+.location::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    opacity: 0.5;
+}
+
+/* Soft vignette effect */
+.location::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 50%, rgba(0, 0, 0, 0.2) 100%);
+    pointer-events: none;
+}
+
+/* Ensure content is above overlays */
+.location > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* --- HEADER --- */
+.location_head {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.location_title {
+    color: #fff;
+    font-size: 3rem;
+    font-weight: 800;
+    margin: 20px auto;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* blueline comes here */
+
+.location_description {
+    max-width: 1200px;
+    margin: 20px auto 0;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.4;
+}
+
+/* --- GLASS CONTAINER --- */
+.locations {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 30px;
+    border: 1px solid rgba(76, 227, 247, 0.2);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.locations h2 {
+    color: #fff;
+    font-size: 1.2rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin: 0 0 30px 0;
+    opacity: 0.75;
+    font-weight: 600;
+}
+
+/* --- GRID --- */
+.locations ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
+}
+
+@media (max-width: 1100px) {
+    .locations ul {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .locations ul {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* --- GRID ITEMS --- */
+.locations ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: 
+        transform 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+        background 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+    will-change: transform;
+    position: relative;
+    overflow: hidden;
+}
+
+.locations ul li a:hover::before {
+    left: 100%;
+}
+
+/* Hover effect using your colors */
+.locations ul li a:hover {
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    transform: translateY(-6px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 
+        0 12px 28px rgba(4, 0, 255, 0.4),
+        0 0 18px rgba(76, 227, 247, 0.3);
+}
+
+/* Active click feedback */
+.locations ul li a:active {
+    transform: translateY(-3px) scale(0.99);
+    transition: transform 0.05s ease;
+}
+
+
+/* Part 2 */
+
+/* --- MODAL BACKDROP --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Darkening the backdrop while keeping the blue tint feel */
+    background-color: rgba(0, 8, 20, 0.7); 
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- MODAL CARD --- */
+.card {
+    position: relative;
+    width: 420px;
+    max-width: 90%;
+    padding: 35px; /* Increased padding for premium feel */
+    background: rgba(255, 255, 255, 0.1); /* Matches .locations */
+    backdrop-filter: blur(15px); /* Slightly stronger blur for focus */
+    border-radius: 30px; /* Matches .locations */
+    border: 1px solid rgba(76, 227, 247, 0.2); /* Matches .locations border */
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: modalPop 0.4s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+    z-index: 1001;
+}
+
+/* Internal Glow Overlay */
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Softened the gradient to keep text readable */
+    background: linear-gradient(30deg, rgba(4, 0, 255, 0.05), rgba(76, 227, 247, 0.1));
+    border-radius: 30px;
+    pointer-events: none;
+}
+
+@keyframes modalPop {
+    0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* --- MODAL IMAGE --- */
+.modal-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* --- TEXT STYLES --- */
+.card h3 {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    /* Gradient text matching the location theme */
+    background: linear-gradient(30deg, #fff, #4ce3f7);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card p {
+    color: rgba(255, 255, 255, 0.85); /* Matches .location_description opacity */
+    margin: 15px 0;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.card b {
+    color: #4ce3f7; /* Matching the cyan accent color */
+    font-weight: 700;
+}
+
+/* --- BUTTONS --- */
+
+/* Close Button (X) */
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: #ff4b2b; /* Contrast color for close or keep blue: linear-gradient(30deg, #0400ff, #4ce3f7) */
+    transform: rotate(90deg);
+    border-color: transparent;
+}
+
+/* Primary Action Button (e.g. "Book Now") */
+.card .btn {
+    width: 100%;
+    padding: 14px;
+    margin-top: 25px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15); /* Matches grid items */
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card .btn:hover {
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(4, 0, 255, 0.4);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.card .btn:active {
+    transform: translateY(-1px);
+}
+
+
+/* Small Smartphones */
+@media only screen and (max-width: 320px) {
+    .location_title {
+        font-size: 1.5rem;
+    }
+
+    .location_description {
+        font-size: small;
+    }
+
+    .locations {
+        max-width: 250px;
+        padding: 20px 10px;
+    }
+
+    .locations ul li a {
+        font-size: small;
+        padding: 5px;
+    }
+}

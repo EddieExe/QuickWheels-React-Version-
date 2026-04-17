@@ -1,0 +1,264 @@
+:root {
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --input-bg: rgba(0, 0, 0, 0.3);
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- SECTION --- */
+.booking_section {
+    position: relative;
+    height: 83vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* --- BACKGROUND (Original preserved) --- */
+.booking_section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.55));
+    transform: scale(1.05);
+    z-index: 0;
+}
+
+/* --- WRAPPER --- */
+.booking_wrapper {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 50px;
+    width: 100%;
+    max-width: 1200px;
+    align-items: center;
+}
+
+/* --- ENHANCED LOAD ANIMATION --- */
+.booking_left,
+.input_field {
+    animation: slideIn 0.8s ease-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.booking_left {
+    flex: 1.2;
+}
+
+.booking_left img {
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.booking_left p {
+    color: #fff;
+    font-size: 1.1rem;
+    margin: 0px auto 20px auto;
+}
+
+/* --- FORM CONTAINER --- */
+.input_field {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 28px;
+    border: 1px solid var(--glass-border);
+    width: 100%;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input_field h1 {
+    color: #fff;
+    font-size: 2rem;
+    margin: 0 auto 10px auto;
+    text-align: center;
+}
+
+/* --- SELECTED CAR PREVIEW --- */
+.selected_car_preview {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: #fff;
+    border: 1px solid var(--glass-border);
+}
+
+.selected_car_preview p {
+    font-size: 1rem;
+    margin: 10px auto;
+}
+
+/* --- FORM LAYOUT (Fixed Overlapping) --- */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    /* Increased gap to prevent overlap */
+}
+
+.pickdrop,
+.pickup-dropoff-dates {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    border: none;
+    padding: 0;
+}
+
+/* --- SMOOTH SLIDING TOGGLE --- */
+/* Label above the toggle */
+.trip_type_header {
+    color: var(--primary);
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    grid-column: span 2;
+    text-align: center;
+    width: 100%;
+    margin: 0;
+}
+
+.trip-type {
+    grid-column: span 2;
+    display: flex;
+    position: relative;
+    background: var(--input-bg);
+    padding: 4px;
+    border-radius: 14px;
+    border: 1px solid var(--glass-border);
+    height: 45px;
+    /* Fixed height for consistency */
+    align-items: center;
+}
+
+.trip-type label {
+    flex: 1;
+    z-index: 2;
+    /* Ensures text is above the slider */
+    cursor: pointer;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.trip-type input[type="radio"] {
+    display: none;
+    /* Hide dots */
+}
+
+/* The Sliding Background */
+.trip-type::after {
+    content: "";
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
+    background: var(--primary);
+    border-radius: 10px;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Transform is smoother for hardware acceleration than 'left' */
+.trip-type:has(input[value="one-way"]:checked)::after {
+    transform: translateX(100%);
+}
+
+/* Highlight text when selected */
+.trip-type label:has(input:checked) {
+    color: #ffffff;
+}
+
+/* --- COOLER DATE SELECTION --- */
+.pickup-dropoff-dates div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.pickup-dropoff-dates label {
+    font-size: 1rem;
+    color: var(--primary);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 12px auto;
+}
+
+input[type="text"],
+input[type="date"] {
+    font-family: quicksand, sans-serif;
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: var(--input-bg);
+    color: #fff;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: var(--transition);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* --- BUTTON --- */
+.form_btn {
+    margin: 10px auto;
+    width: 150px;
+}
+
+
+/* --- RESPONSIVE --- */
+@media (max-width: 900px) {
+    .booking_wrapper {
+        flex-direction: column;
+    }
+
+    .booking_left {
+        display: none;
+    }
+
+    .input_field {
+        width: 100%;
+        padding: 25px;
+    }
+}
