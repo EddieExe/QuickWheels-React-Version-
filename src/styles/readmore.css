@@ -1,0 +1,197 @@
+/* ========================================
+   ABOUT PAGE - PREMIUM GLASS UI
+   ======================================== */
+
+.about_section {
+    padding: 80px 5%;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #0a0a0f !important;
+    background-image: none !important;
+    position: relative;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Background Ambient Glow */
+.about_section::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% -10%, rgba(4, 0, 255, 0.15), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.about_container {
+    max-width: 1100px;
+    width: 100%;
+    z-index: 1;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* ---------- HEADER ---------- */
+.about_header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.about_title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 40%, #4ce3f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+
+.about_subtitle {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.4rem;
+    font-style: italic;
+    font-weight: 400;
+    margin-top: 20px;
+}
+
+.blueline {
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    margin: 0 auto;
+    border-radius: 2px;
+}
+
+/* ---------- CONTENT GRID ---------- */
+.about_content_grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 40px;
+    margin-bottom: 60px;
+}
+
+.about_text_block p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.about_text_block strong {
+    color: #4ce3f7;
+}
+
+.about_mission_card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 30px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.about_mission_card h3 {
+    color: #4ce3f7;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.about_mission_card p {
+    color: #fff;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* ---------- STATS SECTION ---------- */
+.about_stats_grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 80px;
+}
+
+.stat_item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    padding: 30px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.stat_item:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.stat_item h4 {
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 5px;
+}
+
+.stat_item span {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ---------- WHY CHOOSE US ---------- */
+.why_choose_us h3 {
+    text-align: center;
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 40px;
+}
+
+.features_list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.feature_card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.feature_icon {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.feature_card p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* ---------- ANIMATION ---------- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 900px) {
+    .about_content_grid, .about_stats_grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .about_stats_grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
