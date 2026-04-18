@@ -430,3 +430,10 @@
         font-size: 2rem;
     }
 }
+
+@media (max-width: 768px) {
+  .payment_container {
+    flex-direction: column;
+    padding: 16px;
+  }
+}

@@ -48,3 +48,12 @@ header {
     font-size: 1.3rem;
     max-width: 80%;
 }
+
+@media (max-width: 768px) {
+  .main_title {
+    font-size: 28px;
+  }
+  .subtitle {
+    font-size: 14px;
+  }
+}

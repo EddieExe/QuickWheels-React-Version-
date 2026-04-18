@@ -363,3 +363,16 @@ body::-webkit-scrollbar-thumb {
         /* Usually replaced by a hamburger menu in industry projects */
     }
 }
+
+@media (max-width: 768px) {
+  nav {
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+  .header_container {
+    display: none;
+  }
+  .brand_logo {
+    width: 80px;
+  }
+}

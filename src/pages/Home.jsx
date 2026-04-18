@@ -406,7 +406,9 @@ function Home() {
               well-maintained vehicles.
             </p>
           </div>
-          <button className="about_btn btn">Read More</button>
+          <button className="about_btn btn" onClick={() => navigate("/about")}>
+            Read More
+          </button>
         </div>
       </section>
 

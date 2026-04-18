@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { sendBookingReceipt } from "../utils/emailService";
+import { db } from "../firebase";
+import { collection, addDoc } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import "../styles/payment.css";
 
@@ -54,13 +56,17 @@ function Payment() {
 
     const newBooking = {
       bookingId,
+      userId: user.uid,
       carModel: selectedCar.model,
       pickup: bookingData.pickup,
       dropoff: bookingData.dropoff,
       days: bookingData.days,
       total: finalTotal,
       date: new Date().toLocaleDateString(),
+      createdAt: new Date(),
     };
+
+    await addDoc(collection(db, 'bookings'), newBooking);
 
     const existing = JSON.parse(localStorage.getItem("bookingHistory") || "[]");
     localStorage.setItem(

@@ -379,3 +379,11 @@
     margin-bottom: 8px;
 }
 
+@media (max-width: 768px) {
+  .car_cards_wrapper {
+    grid-template-columns: 1fr;
+  }
+  .cars_types {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

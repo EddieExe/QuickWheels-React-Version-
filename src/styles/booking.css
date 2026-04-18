@@ -262,3 +262,9 @@ input:focus {
         padding: 25px;
     }
 }
+
+@media (max-width: 768px) {
+  .booking_wrapper {
+    flex-direction: column;
+  }
+}

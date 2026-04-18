@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react"; // Add useEffect to imports
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { updateProfile, updatePassword, deleteUser } from "firebase/auth";
+import { db } from "../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import "../styles/profile.css";
 import "../styles/header.css";
@@ -11,6 +13,29 @@ function Profile() {
   const [activeTab, setActiveTab] = useState("personal");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [bookingHistory, setBookingHistory] = useState([]);
+
+  useEffect(() => {
+    async function fetchBookings() {
+      try {
+        const q = query(
+          collection(db, "bookings"),
+          where("userId", "==", user.uid),
+        );
+        const snapshot = await getDocs(q);
+        const bookings = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        // sort by date — newest first
+        bookings.sort((a, b) => b.createdAt?.toDate() - a.createdAt?.toDate());
+        setBookingHistory(bookings);
+      } catch (err) {
+        console.error("Error fetching bookings:", err);
+      }
+    }
+    if (user) fetchBookings();
+  }, [user]);
 
   // Add auto-dismiss for messages
   useEffect(() => {
@@ -87,10 +112,6 @@ function Profile() {
       );
     }
   }
-
-  const bookingHistory = JSON.parse(
-    localStorage.getItem("bookingHistory") || "[]",
-  );
 
   const tabs = [
     { id: "personal", label: "Personal Details" },
@@ -293,10 +314,7 @@ function Profile() {
                   </div>
                 ) : (
                   bookingHistory.map((booking, index) => (
-                    <div
-                      key={index}
-                      className="booking_item"
-                    >
+                    <div key={index} className="booking_item">
                       <div
                         style={{
                           display: "flex",
