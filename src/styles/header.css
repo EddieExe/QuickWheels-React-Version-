@@ -35,9 +35,11 @@ body {
     0% {
         box-shadow: 0 0 0 0 #05bada66;
     }
+
     70% {
         box-shadow: 0 0 0 10px rgb(218 103 68 / 0%);
     }
+
     100% {
         box-shadow: 0 0 0 0 rgb(218 103 68 / 0%);
     }
@@ -84,7 +86,7 @@ nav {
     position: relative;
     text-decoration: none;
     color: rgba(255, 255, 255, 0.8);
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     padding: 5px 0;
     transition: color 0.3s ease;
@@ -356,23 +358,198 @@ body::-webkit-scrollbar-thumb {
     border: 2px solid #0f172a;
 }
 
-/* Responsive */
+/* Hamburger Menu */
+.hamburger {
+    display: none;
+    cursor: pointer;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    width: 35px;
+    height: 35px;
+    border-radius: 12px;
+    position: relative;
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.hamburger:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #4ce3f7;
+}
+
+.hamburger span {
+    display: block;
+    height: 2px;
+    width: 20px;
+    background: #fff;
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+}
+
+/* Hamburger Morph to X */
+.hamburger.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.hamburger.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+
+/* --- PREMIUM MOBILE MENU (Location-Style Glassmorphism) --- */
 @media (max-width: 768px) {
-    .header_container {
+    .hamburger {
+        display: flex;
+    }
+
+    .desktop_only {
         display: none;
-        /* Usually replaced by a hamburger menu in industry projects */
+    }
+
+    .brand_logo {
+        width: 100px;
+    }
+    
+    /* 3. THE DRAWER (Using .location & .locations logic) */
+    .header_container {
+        position: fixed;
+        top: 100px;
+        right: -100%;
+        width: 50%;
+        height: auto;
+        
+        /* Base Glass from your .locations styling */
+        background: rgba(15, 23, 42, 0.85); 
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 20px;
+        border: 1px solid rgba(76, 227, 247, 0.2); /* Matching your specific cyan border */
+        
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        
+        /* Shadow depth from your .locations logic */
+        box-shadow: 
+            0 20px 40px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        
+        transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 999;
+        overflow: hidden;
+    }
+
+    /* --- THE DEPTH OVERLAYS (Merging .location::before & ::after) --- */
+    /* 1. Brand Gradient Overlay */
+    .header_container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(30deg, #0400ff, #4ce3f7);
+        opacity: 0.15;
+        z-index: -1;
+    }
+
+    /* 2. Soft Vignette Overlay */
+    .header_container::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.3) 100%);
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    /* 4. OPEN STATE */
+    .header_container.active {
+        right: 15px;
+    }
+
+    /* 5. MENU ITEMS (Staggered Fade) */
+    .header_container li {
+        width: 100%;
+        list-style: none;
+        opacity: 0;
+        transform: translateY(15px);
+        transition: transform 0.5s ease, opacity 0.5s ease;
+        z-index: 2;
+    }
+
+    .header_container.active li {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Staggered Timings */
+    .header_container.active li:nth-child(1) { transition-delay: 0.1s; }
+    .header_container.active li:nth-child(2) { transition-delay: 0.2s; }
+    .header_container.active li:nth-child(3) { transition-delay: 0.3s; }
+    .header_container.active li:nth-child(4) { transition-delay: 0.4s; }
+    .header_container.active li:nth-child(5) { transition-delay: 0.5s; }
+    .header_container.active li:nth-child(6) { transition-delay: 0.6s; }
+    .header_container.active li:nth-child(7) { transition-delay: 0.7s; }
+
+    /* 6. BUTTON STYLING (Refining your glass_nav_btn) */
+    .header_link {
+        font-family: "Quicksand", sans-serif;
+        text-decoration: none;
+        color: #fff;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 10px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        overflow: hidden;
+    }
+
+    .header_link:hover {
+        background: linear-gradient(30deg, #0400ff, #4ce3f7);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(4, 0, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Hide the desktop underline */
+    .header_link::after { display: none; }
+
+    .user-profile {
+        width: 100px;
+        height: 40px;
+        font-size: 14px;
+        justify-content: center;
+        border-radius: 10px;
+    }
+
+    .user-profile-inner {
+        border-radius: 8px;
+    }
+
+    .user-profile-inner svg {
+        width: 18px;
+        height: 18px;
     }
 }
 
-@media (max-width: 768px) {
-  nav {
-    flex-wrap: wrap;
-    padding: 10px;
-  }
-  .header_container {
-    display: none;
-  }
-  .brand_logo {
-    width: 80px;
-  }
+@media (min-width: 768px) {
+    .hamburger {
+        display: none;
+    }
 }

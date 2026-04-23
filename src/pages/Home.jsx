@@ -541,32 +541,34 @@ function Home() {
           hassle-free car rental experience with <strong>Quick Wheels.</strong>
         </p>
 
-        <div
-          ref={scrollRef}
-          className="reviews_container"
-          style={{
-            display: "flex",
-            overflowX: "hidden",
-            gap: "20px",
-            padding: "20px 0",
-          }}
-        >
-          {/* duplicate reviews for seamless loop */}
-          {[...reviews, ...reviews].map((r, index) => (
-            <div
-              key={index}
-              className="review_card"
-              style={{ minWidth: "300px", flexShrink: 0 }}
-            >
-              <div className="review_content">
-                <img className="customer_image" src={r.image} alt={r.name} />
-                <h3 className="customer_name">{r.name}</h3>
-                <p className="customer_location">{r.location}</p>
-                <div className="star_rating">⭐⭐⭐⭐⭐</div>
-                <p className="customer_review">"{r.review}"</p>
+        <div className="reviews_container_wrapper">
+          <div
+            ref={scrollRef}
+            className="reviews_container"
+            style={{
+              display: "flex",
+              overflowX: "hidden",
+              gap: "20px",
+              padding: "20px 0",
+            }}
+          >
+            {/* duplicate reviews for seamless loop */}
+            {[...reviews, ...reviews].map((r, index) => (
+              <div
+                key={index}
+                className="review_card"
+                style={{ minWidth: "300px", flexShrink: 0 }}
+              >
+                <div className="review_content">
+                  <img className="customer_image" src={r.image} alt={r.name} />
+                  <h3 className="customer_name">{r.name}</h3>
+                  <p className="customer_location">{r.location}</p>
+                  <div className="star_rating">⭐⭐⭐⭐⭐</div>
+                  <p className="customer_review">"{r.review}"</p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         <div className="review_image">

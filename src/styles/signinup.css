@@ -245,38 +245,39 @@
 }
 
 /* ---------- 9. RESPONSIVE ---------- */
-@media (max-width: 550px) {
+
+@media only screen and (max-width: 767px) {
     .auth-container {
-        padding: 20px 16px;
+        padding: 30px 15px;
     }
 
     .auth-container form {
-        padding: 30px 20px;
+        padding: 30px;
+        width: auto;
     }
 
     .auth-container h2 {
         font-size: 1.6rem;
+        margin: 0px auto 20px auto;
     }
 
     .auth-container input {
-        padding: 12px 14px;
-    }
-
-    .signin_btn {
-        padding: 12px;
+        padding: 8px 10px;
+        font-size: 14px;
     }
 
     .error-message {
-        padding: 10px 16px;
+        padding: 8px 10px;
     }
 
     .error-message span {
-        font-size: 0.8rem;
+        font-size: 12px;
     }
 }
 
+
 /* ---------- 10. SCROLLBAR ---------- */
-.auth-container::-webkit-scrollbar {
+/* .auth-container::-webkit-scrollbar {
     width: 8px;
 }
 
@@ -292,4 +293,4 @@
 
 .auth-container::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(30deg, #0300cc, #3bcce6);
-}
+} */

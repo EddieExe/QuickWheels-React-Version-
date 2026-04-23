@@ -10,21 +10,36 @@ function Navbar() {
   const isHome = location.pathname === "/";
   const [showProfile, setShowProfile] = useState(false);
   const profileRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const handleNavClick = (section) => (e) => {
+    e.preventDefault();
+    scrollToSection(section);
+    setMenuOpen(false);
+  };
 
   // Add click outside listener
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (profileRef.current && !profileRef.current.contains(event.target)) {
+    function handleClickOutside(e) {
+      // Close profile dropdown
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
         setShowProfile(false);
       }
+
+      // Close hamburger menu
+      if (
+        !e.target.closest(".header_container") &&
+        !e.target.closest(".hamburger")
+      ) {
+        setMenuOpen(false);
+      }
     }
-    if (showProfile) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showProfile]);
+  }, []);
 
   function scrollToSection(sectionId) {
     if (isHome) {
@@ -51,15 +66,21 @@ function Navbar() {
     <header>
       <nav>
         <img className="brand_logo" src="/Images/logo2.png" alt="logo" />
-        <ul className="header_container">
+        <button
+          className={`hamburger ${menuOpen ? "active" : ""}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <ul className={`header_container ${menuOpen ? "active" : ""}`}>
           <li>
             <a
               className="header_link"
               href="#home"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection("home");
-              }}
+              onClick={handleNavClick("home")}
             >
               Home
             </a>
@@ -68,10 +89,7 @@ function Navbar() {
             <a
               className="header_link"
               href="#about"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection("about");
-              }}
+              onClick={handleNavClick("about")}
             >
               About
             </a>
@@ -80,10 +98,7 @@ function Navbar() {
             <a
               className="header_link"
               href="#cars"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection("cars");
-              }}
+              onClick={handleNavClick("cars")}
             >
               Fleet
             </a>
@@ -92,10 +107,7 @@ function Navbar() {
             <a
               className="header_link"
               href="#how_it_works"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection("how_it_works");
-              }}
+              onClick={handleNavClick("how_it_works")}
             >
               How It Works
             </a>
@@ -104,10 +116,7 @@ function Navbar() {
             <a
               className="header_link"
               href="#reviews"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection("reviews");
-              }}
+              onClick={handleNavClick("reviews")}
             >
               Reviews
             </a>
@@ -116,10 +125,7 @@ function Navbar() {
             <a
               className="header_link"
               href="#locations"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection("locations");
-              }}
+              onClick={handleNavClick("locations")}
             >
               Locations
             </a>
@@ -128,10 +134,7 @@ function Navbar() {
             <a
               className="header_link"
               href="#contact"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection("contact");
-              }}
+              onClick={handleNavClick("contact")}
             >
               Contact Us
             </a>

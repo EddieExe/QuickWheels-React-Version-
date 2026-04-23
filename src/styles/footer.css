@@ -140,6 +140,28 @@ ul {
         flex-direction: column;
     }
 
+    .footer_logo {
+        width: 150px;
+    }
+
+    .brand_info {
+        margin: 0px;
+    }
+
+    .brand_info h1 {
+        font-size: 1.5rem;
+        margin: 30px auto;
+    }
+
+    .brand_info p {
+        font-size: 14px;
+    }
+
+    .footer-copyright {
+        font-size: 12px;
+        text-align: center;
+    }
+
     .footer_left,
     .footer_right {
         flex: 1 1 100%;
@@ -160,16 +182,5 @@ ul {
         margin: 0px;
     }
 
-    .brand_info h1 {
-        font-size: 1.5rem;
-    }
-
-    .brand_info p {
-        font-size: small;
-    }
-
-    .footer-copyright {
-        font-size: x-small;
-        text-align: center;
-    }
+    
 }

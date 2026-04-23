@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     align-items: center;
+    background: #fff 
 }
 
 .cars_content {
@@ -68,7 +69,7 @@
     flex-direction: row;
     gap: 4rem;
     padding: 0 3rem;
-    margin: 30px auto;
+    margin: 30px auto 0px auto;
 }
 
 .car_img {
@@ -82,36 +83,43 @@
     transform: translateX(-15px) scale(1.1);
 }
 
-.cars_types a {
-    text-decoration: none;
-}
-
-.car_title p {
-    display: flex;
-    justify-content: center;
+.cars_types p {
+    text-align: center;
     margin-top: 10px;
     text-transform: uppercase;
     font-weight: 500;
 }
 
+.cars_types > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 180px;
+    cursor: pointer;
+}
+
 /* Media Queries */
 
 /* Small Smartphones */
-@media only screen and (max-width: 320px) {
-    /* Styles for small smartphones like iPhone SE */
+@media only screen and (max-width: 767px) {
     .cars_content {
         display: flex;
         flex-direction: column;
     }
 
+    .car_info {
+        padding-top: 30px;
+    }
+
     .cars_title {
         font-size: 1.5rem;
+        text-align: center;
+        margin: 0px;
     }
 
     .cars_description {
-        font-size: small;
+        font-size: 14px;
         margin: 0;
-        width: 90%;
     }
 
     .download_options {
@@ -119,13 +127,20 @@
     }
 
     .download_option {
-        height: 40px;
+        height: 35px;
+    }
+
+    .blueline2 {
+        width: 80px;
+        height: 3px;
+        margin: 10px auto;
     }
 
     .cars_types {
         flex-direction: column;
-        padding: 0 1rem;
-        gap: 0.5rem
+        padding: 2rem 1rem;
+        margin: 0px;
+        gap: 0.5rem;
     }
 
     .car_img {

@@ -295,22 +295,22 @@
 
 
 /* Small Smartphones */
-@media only screen and (max-width: 320px) {
+@media only screen and (max-width: 767px) {
     .location_title {
         font-size: 1.5rem;
     }
 
     .location_description {
-        font-size: small;
+        font-size: 14px;
     }
 
     .locations {
-        max-width: 250px;
         padding: 20px 10px;
     }
 
     .locations ul li a {
         font-size: small;
         padding: 5px;
+        text-align: center;
     }
 }
