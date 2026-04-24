@@ -337,6 +337,12 @@ const locations = [
   },
 ];
 
+const handleSubmit = (e) => {
+  setTimeout(() => {
+    e.target.reset(); // clears all fields
+  }, 100); // small delay ensures submission completes
+};
+
 function Home() {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
@@ -646,6 +652,7 @@ function Home() {
             <button
               className="btn"
               onClick={() => {
+                navigate("/booking")
                 setSelectedLocation(null);
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
@@ -676,14 +683,14 @@ function Home() {
           <div className="contact_content">
             <div className="contact_form">
               <h2>Send Us a Message</h2>
-              <form action="https://formspree.io/f/mrbpgvzd" method="POST">
+              <form action="https://formspree.io/f/mrbpgvzd" method="POST" onSubmit={handleSubmit}>
                 <div className="form_group">
                   <input type="text" id="name" name="name" required />
-                  <label htmlFor="name">Your Name</label>
+                  <label htmlFor="name">Enter your Name</label>
                 </div>
                 <div className="form_group">
                   <input type="email" id="email" name="email" required />
-                  <label htmlFor="email">Your Email</label>
+                  <label htmlFor="email">Enter your Email</label>
                 </div>
                 <div className="form_group">
                   <textarea
@@ -692,7 +699,7 @@ function Home() {
                     rows="6"
                     required
                   ></textarea>
-                  <label htmlFor="message">Your Message</label>
+                  <label htmlFor="message">Enter your Message</label>
                 </div>
                 <button type="submit" className="submit_btn btn">
                   Send Message

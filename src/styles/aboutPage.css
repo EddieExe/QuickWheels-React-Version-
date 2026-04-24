@@ -34,12 +34,13 @@
 
 .pg_about_title {
     font-size: 3rem;
-    color: #fff;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, #ffffff 40%, #4ce3f7);
+    background: linear-gradient(135deg, #ffffff 30%, #4ce3f7, #0400ff);
+    background-size: 200% auto; /* REQUIRED for animation */
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+    animation: gradientShift 4s ease infinite; /* ADD THIS */
 }
 
 .pg_blueline {
@@ -54,11 +55,6 @@
     transform-origin: center;
 }
 
-@keyframes growUnderline {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
-}
-
 .pg_about_intro {
     color: rgba(255, 255, 255, 0.7);
     font-size: 1.2rem;
@@ -67,23 +63,26 @@
 }
 
 /* ---------- SHARED LIGHTING EFFECT (BOXES) ---------- */
-.pg_mission_card, 
-.pg_stat_box, 
+.pg_mission_card,
+.pg_stat_box,
 .pg_feature_item {
-    background: rgba(255, 255, 255, 0.03); /* Subtle glass core */
+    background: rgba(255, 255, 255, 0.03);
+    /* Subtle glass core */
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Edge lighting */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Edge lighting */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     transition: all 0.4s ease;
 }
 
 /* Hover effect for all boxes */
-.pg_mission_card:hover, 
-.pg_stat_box:hover, 
+.pg_mission_card:hover,
+.pg_stat_box:hover,
 .pg_feature_item:hover {
     background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(76, 227, 247, 0.4); /* Cyan glow on hover */
+    border-color: rgba(76, 227, 247, 0.4);
+    /* Cyan glow on hover */
     transform: translateY(-5px);
 }
 
@@ -106,7 +105,9 @@
     font-size: 1.05rem;
 }
 
-.pg_about_text strong { color: #4ce3f7; }
+.pg_about_text strong {
+    color: #4ce3f7;
+}
 
 .pg_mission_card {
     padding: 30px;
@@ -167,7 +168,11 @@
     text-align: center;
 }
 
-.pg_icon { font-size: 2rem; display: block; margin-bottom: 10px; }
+.pg_icon {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 10px;
+}
 
 /* ---------- BACK BUTTON ---------- */
 .pg_back_btn {
@@ -177,13 +182,103 @@
 
 /* ---------- ANIMATIONS ---------- */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes growUnderline {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 /* ---------- RESPONSIVE ---------- */
-@media (max-width: 900px) {
-    .pg_about_grid, .pg_stats_bar, .pg_features_grid {
+@media (max-width: 900px) {}
+
+@media only screen and (max-width: 767px) {
+
+    .pg_about_grid,
+    .pg_features_grid {
         grid-template-columns: 1fr;
     }
+
+    .pg_about_title {
+        font-size: 2rem;
+    }
+
+    .pg_about_intro {
+        font-size: 15px;
+    }
+
+    .pg_about_text h2 {
+        font-size: 1.5rem;
+    }
+
+    .pg_about_text p {
+        font-size: 15px;
+    }
+
+    .pg_mission_card,
+    .pg_stat_box,
+    .pg_feature_item {
+        padding: 20px;
+    }
+
+    .pg_mission_card h3 {
+        margin: 0px 0px 15px 0px;
+    }
+
+    .pg_mission_card p {
+        font-size: 15px;
+    }
+
+    .pg_stats_bar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .pg_stat_box h4 {
+        font-size: 1.5rem;
+    }
+
+    .pg_stat_box span {
+        font-size: 12px;
+    }
+
+    .pg_features_section h3 {
+        font-size: 1.5rem;
+    }
+
+    .pg_feature_item {
+        padding: 15px;
+    }
+
+    .pg_feature_item p {
+        font-size: 15px;
+    }
+
+    .pg_back_btn {
+        margin: 40px auto;
+    }
+
 }

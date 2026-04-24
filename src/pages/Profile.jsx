@@ -14,6 +14,7 @@ function Profile() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [bookingHistory, setBookingHistory] = useState([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     async function fetchBookings() {
@@ -91,15 +92,11 @@ function Profile() {
     }
   }
 
-  async function handleDeleteAccount() {
-    const confirm1 = window.confirm(
-      "Are you sure you want to delete your account? This cannot be undone.",
-    );
-    if (!confirm1) return;
-    const confirm2 = window.confirm(
-      "Last warning — all your data will be permanently deleted.",
-    );
-    if (!confirm2) return;
+  function handleDeleteClick() {
+    setShowDeleteConfirm(true);
+  }
+
+  async function handleDeleteConfirmed() {
     try {
       localStorage.removeItem(`phone_${user.uid}`);
       localStorage.removeItem("bookingHistory");
@@ -107,9 +104,8 @@ function Profile() {
       await logout();
       navigate("/");
     } catch (err) {
-      setError(
-        "Please sign out and sign in again before deleting account. This is a Firebase security requirement.",
-      );
+      setShowDeleteConfirm(false);
+      setError("Please sign out and sign in again before deleting account.");
     }
   }
 
@@ -168,18 +164,6 @@ function Profile() {
         {(message || error) && (
           <div
             className={`feedback_message ${message ? "success" : "error"} show`}
-            style={{
-              padding: "10px",
-              fontWeight: "600",
-              textAlign: "center",
-              borderRadius: "8px",
-              marginBottom: "15px",
-              animation: "slideInOut 3s ease forwards",
-              backgroundColor: message
-                ? "rgba(76, 227, 247, 0.1)"
-                : "rgba(255, 77, 77, 0.1)",
-              border: message ? "1px solid #4ce3f7" : "1px solid #ff4d4d",
-            }}
           >
             {message || error}
           </div>
@@ -234,7 +218,6 @@ function Profile() {
                 <button
                   type="submit"
                   className="btn active"
-                  style={{ width: "200px", marginTop: "10px" }}
                 >
                   Save Changes
                 </button>
@@ -283,7 +266,6 @@ function Profile() {
                 <button
                   type="submit"
                   className="btn active"
-                  style={{ width: "200px", marginTop: "10px" }}
                 >
                   Change Password
                 </button>
@@ -339,7 +321,7 @@ function Profile() {
 
                       <div
                         style={{
-                          fontSize: "14px",
+                          fontSize: "15px",
                           color: "rgba(255,255,255,0.8)",
                           marginBottom: "10px",
                         }}
@@ -366,7 +348,7 @@ function Profile() {
                           display: "flex",
                           justifyContent: "space-between",
                           alignItems: "center",
-                          fontSize: "14px",
+                          fontSize: "15px",
                           color: "#fff",
                           background: "rgba(255,255,255,0.15)",
                           padding: "8px 12px",
@@ -394,7 +376,7 @@ function Profile() {
                 <p
                   style={{
                     color: "rgba(255,255,255,0.6)",
-                    fontSize: "14px",
+                    fontSize: "15px",
                     marginBottom: "20px",
                     lineHeight: "1.5",
                   }}
@@ -402,7 +384,47 @@ function Profile() {
                   Once you delete your account, there is no going back. All your
                   booking history and personal data will be permanently removed.
                 </p>
-                <button onClick={handleDeleteAccount} className="delete_btn">
+
+                {/* styled confirmation — shows after clicking delete */}
+                {showDeleteConfirm && (
+                  <div
+                    className="error-message"
+                    style={{
+                      flexDirection: "column",
+                      gap: "12px",
+                      padding: "20px",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    <span>Are you absolutely sure? This cannot be undone.</span>
+                    <div
+                      style={{ display: "flex", gap: "12px", marginTop: "8px" }}
+                    >
+                      <button
+                        onClick={handleDeleteConfirmed}
+                      >
+                        Yes, Delete
+                      </button>
+                      <button
+                        onClick={() => setShowDeleteConfirm(false)}
+                        style={{
+                          background: "transparent",
+                          color: "#ff4d4d",
+                          border: "1px solid #ff4d4d",
+                          padding: "8px 20px",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* your original button — unchanged */}
+                <button onClick={handleDeleteClick} className="delete_btn">
                   <span>Delete Account</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

@@ -4,7 +4,6 @@ html {
     padding: 0;
     font-family: 'Quicksand', sans-serif;
     height: 100%;
-    overflow-x: hidden;
 }
 
 header {
@@ -51,7 +50,8 @@ header {
 }
 
 @media (max-width: 767px) {
-    body {
+    html, body {
+        overflow-x: hidden;
         background-size: cover;
         background-position: center;
     }
@@ -61,7 +61,7 @@ header {
     }
 
     .subtitle {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     header {
@@ -69,8 +69,8 @@ header {
     }
 
     .btn {
-        padding: 8px 16px;
-        font-size: 0.8rem;
+        padding: 10px 20px;
+        font-size: 1rem;
     }
 
     nav {

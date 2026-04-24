@@ -114,11 +114,11 @@
     .cars_title {
         font-size: 1.5rem;
         text-align: center;
-        margin: 0px;
+        margin: 0px auto 20px auto;
     }
 
     .cars_description {
-        font-size: 14px;
+        font-size: 15px;
         margin: 0;
     }
 

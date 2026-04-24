@@ -16,7 +16,7 @@
   align-items: center;
   overflow: hidden;
   transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
 }
 
 .back_to_top:hover {
@@ -30,7 +30,8 @@
   width: 20px;
   height: 20px;
   margin: auto 15px;
-  flex-shrink: 0;    /* CRITICAL: Prevents SVG from squishing */
+  flex-shrink: 0;
+  /* CRITICAL: Prevents SVG from squishing */
   fill: #fff;
   transition: all 0.5s ease;
   transform: rotate(-45deg);
@@ -73,36 +74,41 @@
 }
 
 /* Color Setup */
-.word_wrapper .text { 
-  color: #fff; 
+.word_wrapper .text {
+  color: #fff;
   position: relative;
   top: 0;
 }
 
-.word_wrapper .clone { 
+.word_wrapper .clone {
   color: #3b82f6;
   position: absolute;
-  top: 100%;  /* Start below the visible area */
+  top: 100%;
+  /* Start below the visible area */
   left: 0;
 }
 
 /* The Slide Up Motion - only move the clone up */
 .back_to_top:hover .word_wrapper .clone {
-  transform: translateY(-100%);  /* Moves up into view */
+  transform: translateY(-100%);
+  /* Moves up into view */
 }
 
 /* Keep the original text in place */
 .back_to_top:hover .word_wrapper .text {
-  transform: translateY(0);  /* No movement needed */
+  transform: translateY(0);
+  /* No movement needed */
 }
 
 /* Staggered Delays - apply to the clone only */
-.back_to_top:hover .word_wrapper:nth-child(1) .clone { 
-  transition-delay: 0.10s; 
+.back_to_top:hover .word_wrapper:nth-child(1) .clone {
+  transition-delay: 0.10s;
 }
-.back_to_top:hover .word_wrapper:nth-child(2) .clone { 
-  transition-delay: 0.15s; 
+
+.back_to_top:hover .word_wrapper:nth-child(2) .clone {
+  transition-delay: 0.15s;
 }
-.back_to_top:hover .word_wrapper:nth-child(3) .clone { 
-  transition-delay: 0.20s; 
+
+.back_to_top:hover .word_wrapper:nth-child(3) .clone {
+  transition-delay: 0.20s;
 }

@@ -114,7 +114,7 @@ ul {
 .footer_location a, .main_links a, .cars_links a, .que a, .reviews a {
     color: #9ca3af;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 15px;
     transition: color 0.3s ease;
 }
 
@@ -154,7 +154,7 @@ ul {
     }
 
     .brand_info p {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .footer-copyright {

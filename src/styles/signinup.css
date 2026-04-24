@@ -138,19 +138,19 @@
     align-items: center;
     justify-content: center;
     padding: 12px 20px;
-    border: none;
     border-radius: 10px;
     position: relative;
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    background-color: #ec003f;
+    background: rgba(255, 77, 77, 0.12);
+    border: 1px solid #ff4d4d;
     margin: 0 auto 20px auto;
     animation: slideInError 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
 }
 
 .error-message span {
-    color: #fff;
+    color: #ff4d4d;
     font-size: 0.9rem;
     font-weight: 600;
     text-align: center;
@@ -248,7 +248,8 @@
 
 @media only screen and (max-width: 767px) {
     .auth-container {
-        padding: 30px 15px;
+        min-height: auto;
+        padding: 50px 15px;
     }
 
     .auth-container form {
@@ -263,7 +264,7 @@
 
     .auth-container input {
         padding: 8px 10px;
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .error-message {

@@ -284,97 +284,6 @@
     }
 }
 
-/* ---------- 7. RESPONSIVE DESIGN ---------- */
-@media (max-width: 1024px) {
-    #addons-list {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 20px;
-    }
-}
-
-@media (max-width: 768px) {
-    .addons-section {
-        padding: 40px 16px;
-    }
-    
-    .addons_title {
-        font-size: 2rem;
-        margin-bottom: 15px;
-    }
-    
-    .addons_description {
-        font-size: 1rem;
-        margin-bottom: 35px;
-        padding: 0 20px;
-    }
-    
-    #addons-list {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .addon_image {
-        height: 180px;
-    }
-    
-    .addon_title {
-        font-size: 1.2rem;
-    }
-    
-    .buttons {
-        flex-direction: column;
-        gap: 15px;
-        width: 100%;
-        max-width: 300px;
-    }
-    
-    .skip_btn {
-        width: 100%;
-        padding: 12px 20px;
-    }
-}
-
-@media (max-width: 480px) {
-    .addon_image {
-        height: 160px;
-    }
-    
-    .addon_content {
-        padding: 16px;
-    }
-    
-    .addon_title {
-        font-size: 1.1rem;
-    }
-    
-    .addon_description {
-        font-size: 0.85rem;
-    }
-    
-    .addon_content strong {
-        font-size: 1rem;
-    }
-}
-
-/* ---------- 8. CUSTOM SCROLLBAR ---------- */
-.addons-section::-webkit-scrollbar {
-    width: 8px;
-}
-
-.addons-section::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-}
-
-.addons-section::-webkit-scrollbar-thumb {
-    background: linear-gradient(30deg, #0400ff, #4ce3f7);
-    border-radius: 10px;
-}
-
-.addons-section::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(30deg, #0300cc, #3bcce6);
-}
-
 /* ---------- 9. EMPTY STATE (if needed) ---------- */
 .empty-state {
     text-align: center;
@@ -387,4 +296,43 @@
     height: 80px;
     margin-bottom: 20px;
     opacity: 0.5;
+}
+
+
+/* ---------- 7. RESPONSIVE DESIGN ---------- */
+
+@media (max-width: 767px) {
+    .addons-section {
+        padding: 0px 20px 30px 20px;
+    }
+
+    .addons_title {
+        font-size: 2rem;
+    }
+
+    .addons_description {
+        font-size: 15px;
+    }
+
+    #addons-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* .addon_image {
+        height: 150px;
+    } */
+
+    .addon_title {
+        font-size: 1.1rem;
+    }
+
+    .addon_description {
+        font-size: 15px;
+    }
+
+    .addon_content strong {
+        font-size: 1rem;
+    }
 }

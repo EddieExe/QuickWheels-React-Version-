@@ -260,7 +260,7 @@ function Payment() {
 
             {/* Confirm Button */}
             <button className="confirm_btn btn" onClick={handleConfirm}>
-              Confirm Your Order →
+              Confirm Your Order
             </button>
           </div>
         </div>

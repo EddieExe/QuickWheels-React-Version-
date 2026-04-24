@@ -41,16 +41,19 @@
 }
 
 /* Content above background */
-.fleet_section > * {
+.fleet_section>* {
     position: relative;
     z-index: 1;
 }
 
 /* Breathe Animation for Blue Light */
 @keyframes breathe {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 0.8;
     }
+
     50% {
         opacity: 1;
     }
@@ -71,8 +74,15 @@
 }
 
 @keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .fleet_title::after {
@@ -89,8 +99,15 @@
 }
 
 @keyframes widthExpand {
-    from { width: 0; opacity: 0; }
-    to { width: 160px; opacity: 1; }
+    from {
+        width: 0;
+        opacity: 0;
+    }
+
+    to {
+        width: 160px;
+        opacity: 1;
+    }
 }
 
 /* ---------- 3. CATEGORY NAVIGATION ---------- */
@@ -247,7 +264,8 @@
     grid-template-columns: 1fr 1fr;
     gap: 8px;
     margin: 15px 0;
-    align-items: start; /* 👈 FIX */
+    align-items: start;
+    /* 👈 FIX */
 }
 
 .fleet_spec_item {
@@ -293,7 +311,8 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-align: center; /* 👈 ensures text is centered */
+    text-align: center;
+    /* 👈 ensures text is centered */
     transition: transform 0.5s ease;
 }
 
@@ -314,24 +333,26 @@
 
 /* ---------- 7. ENHANCED ANIMATIONS ---------- */
 @keyframes fadeInDown {
-    from { 
-        opacity: 0; 
-        transform: translateY(-40px); 
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
 @keyframes fadeInUp {
-    from { 
-        opacity: 0; 
-        transform: translateY(40px); 
+    from {
+        opacity: 0;
+        transform: translateY(40px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
@@ -343,16 +364,45 @@
 }
 
 /* Smooth stagger (slightly tighter + natural feel) */
-.fleet_card:nth-child(1) { animation-delay: 0.05s; }
-.fleet_card:nth-child(2) { animation-delay: 0.09s; }
-.fleet_card:nth-child(3) { animation-delay: 0.13s; }
-.fleet_card:nth-child(4) { animation-delay: 0.17s; }
-.fleet_card:nth-child(5) { animation-delay: 0.21s; }
-.fleet_card:nth-child(6) { animation-delay: 0.25s; }
-.fleet_card:nth-child(7) { animation-delay: 0.29s; }
-.fleet_card:nth-child(8) { animation-delay: 0.33s; }
-.fleet_card:nth-child(9) { animation-delay: 0.37s; }
-.fleet_card:nth-child(10) { animation-delay: 0.41s; }
+.fleet_card:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.fleet_card:nth-child(2) {
+    animation-delay: 0.09s;
+}
+
+.fleet_card:nth-child(3) {
+    animation-delay: 0.13s;
+}
+
+.fleet_card:nth-child(4) {
+    animation-delay: 0.17s;
+}
+
+.fleet_card:nth-child(5) {
+    animation-delay: 0.21s;
+}
+
+.fleet_card:nth-child(6) {
+    animation-delay: 0.25s;
+}
+
+.fleet_card:nth-child(7) {
+    animation-delay: 0.29s;
+}
+
+.fleet_card:nth-child(8) {
+    animation-delay: 0.33s;
+}
+
+.fleet_card:nth-child(9) {
+    animation-delay: 0.37s;
+}
+
+.fleet_card:nth-child(10) {
+    animation-delay: 0.41s;
+}
 
 /* Smooth reveal animation */
 @keyframes cardReveal {
@@ -360,6 +410,7 @@
         opacity: 0;
         transform: translateY(15px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -379,11 +430,60 @@
     margin-bottom: 8px;
 }
 
-@media (max-width: 768px) {
-  .car_cards_wrapper {
+@media (max-width: 767px) {
+    /* .car_cards_wrapper {
     grid-template-columns: 1fr;
   }
   .cars_types {
     grid-template-columns: repeat(2, 1fr);
-  }
+  } */
+
+    .fleet_section {
+        padding: 0px 20px 20px 20px;
+    }
+
+    .fleet_title {
+        font-size: 2rem;
+    }
+
+    .fleet_categories {
+        gap: 8px;
+    }
+
+    .fleet_category_btn {
+        padding: 0 15px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    .fleet_cards_wrapper {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .fleet_card {
+        padding: 8px;
+    }
+
+    .fleet_card_image {
+        height: 120px;
+    }
+
+    .fleet_card_model {
+        font-size: 1rem;
+    }
+
+    .fleet_card_specs {
+        grid-template-columns: 1.1fr;
+    }
+
+    .fleet_card_cost {
+        font-size: 1rem;
+    }
+
+    .fleet_book_btn {
+        width: 120px;
+        font-size: 15px;
+        margin: 0px auto 15px auto;
+    }
 }

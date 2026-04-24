@@ -296,12 +296,29 @@
 
 /* Small Smartphones */
 @media only screen and (max-width: 767px) {
+    .card {
+        width: 70%;
+        padding: 25px;
+    }
+
+    .modal-image {
+        height: 180px;
+    }
+
+    .modal-backdrop h3 {
+        font-size: 1.5rem;
+    }
+
+    .modal-backdrop p {
+        font-size: 0.9rem;
+    }
+
     .location_title {
         font-size: 1.5rem;
     }
 
     .location_description {
-        font-size: 14px;
+        font-size: 15px;
     }
 
     .locations {
