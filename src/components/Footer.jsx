@@ -129,7 +129,7 @@ function Footer() {
               <h2 className="footer_heading">FAQ</h2>
               <ul className="que">
                 <li>
-                  <a href="#how">How It Works?</a>
+                  <a href="#how_it_works">How It Works?</a>
                 </li>
                 <li>
                   <a href="#contact">Contact Us</a>

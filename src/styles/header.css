@@ -167,7 +167,8 @@ nav {
     position: absolute;
     right: 0;
     top: calc(100% + 15px);
-    width: 240px;
+    /* width: 240px; */
+    width: auto;
     border-radius: 15px;
     background: linear-gradient(to bottom right, #2e8eff 0%, rgba(46, 142, 255, 0) 30%);
     background-color: rgba(46, 142, 255, 0.2);

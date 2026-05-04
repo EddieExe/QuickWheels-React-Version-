@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BackToTop from "../components/BackToTop";
+import { useAuth } from "../context/AuthContext";
+import validateEmail from "../utils/emailValidator";
+import AnimatedSection from "../components/AnimatedSection";
 import "../styles/home.css";
 import "../styles/about.css";
 import "../styles/cars.css";
@@ -337,16 +340,30 @@ const locations = [
   },
 ];
 
-const handleSubmit = (e) => {
-  setTimeout(() => {
-    e.target.reset(); // clears all fields
-  }, 100); // small delay ensures submission completes
-};
-
 function Home() {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
+  const { user } = useAuth();
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [contactError, setContactError] = useState("");
+
+  const handleContactSubmit = (e) => {
+    const emailInput = e.target.email.value;
+    const emailError = validateEmail(emailInput);
+    if (emailError) {
+      e.preventDefault();
+      setContactError(emailError);
+      return;
+    }
+    setContactError("");
+    setTimeout(() => e.target.reset(), 100);
+  };
+
+  const handleSubmit = (e) => {
+    setTimeout(() => {
+      e.target.reset(); // clears all fields
+    }, 100); // small delay ensures submission completes
+  };
 
   useEffect(() => {
     const container = scrollRef.current;
@@ -371,27 +388,34 @@ function Home() {
       {/* Hero Section */}
       <section id="home" className="home_page">
         <div className="overlay">
-          <p className="main_title">
-            Welcome to <strong>Quick Wheels!</strong>
-          </p>
-          <p className="subtitle">
-            Ready to hit the road? You're at the right place! Discover the
-            freedom and convenience of car rental with{" "}
-            <strong>Quick Wheels</strong>—your trusted partner for a safe and
-            easy travel experience!
-          </p>
-          <button className="book_btn btn" onClick={() => navigate("/booking")}>
-            Book Now!
-          </button>
+          <AnimatedSection>
+            <p className="main_title">
+              Welcome to <strong>Quick Wheels!</strong>
+            </p>
+          </AnimatedSection>
+          <AnimatedSection delay={0.2}>
+            <p className="subtitle">
+              Ready to hit the road? You're at the right place! Discover the
+              freedom and convenience of car rental with{" "}
+              <strong>Quick Wheels</strong>—your trusted partner for a safe and
+              easy travel experience!
+            </p>
+            <button
+              className="book_btn btn"
+              onClick={() => navigate("/booking")}
+            >
+              Book Now!
+            </button>
+          </AnimatedSection>
         </div>
       </section>
 
       {/* About Section */}
       <section id="about" className="about_section">
-        <div className="about_img">
+        <AnimatedSection className="about_img">
           <img src="/Images/about.jpg" alt="about" />
-        </div>
-        <div className="about_info">
+        </AnimatedSection>
+        <AnimatedSection delay={0.2} className="about_info">
           <h1 className="about_title">About Us</h1>
           <hr className="blueline1" />
           <h2 className="about_subtitle">
@@ -415,94 +439,100 @@ function Home() {
           <button className="about_btn btn" onClick={() => navigate("/about")}>
             Read More
           </button>
-        </div>
+        </AnimatedSection>
       </section>
 
       {/* Explore Fleet Section */}
       <section id="cars" className="our_cars">
-        <div className="cars_content">
-          <div className="car_info">
-            <h2 className="cars_title">
-              <strong>Explore Our Fleet</strong>
-            </h2>
-            <p className="cars_description">
-              At <strong>Quick Wheels</strong>, we offer a wide variety of
-              vehicles to suit every need and occasion. Whether you're looking
-              for a reliable car for your daily commute, a spacious vehicle for
-              a family trip, or something stylish for a special event, we have
-              you covered. <br />
-              Our fleet is carefully maintained and regularly updated to ensure
-              you have access to the latest models, complete with advanced
-              safety features and modern comforts. With our extensive selection,
-              you can easily find a vehicle that meets your requirements and
-              enjoy a smooth, comfortable driving experience.
-            </p>
-            <div className="download_options">
-              <a href="#play_store">
-                <img
-                  className="download_option"
-                  src="/Images/playstore.png"
-                  alt="Play Store"
-                />
-              </a>
-              <a href="#app_store">
-                <img
-                  className="download_option"
-                  src="/Images/appstore.png"
-                  alt="App Store"
-                />
-              </a>
-            </div>
-            <hr className="blueline2" />
-          </div>
-
-          <div className="car_on_right">
-            <img src="/Images/Untitled design (1).png" alt="car" />
-          </div>
-        </div>
-
-        <div className="cars_types">
-          {[
-            { type: "Sedan", img: "/Images/Sedan/mazda3.png" },
-            { type: "SUVs", img: "/Images/SUV/mazda_cx5.png" },
-            {
-              type: "Convertible",
-              img: "/Images/Convertible/audi-A5-cabriolet.png",
-            },
-            {
-              type: "Pickup Trucks 4x4",
-              img: "/Images/Pickup Trucks/ram_trx2.png",
-            },
-            { type: "Van", img: "/Images/Van/ford_transit.png" },
-            { type: "Luxury Cars", img: "/Images/Luxury/s-class.png" },
-          ].map((car) => (
-            <div
-              key={car.type}
-              className={car.type.toUpperCase().replace(/\s+/g, "")}
-              onClick={() => navigate("/fleet")}
-            >
-              <img className="car_img" src={car.img} alt={car.type} />
-              <p>
-                <strong>{car.type}</strong>
+        <AnimatedSection>
+          <div className="cars_content">
+            <div className="car_info">
+              <h2 className="cars_title">
+                <strong>Explore Our Fleet</strong>
+              </h2>
+              <p className="cars_description">
+                At <strong>Quick Wheels</strong>, we offer a wide variety of
+                vehicles to suit every need and occasion. Whether you're looking
+                for a reliable car for your daily commute, a spacious vehicle
+                for a family trip, or something stylish for a special event, we
+                have you covered. <br />
+                Our fleet is carefully maintained and regularly updated to
+                ensure you have access to the latest models, complete with
+                advanced safety features and modern comforts. With our extensive
+                selection, you can easily find a vehicle that meets your
+                requirements and enjoy a smooth, comfortable driving experience.
               </p>
+              <div className="download_options">
+                <a href="#play_store">
+                  <img
+                    className="download_option"
+                    src="/Images/playstore.png"
+                    alt="Play Store"
+                  />
+                </a>
+                <a href="#app_store">
+                  <img
+                    className="download_option"
+                    src="/Images/appstore.png"
+                    alt="App Store"
+                  />
+                </a>
+              </div>
+              <hr className="blueline2" />
             </div>
-          ))}
-        </div>
+
+            <div className="car_on_right">
+              <img src="/Images/Untitled design (1).png" alt="car" />
+            </div>
+          </div>
+        </AnimatedSection>
+
+        <AnimatedSection delay={0.2}>
+          <div className="cars_types">
+            {[
+              { type: "Sedan", img: "/Images/Sedan/mazda3.png" },
+              { type: "SUVs", img: "/Images/SUV/mazda_cx5.png" },
+              {
+                type: "Convertible",
+                img: "/Images/Convertible/audi-A5-cabriolet.png",
+              },
+              {
+                type: "Pickup Trucks 4x4",
+                img: "/Images/Pickup Trucks/ram_trx2.png",
+              },
+              { type: "Van", img: "/Images/Van/ford_transit.png" },
+              { type: "Luxury Cars", img: "/Images/Luxury/s-class.png" },
+            ].map((car) => (
+              <div
+                key={car.type}
+                className={car.type.toUpperCase().replace(/\s+/g, "")}
+                onClick={() => navigate("/fleet")}
+              >
+                <img className="car_img" src={car.img} alt={car.type} />
+                <p>
+                  <strong>{car.type}</strong>
+                </p>
+              </div>
+            ))}
+          </div>
+        </AnimatedSection>
       </section>
 
       {/* How It Works Section */}
       <section id="how_it_works" className="how_it_works_section">
-        <h2 className="section_title">How It Works</h2>
-        <hr className="blueline3" />
-        <p className="section_description">
-          Renting a car with <strong>Quick Wheels</strong> is easier than ever
-          before. Our streamlined process ensures you can book the perfect car
-          with just a few clicks. Follow these simple steps to get on the road
-          in no time and enjoy a hassle-free experience that lets you focus on
-          your journey. Whether you're planning a weekend getaway or need a car
-          for daily commutes, <strong>Quick Wheels</strong> makes it simple,
-          fast, and convenient.
-        </p>
+        <AnimatedSection>
+          <h2 className="section_title">How It Works</h2>
+          <hr className="blueline3" />
+          <p className="section_description">
+            Renting a car with <strong>Quick Wheels</strong> is easier than ever
+            before. Our streamlined process ensures you can book the perfect car
+            with just a few clicks. Follow these simple steps to get on the road
+            in no time and enjoy a hassle-free experience that lets you focus on
+            your journey. Whether you're planning a weekend getaway or need a
+            car for daily commutes, <strong>Quick Wheels</strong> makes it
+            simple, fast, and convenient.
+          </p>
+        </AnimatedSection>
 
         <div className="steps_container">
           {[
@@ -526,97 +556,113 @@ function Home() {
               img: "/Images/smiley-businesswoman-driving-her-car-city.jpg",
               desc: "Enjoy your journey with our well-maintained vehicles. Drive with confidence and comfort.",
             },
-          ].map((item) => (
-            <div key={item.step} className="step_card">
-              <img src={item.img} alt={item.step} className="step_image" />
-              <div className="step_content">
-                <h3 className="step_title">{item.step}</h3>
-                <p className="step_description">{item.desc}</p>
+          ].map((item, index) => (
+            <AnimatedSection key={item.step} delay={index * 0.15}>
+              <div className="step_card">
+                <img src={item.img} alt={item.step} className="step_image" />
+                <div className="step_content">
+                  <h3 className="step_title">{item.step}</h3>
+                  <p className="step_description">{item.desc}</p>
+                </div>
               </div>
-            </div>
+            </AnimatedSection>
           ))}
         </div>
       </section>
 
       {/* Reviews Section */}
       <section className="review_section" id="reviews">
-        <h2 className="review_title">What Our Customers Say</h2>
-        <hr className="blueline4" />
-        <p className="review_description">
-          Hear from our satisfied customers who have enjoyed a smooth and
-          hassle-free car rental experience with <strong>Quick Wheels.</strong>
-        </p>
+        <AnimatedSection>
+          <h2 className="review_title">What Our Customers Say</h2>
+          <hr className="blueline4" />
+          <p className="review_description">
+            Hear from our satisfied customers who have enjoyed a smooth and
+            hassle-free car rental experience with{" "}
+            <strong>Quick Wheels.</strong>
+          </p>
+        </AnimatedSection>
 
-        <div className="reviews_container_wrapper">
-          <div
-            ref={scrollRef}
-            className="reviews_container"
-            style={{
-              display: "flex",
-              overflowX: "hidden",
-              gap: "20px",
-              padding: "20px 0",
-            }}
-          >
-            {/* duplicate reviews for seamless loop */}
-            {[...reviews, ...reviews].map((r, index) => (
-              <div
-                key={index}
-                className="review_card"
-                style={{ minWidth: "300px", flexShrink: 0 }}
-              >
-                <div className="review_content">
-                  <img className="customer_image" src={r.image} alt={r.name} />
-                  <h3 className="customer_name">{r.name}</h3>
-                  <p className="customer_location">{r.location}</p>
-                  <div className="star_rating">⭐⭐⭐⭐⭐</div>
-                  <p className="customer_review">"{r.review}"</p>
+        <AnimatedSection delay={0.2}>
+          <div className="reviews_container_wrapper">
+            <div
+              ref={scrollRef}
+              className="reviews_container"
+              style={{
+                display: "flex",
+                overflowX: "hidden",
+                gap: "20px",
+                padding: "20px 0",
+              }}
+            >
+              {/* duplicate reviews for seamless loop */}
+              {[...reviews, ...reviews].map((r, index) => (
+                <div
+                  key={index}
+                  className="review_card"
+                  style={{ minWidth: "300px", flexShrink: 0 }}
+                >
+                  <div className="review_content">
+                    <img
+                      className="customer_image"
+                      src={r.image}
+                      alt={r.name}
+                    />
+                    <h3 className="customer_name">{r.name}</h3>
+                    <p className="customer_location">{r.location}</p>
+                    <div className="star_rating">⭐⭐⭐⭐⭐</div>
+                    <p className="customer_review">"{r.review}"</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        </AnimatedSection>
 
-        <div className="review_image">
-          <img src="/Images/Google-Review-Logo.png" alt="Google Reviews" />
-        </div>
+        <AnimatedSection delay={0.3}>
+          <div className="review_image">
+            <img src="/Images/Google-Review-Logo.png" alt="Google Reviews" />
+          </div>
+        </AnimatedSection>
       </section>
 
       {/* Locations Section */}
       <section className="location" id="locations">
-        <div className="location_content">
-          <div className="location_head">
-            <h1 className="location_title">Where Are We?</h1>
-            <p className="location_description">
-              "With service stations located across the country, we're always
-              nearby to serve you. Whether you're in the heart of New York City,
-              the sunny streets of Los Angeles, or any of our other convenient
-              locations, our team is ready to provide exceptional service.
-              Explore our interactive map to find the nearest station, or check
-              out the list below for a location closest to you."
-            </p>
-          </div>
+        <AnimatedSection>
+          <div className="location_content">
+            <div className="location_head">
+              <h1 className="location_title">Where Are We?</h1>
+              <p className="location_description">
+                "With service stations located across the country, we're always
+                nearby to serve you. Whether you're in the heart of New York
+                City, the sunny streets of Los Angeles, or any of our other
+                convenient locations, our team is ready to provide exceptional
+                service. Explore our interactive map to find the nearest
+                station, or check out the list below for a location closest to
+                you."
+              </p>
+            </div>
 
-          <div className="locations">
-            <h2>Our Service Locations</h2>
-            <hr />
-            <ul>
-              {locations.map((loc) => (
-                <li key={loc.id}>
-                  <a
-                    href={`#${loc.id}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedLocation(loc);
-                    }}
-                  >
-                    {loc.city}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <div className="locations">
+              <h2>Our Service Locations</h2>
+              <hr />
+              <ul>
+                {locations.map((loc) => (
+                  <li key={loc.id}>
+                    <a
+                      href={`#${loc.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setSelectedLocation(loc);
+                      }}
+                    >
+                      {loc.city}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
+        </AnimatedSection>
       </section>
 
       {/* Location Modal - Now using .card class */}
@@ -652,7 +698,7 @@ function Home() {
             <button
               className="btn"
               onClick={() => {
-                navigate("/booking")
+                navigate("/booking");
                 setSelectedLocation(null);
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
@@ -664,85 +710,103 @@ function Home() {
       )}
 
       {/* Contact Section */}
-      <section className="contact" id="contact">
-        {/* Wrap the top text in a container so it doesn't break the flex layout */}
-        <div className="contact_header_text">
-          <h1 className="contact_title">Contact Us</h1>
-          <hr className="blueline5" />
-        </div>
-
-        <div className="contact_info">
-          <div className="contact_image">
-            <p className="contact_description">
-              <strong>We'd love to hear from you!</strong> Whether you have a
-              question, feedback, or need support, feel free to reach out to us.
-            </p>
-            <img src="/Images/QUICK WHEELS (2).png" alt="contact" />
+      {!user && (
+        <section className="contact" id="contact">
+          {/* Wrap the top text in a container so it doesn't break the flex layout */}
+          <div className="contact_header_text">
+            <h1 className="contact_title">Contact Us</h1>
+            <hr className="blueline5" />
           </div>
 
-          <div className="contact_content">
-            <div className="contact_form">
-              <h2>Send Us a Message</h2>
-              <form action="https://formspree.io/f/mrbpgvzd" method="POST" onSubmit={handleSubmit}>
-                <div className="form_group">
-                  <input type="text" id="name" name="name" required />
-                  <label htmlFor="name">Enter your Name</label>
-                </div>
-                <div className="form_group">
-                  <input type="email" id="email" name="email" required />
-                  <label htmlFor="email">Enter your Email</label>
-                </div>
-                <div className="form_group">
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows="6"
-                    required
-                  ></textarea>
-                  <label htmlFor="message">Enter your Message</label>
-                </div>
-                <button type="submit" className="submit_btn btn">
-                  Send Message
-                </button>
-              </form>
+          <div className="contact_info">
+            <div className="contact_image">
+              <p className="contact_description">
+                <strong>We'd love to hear from you!</strong> Whether you have a
+                question, feedback, or need support, feel free to reach out to
+                us.
+              </p>
+              <img src="/Images/QUICK WHEELS (2).png" alt="contact" />
             </div>
-            <div className="social_links">
-              <a
-                className="social_icon"
-                href="https://www.facebook.com"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img src="/Images/fb.png" alt="Facebook" />
-              </a>
-              <a
-                className="social_icon"
-                href="https://in.linkedin.com"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img src="/Images/linkedin.png" alt="LinkedIn" />
-              </a>
-              <a
-                className="social_icon"
-                href="https://x.com"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img src="/Images/x.png" alt="Twitter" />
-              </a>
-              <a
-                className="social_icon"
-                href="https://www.instagram.com"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img src="/Images/instagram.png" alt="Instagram" />
-              </a>
+
+            <div className="contact_content">
+              <div className="contact_form">
+                <h2>Send Us a Message</h2>
+                <form
+                  action="https://formspree.io/f/mrbpgvzd"
+                  method="POST"
+                  onSubmit={handleContactSubmit}
+                >
+                  {contactError && (
+                    <p
+                      style={{
+                        color: "#ff4d4d",
+                        fontSize: "13px",
+                        marginBottom: "8px",
+                      }}
+                    >
+                      {contactError}
+                    </p>
+                  )}
+                  <div className="form_group">
+                    <input type="text" id="name" name="name" required />
+                    <label htmlFor="name">Enter your Name</label>
+                  </div>
+                  <div className="form_group">
+                    <input type="email" id="email" name="email" required />
+                    <label htmlFor="email">Enter your Email</label>
+                  </div>
+                  <div className="form_group">
+                    <textarea
+                      id="message"
+                      name="message"
+                      rows="6"
+                      required
+                    ></textarea>
+                    <label htmlFor="message">Enter your Message</label>
+                  </div>
+                  <button type="submit" className="submit_btn btn">
+                    Send Message
+                  </button>
+                </form>
+              </div>
+              <div className="social_links">
+                <a
+                  className="social_icon"
+                  href="https://www.facebook.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src="/Images/fb.png" alt="Facebook" />
+                </a>
+                <a
+                  className="social_icon"
+                  href="https://in.linkedin.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src="/Images/linkedin.png" alt="LinkedIn" />
+                </a>
+                <a
+                  className="social_icon"
+                  href="https://x.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src="/Images/x.png" alt="Twitter" />
+                </a>
+                <a
+                  className="social_icon"
+                  href="https://www.instagram.com"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img src="/Images/instagram.png" alt="Instagram" />
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <BackToTop />
     </main>

@@ -19,6 +19,22 @@ function Payment() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const navigate = useNavigate();
 
+  const addonsList = [
+    { id: 1, name: "Child Safety Seats", price: 10 },
+    { id: 2, name: "Wi-Fi Hotspot", price: 8 },
+    { id: 3, name: "Roadside Assistance", price: 15 },
+    { id: 4, name: "Insurance Package", price: 20 },
+  ];
+
+  function toggleAddon(addon) {
+    const exists = selectedAddons.find((a) => a.id === addon.id);
+    const updated = exists
+      ? selectedAddons.filter((a) => a.id !== addon.id)
+      : [...selectedAddons, addon];
+    setSelectedAddons(updated);
+    localStorage.setItem("selectedAddons", JSON.stringify(updated));
+  }
+
   useEffect(() => {
     const car = localStorage.getItem("selectedCar");
     const booking = localStorage.getItem("bookingData");
@@ -44,7 +60,7 @@ function Payment() {
 
     const { name, email, phone } = formData;
     if (!name || !email || !phone) {
-      alert("Please fill all driver details");
+      alert("Please add your phone number in profile first");
       return;
     }
     if (!selectedCar || !bookingData) {
@@ -53,10 +69,11 @@ function Payment() {
     }
 
     const bookingId = "QW-" + Date.now();
-
     const newBooking = {
       bookingId,
       userId: user.uid,
+      userEmail: user.email,
+      userName: user.displayName,
       carModel: selectedCar.model,
       pickup: bookingData.pickup,
       dropoff: bookingData.dropoff,
@@ -66,15 +83,11 @@ function Payment() {
       createdAt: new Date(),
     };
 
-    await addDoc(collection(db, 'bookings'), newBooking);
-
-    const existing = JSON.parse(localStorage.getItem("bookingHistory") || "[]");
-    localStorage.setItem(
-      "bookingHistory",
-      JSON.stringify([newBooking, ...existing]),
-    );
-
     try {
+      // 1 — save to Firestore
+      await addDoc(collection(db, "bookings"), newBooking);
+
+      // 2 — send email
       await sendBookingReceipt({
         name,
         email,
@@ -90,12 +103,16 @@ function Payment() {
         bookingId,
       });
     } catch (error) {
-      console.error("Receipt email error:", error);
+      console.error("Booking error:", error);
+      // still show success — booking was saved even if email failed
     }
 
+    // 3 — clear localStorage
     localStorage.removeItem("selectedCar");
     localStorage.removeItem("bookingData");
     localStorage.removeItem("selectedAddons");
+
+    // 4 — show success
     setOrderPlaced(true);
   }
 
@@ -223,22 +240,37 @@ function Payment() {
               </div>
             </div>
 
-            {/* Add-ons */}
-            {selectedAddons.length > 0 && (
-              <div className="payment_booking_section">
-                <h3>Add-ons</h3>
-                <div className="addons_list">
-                  {selectedAddons.map((addon) => (
-                    <div className="addon_row" key={addon.id}>
-                      <span>{addon.name}</span>
-                      <strong>
-                        +{addon.price * (bookingData?.days || 1)} USD
-                      </strong>
+            {/* Add-ons — toggleable directly on payment page */}
+            <div className="payment_booking_section">
+              <h3>Add-ons</h3>
+              <div className="payment_addons_grid">
+                {addonsList.map((addon) => {
+                  const isSelected = selectedAddons.some(
+                    (a) => a.id === addon.id,
+                  );
+
+                  return (
+                    <div
+                      key={addon.id}
+                      className={`payment_addon_card ${isSelected ? "is_selected" : ""}`}
+                      onClick={() => toggleAddon(addon)}
+                    >
+                      <div className="payment_addon_info">
+                        <p className="payment_addon_name">
+                          {isSelected && (
+                            <span className="payment_check_icon">✓ </span>
+                          )}
+                          {addon.name}
+                        </p>
+                        <p className="payment_addon_price">
+                          +${addon.price * (bookingData?.days || 1)} USD
+                        </p>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            )}
+            </div>
 
             {/* Price Summary */}
             <div className="price_summary">
@@ -259,7 +291,10 @@ function Payment() {
             </div>
 
             {/* Confirm Button */}
-            <button className="confirm_btn btn" onClick={handleConfirm}>
+            <button
+              className="confirm_btn btn"
+              onClick={(e) => handleConfirm(e)}
+            >
               Confirm Your Order
             </button>
           </div>

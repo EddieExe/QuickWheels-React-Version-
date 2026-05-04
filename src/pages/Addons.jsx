@@ -38,16 +38,21 @@ const addonsList = [
 ];
 
 function Addons() {
-  const [selectedAddons, setSelectedAddons] = useState([]);
+  // load previously selected addons from localStorage
+  const [selectedAddons, setSelectedAddons] = useState(() => {
+    const saved = localStorage.getItem("selectedAddons");
+    return saved ? JSON.parse(saved) : [];
+  });
   const navigate = useNavigate();
 
   function toggleAddon(addon) {
     const exists = selectedAddons.find((a) => a.id === addon.id);
-    if (exists) {
-      setSelectedAddons(selectedAddons.filter((a) => a.id !== addon.id));
-    } else {
-      setSelectedAddons([...selectedAddons, addon]);
-    }
+    const updated = exists
+      ? selectedAddons.filter((a) => a.id !== addon.id)
+      : [...selectedAddons, addon];
+    setSelectedAddons(updated);
+    // save immediately on every toggle
+    localStorage.setItem("selectedAddons", JSON.stringify(updated));
   }
 
   function handleProceed() {
@@ -73,15 +78,15 @@ function Addons() {
               style={{ cursor: "pointer" }}
             >
               <img src={addon.image} alt={addon.name} className="addon_image" />
-
               <div className="addon_content">
                 <h3 className="addon_title">{addon.name}</h3>
                 <p className="addon_description">{addon.description}</p>
                 <p>
                   <strong>+{addon.price} USD/Day</strong>
                 </p>
-
-                {isSelected && <p style={{ color: "green" }}>Selected</p>}
+                {isSelected && (
+                  <p style={{ color: "green", fontWeight: "bold" }}>Selected</p>
+                )}
               </div>
             </div>
           );
@@ -92,7 +97,13 @@ function Addons() {
         <button className="skip_btn btn" onClick={handleProceed}>
           Proceed to Payment
         </button>
-        <button className="skip_btn btn" onClick={() => navigate("/payment")}>
+        <button
+          className="skip_btn btn"
+          onClick={() => {
+            localStorage.setItem("selectedAddons", JSON.stringify([]));
+            navigate("/payment");
+          }}
+        >
           Skip
         </button>
       </div>

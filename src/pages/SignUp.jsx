@@ -1,8 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
 import { auth } from "../firebase";
+import { db } from "../firebase";
+import { doc, setDoc } from "firebase/firestore";
 import { sendWelcomeEmail } from "../utils/emailService";
+import validateEmail from "../utils/emailValidator";
 import "../styles/signinup.css";
 
 function SignUp() {
@@ -13,13 +20,11 @@ function SignUp() {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [emailHint, setEmailHint] = useState("");
 
-  // Auto-dismiss error after 3 seconds
   useEffect(() => {
     if (error) {
-      const timer = setTimeout(() => {
-        setError("");
-      }, 3000);
+      const timer = setTimeout(() => setError(""), 3000);
       return () => clearTimeout(timer);
     }
   }, [error]);
@@ -39,6 +44,11 @@ function SignUp() {
       setError("Password must be at least 6 characters");
       return;
     }
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setError(emailError);
+      return;
+    }
     try {
       const result = await createUserWithEmailAndPassword(
         auth,
@@ -46,8 +56,17 @@ function SignUp() {
         password,
       );
       await updateProfile(result.user, { displayName: username });
+      await setDoc(doc(db, "users", email), {
+        email: email,
+        displayName: username,
+        isAdmin: false,
+        createdAt: new Date(),
+      });
+      await sendEmailVerification(result.user);
       await sendWelcomeEmail(username, email);
-      navigate("/");
+      // ✅ save success message then go to signin
+      localStorage.setItem("signupSuccess", "welcome");
+      navigate("/signin");
     } catch (err) {
       if (err.code === "auth/email-already-in-use") {
         setError("Email already registered. Please sign in.");
@@ -63,14 +82,11 @@ function SignUp() {
     <div className="auth-container">
       <form onSubmit={handleSubmit}>
         <h2>Create an account</h2>
-        
-        {/* Error Message with same styling as SignIn */}
         {error && (
           <div className="error-message">
             <span>{error}</span>
           </div>
         )}
-        
         <label>Username</label>
         <input
           type="text"
@@ -80,15 +96,38 @@ function SignUp() {
           placeholder="Enter your username"
           required
         />
+
         <label>Email</label>
         <input
           type="email"
           name="email"
           value={formData.email}
-          onChange={handleChange}
+          onChange={(e) => {
+            handleChange(e);
+            // only show hint after user has typed enough
+            if (e.target.value.length > 5) {
+              const err = validateEmail(e.target.value);
+              setEmailHint(err || "");
+            } else {
+              setEmailHint(""); // clear hint while typing
+            }
+          }}
           placeholder="Enter your email"
           required
         />
+        {emailHint && (
+          <p
+            style={{
+              color: "#ff4d4d",
+              fontSize: "12px",
+              marginTop: "-8px",
+              marginBottom: "8px",
+            }}
+          >
+            {emailHint}
+          </p>
+        )}
+
         <label>Password</label>
         <input
           type="password"

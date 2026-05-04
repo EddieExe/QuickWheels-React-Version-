@@ -202,9 +202,11 @@
     padding: 20px 25px 25px 25px;
 }
 
+/* --- Payment Page Specific Add-ons Layout --- */
+
 .payment_booking_section {
-    margin-bottom: 20px;
-    padding-bottom: 15px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
     border-bottom: 1px solid rgba(76, 227, 247, 0.1);
 }
 
@@ -212,8 +214,77 @@
     color: #4ce3f7;
     font-size: 1rem;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* 2:2 Grid specifically for the payment page */
+.payment_addons_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+
+/* Scoped card styling to avoid conflict with .addon_card */
+.payment_addon_card {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Force override if needed */
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.2s ease;
+    min-height: 60px;
+    box-sizing: border-box;
+    /* Reset any animations from the main page */
+    animation: none !important; 
+    transform: none !important;
+}
+
+.payment_addon_card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(76, 227, 247, 0.3) !important;
+}
+
+/* Selected State */
+.payment_addon_card.is_selected {
+    border-color: #4ce3f7 !important;
+    background: rgba(76, 227, 247, 0.08);
+}
+
+.payment_addon_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.payment_addon_name {
+    margin: 0 !important;
+    font-weight: 600;
+    font-size: 13px;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.payment_check_icon {
+    color: #4ce3f7;
+    font-weight: bold;
+}
+
+.payment_addon_price {
+    margin: 4px 0 0 0 !important;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Ensure 1 column on small mobile screens */
+@media (max-width: 400px) {
+    .payment_addons_grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Car Info */

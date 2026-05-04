@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/booking.css";
@@ -46,45 +46,123 @@ function Booking() {
     pickupDate: "",
     dropoffDate: "",
   });
+  const [openDropdown, setOpenDropdown] = useState(null); // 'pickup' | 'dropoff' | null
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+
+  // Refs for dropdowns
+  const pickupRef = useRef(null);
+  const dropoffRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const clickedOutsidePickup =
+        pickupRef.current && !pickupRef.current.contains(event.target);
+      const clickedOutsideDropoff =
+        dropoffRef.current && !dropoffRef.current.contains(event.target);
+
+      // only close if clicked outside BOTH
+      if (clickedOutsidePickup && clickedOutsideDropoff) {
+        setOpenDropdown(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     if (!user) {
-      alert("Please sign in to book a car");
       navigate("/signin");
     }
-  }, [user]);
+  }, [user, navigate]);
 
   useEffect(() => {
     const car = localStorage.getItem("selectedCar");
     if (car) setSelectedCar(JSON.parse(car));
+
+    const saved = localStorage.getItem("bookingData");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      setFormData(parsed);
+    }
   }, []);
+
+  const today = new Date();
+  const todayStr = today.toISOString().split("T")[0];
+  const maxDate = new Date();
+  maxDate.setMonth(maxDate.getMonth() + 1);
+  const maxDateStr = maxDate.toISOString().split("T")[0];
+  const currentYear = today.getFullYear();
+
+  function handleReset() {
+    setFormData({
+      pickup: "",
+      dropoff: "",
+      tripType: "round-trip",
+      pickupDate: "",
+      dropoffDate: "",
+    });
+    setErrors({});
+    localStorage.removeItem("bookingData");
+    setSelectedCar(null);
+    localStorage.removeItem("selectedCar");
+  }
 
   function handleChange(e) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: "" });
+    }
+  }
+
+  function handleLocationSelect(type, location) {
+    setFormData({ ...formData, [type]: location });
+    if (errors[type]) {
+      setErrors({ ...errors, [type]: "" });
+    }
+    setOpenDropdown(null);
+  }
+
+  function isValidLocation(value) {
+    return locations.includes(value);
   }
 
   function handleSubmit(e) {
     e.preventDefault();
     const { pickup, dropoff, pickupDate, dropoffDate } = formData;
+    const newErrors = {};
 
-    if (!pickup || !dropoff || !pickupDate || !dropoffDate) {
-      alert("Please fill all fields");
-      return;
+    if (!isValidLocation(pickup)) {
+      newErrors.pickup = "Please select a valid location from the list.";
+    }
+    if (!isValidLocation(dropoff)) {
+      newErrors.dropoff = "Please select a valid location from the list.";
     }
 
-    // ✅ date validation lives HERE inside handleSubmit
     const pickup_ = new Date(pickupDate);
     const dropoff_ = new Date(dropoffDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayMidnight = new Date();
+    todayMidnight.setHours(0, 0, 0, 0);
 
-    if (pickup_ < today) {
-      alert("Pickup date cannot be in the past");
-      return;
+    if (!pickupDate) {
+      newErrors.pickupDate = "Please select a pickup date.";
+    } else if (pickup_ < todayMidnight) {
+      newErrors.pickupDate = "Pickup date cannot be in the past.";
+    } else if (pickup_.getFullYear() !== currentYear) {
+      newErrors.pickupDate = `Booking must be within ${currentYear}.`;
     }
-    if (dropoff_ <= pickup_) {
-      alert("Drop-off date must be at least 1 day after pickup date");
+
+    if (!dropoffDate) {
+      newErrors.dropoffDate = "Please select a drop-off date.";
+    } else if (dropoff_ <= pickup_) {
+      newErrors.dropoffDate = "Drop-off must be at least 1 day after pickup.";
+    } else if (dropoff_ > maxDate) {
+      newErrors.dropoffDate = "Maximum rental period is 1 month.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
@@ -97,18 +175,15 @@ function Booking() {
     <main>
       <section className="booking_section">
         <div className="booking_wrapper">
-          {/* LEFT SIDE (GIF) */}
           <div className="booking_left">
             <p>
-              Fill out the form below to reserve your vehicle. Whether it's for
-              a business trip, vacation, or daily commute,{" "}
+              Fill out the form below to reserve your vehicle.{" "}
               <strong>Quick Wheels</strong> offers a variety of vehicles to suit
               your needs.
             </p>
-            <img src="../Images/Book Your Ride Now!.gif" alt="Car animation" />
+            <img src="/Images/Book Your Ride Now!.gif" alt="Car animation" />
           </div>
 
-          {/* RIGHT SIDE (FORM) */}
           <div className="input_field">
             <form onSubmit={handleSubmit}>
               <h1>Book Your Ride Now!</h1>
@@ -125,35 +200,71 @@ function Booking() {
               )}
 
               <fieldset className="pickdrop">
-                <div className="input-group pickup">
-                  <input
-                    type="text"
-                    name="pickup"
-                    value={formData.pickup}
-                    onChange={handleChange}
-                    placeholder="Select Pickup Location"
-                    list="locations"
-                    required
-                  />
+                {/* Pickup Dropdown */}
+                <div className="custom_select_container" ref={pickupRef}>
+                  <div
+                    className={`location_select ${openDropdown === "pickup" ? "active" : ""}`}
+                    onClick={() =>
+                      setOpenDropdown(
+                        openDropdown === "pickup" ? null : "pickup",
+                      )
+                    }
+                  >
+                    <span>{formData.pickup || "Select Pickup Location"}</span>
+                    <span className="arrow_icon">▼</span>
+                  </div>
+                  {openDropdown === "pickup" && (
+                    <div className="custom_location_list">
+                      {locations.map((loc) => (
+                        <div
+                          key={loc}
+                          className="location_option"
+                          onClick={() => handleLocationSelect("pickup", loc)}
+                        >
+                          {loc}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {errors.pickup && (
+                    <p className="field_error">{errors.pickup}</p>
+                  )}
                 </div>
-                <div className="input-group dropoff">
-                  <input
-                    type="text"
-                    name="dropoff"
-                    value={formData.dropoff}
-                    onChange={handleChange}
-                    placeholder="Select Drop-off Location"
-                    list="locations"
-                    required
-                  />
+
+                {/* Dropoff Dropdown */}
+                <div className="custom_select_container" ref={dropoffRef}>
+                  <div
+                    className={`location_select ${openDropdown === "dropoff" ? "active" : ""}`}
+                    onClick={() =>
+                      setOpenDropdown(
+                        openDropdown === "dropoff" ? null : "dropoff",
+                      )
+                    }
+                  >
+                    <span>
+                      {formData.dropoff || "Select Drop-off Location"}
+                    </span>
+                    <span className="arrow_icon">▼</span>
+                  </div>
+                  {openDropdown === "dropoff" && (
+                    <div className="custom_location_list">
+                      {locations.map((loc) => (
+                        <div
+                          key={loc}
+                          className="location_option"
+                          onClick={() => handleLocationSelect("dropoff", loc)}
+                        >
+                          {loc}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {errors.dropoff && (
+                    <p className="field_error">{errors.dropoff}</p>
+                  )}
                 </div>
-                <datalist id="locations">
-                  {locations.map((loc) => (
-                    <option key={loc} value={loc} />
-                  ))}
-                </datalist>
-                <div className="trip_type_header">Trip Type</div>{" "}
-                {/* New Label outside */}
+
+                <div className="trip_type_header">Trip Type</div>
                 <div className="input-group trip-type">
                   <label>
                     <input
@@ -165,7 +276,6 @@ function Booking() {
                     />
                     Round Trip
                   </label>
-
                   <label>
                     <input
                       type="radio"
@@ -180,28 +290,63 @@ function Booking() {
               </fieldset>
 
               <fieldset className="pickup-dropoff-dates">
-                <label>Pick-Up Date</label>
-                <input
-                  type="date"
-                  name="pickupDate"
-                  value={formData.pickupDate}
-                  onChange={handleChange}
-                  required
-                />
-
-                <label>Drop-Off Date</label>
-                <input
-                  type="date"
-                  name="dropoffDate"
-                  value={formData.dropoffDate}
-                  onChange={handleChange}
-                  required
-                />
+                <div>
+                  <label>Pick-Up Date</label>
+                  <input
+                    type="date"
+                    name="pickupDate"
+                    value={formData.pickupDate}
+                    onChange={handleChange}
+                    min={todayStr}
+                    max={maxDateStr}
+                    required
+                  />
+                  {errors.pickupDate && (
+                    <p className="field_error">{errors.pickupDate}</p>
+                  )}
+                </div>
+                <div>
+                  <label>Drop-Off Date</label>
+                  <input
+                    type="date"
+                    name="dropoffDate"
+                    value={formData.dropoffDate}
+                    onChange={handleChange}
+                    min={formData.pickupDate || todayStr}
+                    max={maxDateStr}
+                    required
+                  />
+                  {errors.dropoffDate && (
+                    <p className="field_error">{errors.dropoffDate}</p>
+                  )}
+                </div>
               </fieldset>
 
-              <button type="submit" className="form_btn btn">
-                Confirm
-              </button>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "12px",
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="secondary_btn"
+                  >
+                    Reset
+                  </button>
+                  <button type="submit" className="form_btn btn">
+                    Confirm
+                  </button>
+                </div>
+              </div>
             </form>
           </div>
         </div>

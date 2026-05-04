@@ -134,7 +134,14 @@ function Navbar() {
             <a
               className="header_link"
               href="#contact"
-              onClick={handleNavClick("contact")}
+              onClick={(e) => {
+                e.preventDefault();
+                if (user) {
+                  navigate("/profile", { state: { tab: "contact" } });
+                } else {
+                  scrollToSection("contact");
+                }
+              }}
             >
               Contact Us
             </a>
