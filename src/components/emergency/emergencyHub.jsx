@@ -11,7 +11,7 @@ import {
   getNearbyHospitals,
 } from '../../utils/emergencyHubService';
 import SOSButton from './SOSButton';
-import EmergencyContactCard from './EmergencyContactCard';
+import EmergencyContactCard from './emergencyContactCard';
 
 /* ─────────────────────────────────────────────────────────────
    Shared style tokens (all inline — no className dependencies)
