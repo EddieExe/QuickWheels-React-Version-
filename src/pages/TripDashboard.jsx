@@ -9,7 +9,7 @@ import TripTimeline from "../components/TripTimeline";
 import TollCalculator from "../components/TollCalculator";
 import AttractionsNearby from "../components/AttractionsNearby";
 import LiveNavigation from "../components/LiveNavigation";
-import EmergencyHub from "../components/emergency/EmergencyHub";
+import EmergencyHub from "../components/emergency/emergencyHub";
 import AssistanceRequest from "../components/assistance/AssistanceRequest";
 import TripExtensionModal from "../components/TripExtensionModal";
 import NotificationCenter from "../components/notifications/NotificationCenter";
