@@ -70,7 +70,7 @@ export default function ProfileImageUpload({ currentImageUrl, onImageUpdate }) {
       setImage(null);
     } catch (error) {
       console.error('Upload error:', error);
-      setError('Failed to upload image. Please try again.');
+      setError(error?.message || 'Failed to upload image. Please try again.');
       setUploading(false);
     }
   }

@@ -1285,7 +1285,7 @@
   -webkit-backdrop-filter: blur(var(--qw-blur-md));
   border: 1px solid var(--qw-border-cyan);
   color: var(--qw-text);
-  font-family: "DM Sans", sans-serif;
+  font-family: "Quicksand";
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1462,5 +1462,52 @@
   }
   .about_feature_art {
     height: 150px;
+  }
+}
+
+@media (max-width: 479px) {
+  .about_tagline {
+    font-size: 16px;
+    width: 270px;
+    text-transform: uppercase;
+    margin: 0px 0px 20px;
+  }
+
+  .about_hero_title {
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  .about_badge {
+    padding: 9px 16px;
+    font-size: 12px;
+  }
+
+  .about_offer_title {
+    font-size: 26px;
+    margin: 0 0 20px;
+    letter-spacing: 0;
+  }
+
+  .about_para {
+    font-size: 13.5px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .about_feature_body {
+    padding: 0px 20px 30px;
+  }
+
+  .about_feature_desc {
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .about_btn {
+    font-size: 15px;
+    padding: 14px 20px;
   }
 }

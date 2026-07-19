@@ -356,3 +356,30 @@
         height: 54px;
     }
 }
+
+@media (max-width: 479px) {
+    .review_badge {
+        padding: 9px 16px;
+        font-size: 12px;
+    }
+
+    .review_title {
+        font-size: 26px;
+    }
+
+    .review_description {
+        font-size: 13.5px;
+        line-height: 1.4;
+        font-weight: 500;
+    }
+
+    .customer_image {
+        height: 100px;
+        width: 100px;
+    }
+
+    .customer_review {
+        font-size: 13.5px;
+        line-height: 1.4;
+    }
+}

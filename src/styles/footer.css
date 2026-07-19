@@ -110,7 +110,7 @@ footer .qw_spots {
     filter: drop-shadow(0 8px 24px rgba(147, 51, 234, 0.35));
 }
 
-.brand_info h1 {
+.footer_title {
     font-family: "Quicksand", sans-serif;
     font-size: 1.6rem;
     font-weight: 800;
@@ -123,7 +123,7 @@ footer .qw_spots {
     -webkit-text-fill-color: transparent;
 }
 
-.brand_info p {
+.footer_description {
     font-size: 0.95rem;
     line-height: 1.7;
     color: var(--qw-text-dim);
@@ -131,7 +131,7 @@ footer .qw_spots {
     margin: 0;
 }
 
-.brand_info p strong {
+.footer_description strong {
     color: #fff;
     font-weight: 700;
 }
@@ -494,5 +494,30 @@ footer .footer_social_icon--instagram:hover svg {
 @media only screen and (max-width: 320px) {
     .brand_info {
         margin: 0 0 18px;
+    }
+}
+
+@media (max-width: 479px) {
+    .footer_title {
+        font-size: 20px !important;
+        margin-bottom: 20px !important;
+    }
+
+    .footer_description {
+        font-size: 13.5px;
+        line-height: 1.4;
+        font-weight: 500;
+    }
+
+    .footer_social_links {
+        margin-top: 30px !important;
+    }
+
+    .footer_download_options {
+        margin: 30px 0px !important;
+    }
+
+    .footer_section a {
+        font-size: 13.5px !important;
     }
 }

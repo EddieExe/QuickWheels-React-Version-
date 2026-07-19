@@ -421,3 +421,29 @@
         height: 46px;
     }
 }
+
+@media (max-width: 479px) {
+    .location_badge {
+        padding: 9px 16px;
+        font-size: 12px;
+    }
+
+    .location_title {
+        font-size: 26px;
+    }
+
+    .location_description {
+        margin-top: 0;
+        font-size: 13.5px;
+        line-height: 1.4;
+        font-weight: 500;
+    }
+
+    .locations h2 {
+        margin-bottom: 20px;
+    }
+
+    .locations ul a {
+        font-size: 12px !important;
+    }
+}

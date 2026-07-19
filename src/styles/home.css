@@ -796,8 +796,122 @@ header {
     var(--qw-gradient);
 }
 
-.qw_fancy_btn:hover {
-  box-shadow: var(--qw-shadow-md), var(--qw-glow-cyan);
+/* ─────────────────────────────
+   DESKTOP: effects only on hover
+   ───────────────────────────── */
+@media (hover: hover) and (pointer: fine) {
+  .qw_fancy_btn:hover {
+    box-shadow: var(--qw-shadow-md), var(--qw-glow-cyan);
+  }
+
+  .qw_fancy_btn_fold {
+    transition: all 0.5s ease-in-out;
+  }
+
+  .qw_fancy_btn:hover .qw_fancy_btn_fold {
+    margin-top: -1rem;
+    margin-right: -1rem;
+  }
+
+  .qw_fancy_btn .qw_fancy_btn_point {
+    animation-play-state: paused;
+  }
+
+  .qw_fancy_btn:hover .qw_fancy_btn_point {
+    animation-play-state: running;
+  }
+
+  .qw_fancy_btn:hover .qw_fancy_btn_icon {
+    fill: transparent;
+    animation:
+      qw-fancy-btn-dasharray 1s linear forwards,
+      qw-fancy-btn-filled 0.1s linear forwards 0.95s;
+  }
+}
+
+/* ─────────────────────────────────────────
+   MOBILE / TOUCH: no hover, so auto-loop
+   the same effects instead, with a short
+   delay before the first cycle starts.
+
+   NOTE: uses a comma (OR) instead of "and"
+   so a device only needs ONE touch signal
+   (no hover OR a coarse pointer) to match —
+   some hybrid/tablet browsers don't reliably
+   report both at once.
+   ───────────────────────────── */
+@media (hover: none), (pointer: coarse) {
+  .qw_fancy_btn_fold {
+    animation: qw-fancy-btn-fold-mobile 7s ease-in-out infinite;
+    animation-delay: 1s;
+  }
+
+  .qw_fancy_btn_point {
+    animation-play-state: running;
+  }
+
+  .qw_fancy_btn_icon {
+    animation: qw-fancy-btn-icon-mobile 7s ease-in-out infinite;
+    animation-delay: 1.1s;
+  }
+
+  .qw_fancy_btn {
+    animation: qw-fancy-btn-shadow-mobile 7s ease-in-out infinite;
+    animation-delay: 0.9s;
+  }
+}
+
+/* Mobile-specific keyframes.
+   Slowed to a 7s cycle with the rise/fall spread across a much
+   wider percentage range (instead of a 5%-wide window) so
+   ease-in-out actually has room to glide instead of snapping. */
+@keyframes qw-fancy-btn-fold-mobile {
+  0%, 40% {
+    margin-top: 0;
+    margin-right: 0;
+  }
+  60%, 80% {
+    margin-top: -1rem;
+    margin-right: -1rem;
+  }
+  100% {
+    margin-top: 0;
+    margin-right: 0;
+  }
+}
+
+/* Combined draw-then-fill-then-reset cycle, timed to match the
+   fold above, without nesting an `animation` property inside a
+   keyframe (that doesn't work). */
+@keyframes qw-fancy-btn-icon-mobile {
+  0%, 40% {
+    fill: transparent;
+    stroke-dasharray: 0 0 0 0;
+  }
+  60% {
+    fill: transparent;
+    stroke-dasharray: 68 68 0 0;
+  }
+  65%, 80% {
+    fill: #fff;
+    stroke-dasharray: 68 68 0 0;
+  }
+  100% {
+    fill: transparent;
+    stroke-dasharray: 0 0 0 0;
+  }
+}
+
+@keyframes qw-fancy-btn-shadow-mobile {
+  0%, 40% {
+    box-shadow: var(--qw-shadow-sm);
+  }
+  60%, 80% {
+    box-shadow: var(--qw-shadow-md), var(--qw-glow-cyan);
+  }
+  100% {
+    box-shadow: var(--qw-shadow-sm);
+  }
 }
 
 .qw_fancy_btn:active {
@@ -812,7 +926,6 @@ header {
   height: 1rem;
   width: 1rem;
   display: inline-block;
-  transition: all 0.5s ease-in-out;
   background: radial-gradient(100% 75% at 55%, rgba(147, 51, 234, 0.85) 0%, rgba(147, 51, 234, 0) 100%);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
   border-bottom-left-radius: 0.5rem;
@@ -829,11 +942,6 @@ header {
   transform: rotate(45deg) translateX(0%) translateY(-18px);
   background-color: var(--qw-text);
   pointer-events: none;
-}
-
-.qw_fancy_btn:hover .qw_fancy_btn_fold {
-  margin-top: -1rem;
-  margin-right: -1rem;
 }
 
 .qw_fancy_btn_points {
@@ -862,6 +970,7 @@ header {
   100% { transform: translateY(-55px); opacity: 0; }
 }
 
+/* Point positions/delays */
 .qw_fancy_btn_point:nth-child(1)  { left: 10%; opacity: 1;   animation-duration: 2.35s; animation-delay: 0.2s; }
 .qw_fancy_btn_point:nth-child(2)  { left: 30%; opacity: 0.7; animation-duration: 2.5s;  animation-delay: 0.5s; }
 .qw_fancy_btn_point:nth-child(3)  { left: 25%; opacity: 0.8; animation-duration: 2.2s;  animation-delay: 0.1s; }
@@ -892,13 +1001,6 @@ header {
 
 .qw_fancy_btn:focus-visible .qw_fancy_btn_icon {
   fill: #fff;
-}
-
-.qw_fancy_btn:hover .qw_fancy_btn_icon {
-  fill: transparent;
-  animation:
-    qw-fancy-btn-dasharray 1s linear forwards,
-    qw-fancy-btn-filled 0.1s linear forwards 0.95s;
 }
 
 @keyframes qw-fancy-btn-dasharray {
@@ -1030,4 +1132,26 @@ header {
   .book_btn.qw_fancy_btn {
     padding: 14px 20px;
   }
+}
+
+@media (max-width: 479px) {
+  .main_title {
+    font-size: 40px;
+  }
+
+  .subtitle {
+    font-size: 13.5px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .book_btn {
+    font-size: 15px !important;
+  }
+
+  .about_hero {
+    height: 100vh;
+  }
+
+  
 }

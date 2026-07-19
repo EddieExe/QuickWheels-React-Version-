@@ -763,7 +763,7 @@ function Home() {
 
         <AnimatedSection delay={0.1}>
           <h2 className="section_title qw_shine_heading">How It Works</h2>
-          <hr className="blueline3" />
+          {/* <hr className="blueline3" /> */}
           <p className="section_description">
             Renting a car with <strong>Quick Wheels</strong> is easier than ever
             before. Our streamlined process ensures you can book the perfect car
@@ -802,7 +802,7 @@ function Home() {
               <div className="step_card">
                 <img src={item.img} alt={item.step} className="step_image" />
                 <div className="step_content">
-                  <h3 className="step_title">{item.step}</h3>
+                  <h3 className="step_title qw_shine_heading">{item.step}</h3>
                   <p className="step_description">{item.desc}</p>
                 </div>
               </div>
@@ -834,7 +834,7 @@ function Home() {
           <h2 className="review_title qw_shine_heading">
             What Our Customers Say
           </h2>
-          <hr className="blueline4" />
+          {/* <hr className="blueline4" /> */}
           <p className="review_description">
             Hear from our satisfied customers who have enjoyed a smooth and
             hassle-free car rental experience with{" "}
@@ -1011,7 +1011,7 @@ function Home() {
             </span>
           </div>
           <h1 className="contact_title qw_shine_heading">Contact Us</h1>
-          <hr className="blueline5" />
+          {/* <hr className="blueline5" /> */}
         </div>
 
         <div className="contact_info">

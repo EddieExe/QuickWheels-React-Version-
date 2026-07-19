@@ -499,3 +499,33 @@
     height: 90px;
   }
 }
+
+@media (max-width: 479px) {
+  .cars_badge {
+    padding: 9px 16px;
+    font-size: 12px;
+  }
+
+  .cars_title {
+    font-size: 26px;
+  }
+
+  .cars_description {
+    font-size: 13.5px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .car_on_right .sketchfab-iframe {
+    min-height: 250px;
+  }
+
+  .cars_type_card {
+    padding: 15px;
+  }
+
+  .cars_type_label {
+    font-size: 13.5px;
+    padding: 0;
+  }
+}
