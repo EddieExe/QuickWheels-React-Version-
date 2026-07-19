@@ -1,0 +1,423 @@
+/* Location Section */
+/* src/styles/location.css */
+
+/* Part 1 */
+
+/* --- SECTION BACKGROUND --- */
+.location {
+    position: relative;
+    isolation: isolate;
+    padding: 70px 20px;
+    background: var(--qw-surface);
+    overflow: hidden;
+}
+
+/* ── Ambient glow blobs (real elements now, so they can drift like every
+   other section's ambience instead of sitting static) ── */
+.location_ambient_a,
+.location_ambient_b {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(100px);
+}
+
+.location_ambient_a {
+    top: -20%;
+    left: -10%;
+    width: 46vw;
+    height: 46vw;
+    max-width: 700px;
+    background: radial-gradient(circle, rgba(67, 56, 202, 0.2) 0%, transparent 65%);
+    animation: loc-flare-a 16s ease-in-out infinite;
+}
+
+.location_ambient_b {
+    bottom: -20%;
+    right: -10%;
+    width: 40vw;
+    height: 40vw;
+    max-width: 600px;
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.16) 0%, transparent 65%);
+    animation: loc-flare-b 13s ease-in-out infinite;
+}
+
+@keyframes loc-flare-a {
+    0%, 100% { opacity: 0.8; transform: translate(0, 0) scale(1); }
+    50%      { opacity: 1; transform: translate(3%, 3%) scale(1.1); }
+}
+
+@keyframes loc-flare-b {
+    0%, 100% { opacity: 0.75; transform: translate(0, 0) scale(1); }
+    50%      { opacity: 1; transform: translate(-3%, -4%) scale(1.14); }
+}
+
+/* Ensure content is above overlays */
+.location > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* the catch-all above matches every direct child, including these
+   decorative overlays — restore their absolute positioning with a
+   higher-specificity rule or they collapse into huge in-flow blocks */
+.location > .location_ambient_a,
+.location > .location_ambient_b,
+.location > .qw_spots {
+    position: absolute;
+    z-index: 0;
+}
+
+/* --- HEADER --- */
+.location_head {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.location_badge_wrap {
+    display: flex;
+    justify-content: center;
+}
+
+.location_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    background: rgba(147, 51, 234, 0.12);
+    backdrop-filter: blur(var(--qw-blur-md));
+    -webkit-backdrop-filter: blur(var(--qw-blur-md));
+    border: 1px solid var(--qw-border-cyan);
+    color: var(--qw-text);
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-bottom: 22px;
+}
+
+.location_badge svg {
+    width: 14px;
+    height: 14px;
+    color: var(--qw-cyan);
+}
+
+.location_title {
+    color: #fff;
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 auto 20px;
+}
+
+.location_description {
+    max-width: 1100px;
+    margin: 20px auto 0;
+    font-family: "DM Sans", sans-serif;
+    font-size: 1.05rem;
+    color: var(--qw-text-dim);
+    line-height: 1.7;
+}
+
+/* --- GLASS CONTAINER --- */
+.locations {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 44px;
+    background: var(--qw-glass);
+    backdrop-filter: blur(var(--qw-blur-md));
+    -webkit-backdrop-filter: blur(var(--qw-blur-md));
+    border-radius: var(--qw-r-xl);
+    border: 1px solid var(--qw-border);
+    box-shadow: var(--qw-shadow-md);
+    transition: border-color var(--qw-t-base) var(--qw-ease), box-shadow var(--qw-t-base) var(--qw-ease);
+}
+
+.locations:hover {
+    border-color: var(--qw-border-cyan);
+    box-shadow: var(--qw-shadow-lg), var(--qw-glow-cyan);
+}
+
+.locations h2 {
+    color: var(--qw-text-dim);
+    font-size: 1rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin: 0 0 24px 0;
+    font-weight: 700;
+    font-family: "JetBrains Mono", monospace;
+}
+
+.locations hr {
+    border: none;
+    border-top: 1px solid var(--qw-border);
+    margin: 0 0 28px;
+}
+
+/* --- GRID --- */
+.locations ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
+}
+
+@media (max-width: 1100px) {
+    .locations ul {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .locations ul {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* --- GRID ITEMS --- */
+.locations ul li a {
+    text-decoration: none;
+    color: var(--qw-text-dim);
+    font-family: "Quicksand";
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    border-radius: var(--qw-r-md);
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--qw-border);
+    transition:
+        transform 0.3s var(--qw-ease-spring),
+        background 0.25s ease,
+        color 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+    will-change: transform;
+    position: relative;
+    overflow: hidden;
+}
+
+.locations ul li a::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    pointer-events: none;
+}
+
+.locations ul li a:hover::before {
+    animation: qw-loc-shimmer 0.6s ease forwards;
+}
+
+@keyframes qw-loc-shimmer {
+    from { left: -100%; }
+    to   { left: 130%; }
+}
+
+/* Hover effect using brand gradient */
+.locations ul li a:hover {
+    color: #04040a;
+    background: var(--qw-gradient);
+    transform: translateY(-6px) scale(1.02);
+    border-color: transparent;
+    box-shadow: var(--qw-shadow-sm), var(--qw-glow-cyan);
+}
+
+/* Active click feedback */
+.locations ul li a:active {
+    transform: translateY(-3px) scale(0.99);
+    transition: transform 0.05s ease;
+}
+
+
+/* Part 2 */
+
+/* --- MODAL BACKDROP --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(2, 2, 6, 0.78);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* --- MODAL CARD --- */
+.card {
+    position: relative;
+    width: 440px;
+    max-width: 90%;
+    padding: 38px;
+    background: var(--qw-surface-2);
+    backdrop-filter: blur(var(--qw-blur-lg));
+    -webkit-backdrop-filter: blur(var(--qw-blur-lg));
+    border-radius: var(--qw-r-xl);
+    border: 1px solid var(--qw-border-cyan);
+    box-shadow: var(--qw-shadow-lg), var(--qw-glow-cyan);
+    animation: modalPop 0.4s var(--qw-ease-spring) forwards;
+    z-index: 1001;
+}
+
+/* Internal Glow Overlay */
+.card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--qw-gradient-soft);
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+@keyframes modalPop {
+    0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* --- MODAL IMAGE --- */
+.modal-image {
+    position: relative;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: var(--qw-r-lg);
+    margin-bottom: 25px;
+    border: 1px solid var(--qw-border);
+    box-shadow: var(--qw-shadow-sm);
+}
+
+/* --- TEXT STYLES --- */
+.card h3 {
+    position: relative;
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+    background: var(--qw-gradient-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.card p {
+    position: relative;
+    color: var(--qw-text-dim);
+    margin: 15px 0;
+    font-size: 1rem;
+    line-height: 1.65;
+    font-family: "DM Sans", sans-serif;
+}
+
+.card b {
+    color: var(--qw-cyan);
+    font-weight: 700;
+}
+
+/* --- BUTTONS --- */
+
+/* Close Button (X) */
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--qw-border);
+    border-radius: 50%;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--qw-t-fast) var(--qw-ease);
+    z-index: 2;
+}
+
+.modal-close:hover {
+    background: var(--qw-red);
+    transform: rotate(90deg);
+    border-color: transparent;
+}
+
+/* Primary Action Button (e.g. "Book Now") */
+.card .btn {
+    position: relative;
+    width: 100%;
+    padding: 15px;
+    margin-top: 22px;
+    border-radius: var(--qw-r-md);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-size: 0.85rem;
+}
+
+
+/* Small Smartphones */
+@media only screen and (max-width: 767px) {
+    .location {
+        padding: 50px 16px;
+    }
+
+    .location_badge {
+        font-size: 0.78rem;
+        padding: 7px 16px;
+        margin-bottom: 16px;
+    }
+
+    .card {
+        width: 82%;
+        padding: 26px;
+    }
+
+    .modal-image {
+        height: 170px;
+    }
+
+    .card h3 {
+        font-size: 1.5rem;
+    }
+
+    .card p {
+        font-size: 0.9rem;
+    }
+
+    .location_title {
+        font-size: 1.7rem;
+    }
+
+    .location_description {
+        font-size: 0.92rem;
+    }
+
+    .locations {
+        padding: 22px 14px;
+        border-radius: var(--qw-r-lg);
+    }
+
+    .locations ul li a {
+        font-size: 0.82rem;
+        padding: 5px;
+        text-align: center;
+        height: 46px;
+    }
+}

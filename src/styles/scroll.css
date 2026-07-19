@@ -1,0 +1,137 @@
+/* Scroll to Top Button */
+/* src/styles/scroll.css */
+
+.back_to_top {
+  all: unset;
+  font-family: 'Quicksand', sans-serif;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 9999;
+  width: 50px;
+  height: 50px;
+  background: var(--qw-surface-2);
+  border: 1px solid var(--qw-border);
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: var(--qw-shadow-md);
+}
+
+.back_to_top:hover {
+  width: 165px;
+  border-color: var(--qw-cyan);
+  background: var(--qw-surface-3);
+  box-shadow: var(--qw-shadow-md), var(--qw-glow-cyan);
+}
+
+.back_to_top:focus-visible {
+  outline: 2px solid var(--qw-cyan);
+  outline-offset: 3px;
+}
+
+/* --- THE SVG ICON --- */
+.back_to_top svg {
+  width: 20px;
+  height: 20px;
+  margin: auto 15px;
+  flex-shrink: 0;
+  fill: #fff;
+  transition: all 0.5s ease;
+  transform: rotate(-45deg);
+}
+
+.back_to_top:hover svg {
+  transform: rotate(0deg);
+  fill: var(--qw-cyan);
+}
+
+/* --- THE TEXT CONTAINER --- */
+.text_container {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transform: translateX(10px);
+  transition: all 0.5s ease;
+  pointer-events: none;
+}
+
+.back_to_top:hover .text_container {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* --- THE WAVY TEXT LOGIC --- */
+.word_wrapper {
+  display: block;
+  position: relative;
+  height: 20px;
+  overflow: hidden;
+}
+
+.word_wrapper span {
+  display: block;
+  font-family: "Quicksand", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.word_wrapper .text {
+  color: #fff;
+  position: relative;
+  top: 0;
+}
+
+.word_wrapper .clone {
+  color: var(--qw-cyan);
+  position: absolute;
+  top: 100%;
+  left: 0;
+}
+
+.back_to_top:hover .word_wrapper .clone {
+  transform: translateY(-100%);
+}
+
+.back_to_top:hover .word_wrapper .text {
+  transform: translateY(0);
+}
+
+.back_to_top:hover .word_wrapper:nth-child(1) .clone {
+  transition-delay: 0.10s;
+}
+
+.back_to_top:hover .word_wrapper:nth-child(2) .clone {
+  transition-delay: 0.15s;
+}
+
+.back_to_top:hover .word_wrapper:nth-child(3) .clone {
+  transition-delay: 0.20s;
+}
+
+/* Responsive */
+@media only screen and (max-width: 767px) {
+  .back_to_top {
+    bottom: 20px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .back_to_top:hover {
+    width: 140px;
+  }
+
+  .back_to_top svg {
+    margin: auto 12px;
+  }
+
+  .word_wrapper span {
+    font-size: 14px;
+  }
+}

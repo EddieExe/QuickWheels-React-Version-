@@ -1,0 +1,1033 @@
+/* Home Page */
+/* src/styles/home.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@500;600&display=swap');
+
+:root {
+  /* brand — matches the premium navbar's indigo → violet gradient */
+  --qw-indigo: #4338ca;
+  --qw-cyan: #9333ea;
+  --qw-blue: #7c3aed;
+  --qw-pink: #ec4899;
+  --qw-orange: #f97316;
+  --qw-amber: #f5b942;
+  --qw-green: #22c55e;
+  --qw-red: #ef4444;
+
+  --qw-gradient: linear-gradient(115deg, var(--qw-indigo) 0%, var(--qw-blue) 45%, var(--qw-cyan) 100%);
+  --qw-gradient-soft: linear-gradient(135deg, rgba(67, 56, 202, 0.14) 0%, rgba(147, 51, 234, 0.05) 100%);
+  --qw-gradient-text: linear-gradient(100deg, #ffffff 20%, var(--qw-cyan) 65%, var(--qw-blue) 100%);
+  --qw-gradient-rainbow: linear-gradient(90deg, var(--qw-indigo) 0%, var(--qw-cyan) 35%, var(--qw-pink) 68%, var(--qw-orange) 100%);
+
+  /* surfaces */
+  --qw-bg: #05050b;
+  --qw-surface: #0a0a14;
+  --qw-surface-2: #10101d;
+  --qw-surface-3: #16162a;
+  --qw-glass: rgba(255, 255, 255, 0.035);
+  --qw-glass-strong: rgba(255, 255, 255, 0.07);
+
+  /* borders */
+  --qw-border: rgba(255, 255, 255, 0.08);
+  --qw-border-strong: rgba(255, 255, 255, 0.16);
+  --qw-border-cyan: rgba(147, 51, 234, 0.28);
+
+  /* text */
+  --qw-text: #f6f7fb;
+  --qw-text-dim: rgba(246, 247, 251, 0.68);
+  --qw-text-faint: rgba(246, 247, 251, 0.42);
+
+  /* elevation */
+  --qw-shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.35);
+  --qw-shadow-md: 0 20px 48px rgba(0, 0, 0, 0.45);
+  --qw-shadow-lg: 0 30px 90px -20px rgba(0, 0, 0, 0.65);
+  --qw-glow-cyan: 0 0 40px rgba(147, 51, 234, 0.22);
+  --qw-glow-indigo: 0 10px 32px rgba(67, 56, 202, 0.35);
+
+  /* motion */
+  --qw-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --qw-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --qw-t-fast: 0.2s;
+  --qw-t-base: 0.35s;
+  --qw-t-slow: 0.6s;
+
+  /* radii */
+  --qw-r-sm: 10px;
+  --qw-r-md: 16px;
+  --qw-r-lg: 24px;
+  --qw-r-xl: 32px;
+
+  /* glassmorphism */
+  --qw-blur-sm: 10px;
+  --qw-blur-md: 16px;
+  --qw-blur-lg: 22px;
+
+  color-scheme: dark;
+}
+
+/* ── Resets ── */
+* {
+  box-sizing: border-box;
+}
+
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  scroll-behavior: smooth;
+  background: var(--qw-bg);
+  font-family: "DM Sans", "Quicksand", sans-serif;
+  color: var(--qw-text);
+}
+
+main {
+  display: block;
+  background: var(--qw-bg);
+  overflow-x: clip;
+}
+
+h1, h2, h3 {
+  font-family: "Quicksand", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+::selection {
+  background: rgba(147, 51, 234, 0.3);
+  color: #fff;
+}
+
+/* visible keyboard focus everywhere on this page */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--qw-cyan);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+header {
+  position: relative;
+  background: rgba(5, 5, 11, 0.75);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--qw-border);
+}
+
+/* ═══════════════════════════════════════════
+   SIGNATURE ELEMENT — the "Energy Line"
+   A thin brand-gradient rule with a travelling
+   light pulse, used as every section divider
+   (blueline1–5). Reinforces "Quick" motion.
+   ═══════════════════════════════════════════ */
+
+[class^="blueline"] {
+  position: relative;
+  height: 3px;
+  border: none;
+  border-radius: 3px;
+  background: var(--qw-gradient);
+  background-size: 220% 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+[class^="blueline"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+  animation: qw-energy-pulse 2.8s ease-in-out infinite;
+}
+
+@keyframes qw-energy-pulse {
+  0%   { transform: translateX(-120%); }
+  60%  { transform: translateX(340%); }
+  100% { transform: translateX(340%); }
+}
+
+/* ═══════════════════════════════════════════
+   SHARED DECORATIVE UTILITIES
+   Used across every dark section (About, Fleet,
+   How It Works, Reviews, Locations, Contact) so
+   the page reads as one continuous system.
+   ═══════════════════════════════════════════ */
+
+/* ── Floating color-spot particles (ColorSpots.jsx) ──
+   Small twinkling brand-colored dots, dropped into any
+   positioned ancestor for premium ambient texture. */
+
+.qw_spots {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.qw_spot {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.4;
+  animation: qw-spot-breathe 9s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.qw_spot_indigo { background: radial-gradient(circle, rgba(99, 102, 241, 0.5) 0%, transparent 70%); }
+.qw_spot_violet { background: radial-gradient(circle, rgba(168, 85, 247, 0.46) 0%, transparent 70%); }
+.qw_spot_purple { background: radial-gradient(circle, rgba(147, 51, 234, 0.46) 0%, transparent 70%); }
+.qw_spot_cyan   { background: radial-gradient(circle, rgba(76, 227, 247, 0.4) 0%, transparent 70%); }
+.qw_spot_pink   { background: radial-gradient(circle, rgba(236, 72, 153, 0.36) 0%, transparent 70%); }
+
+@keyframes qw-spot-breathe {
+  0%, 100%  { opacity: 0.28; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qw_spot { animation: none; opacity: 0.35; }
+}
+
+/* ── Shine-sweep heading ──
+   A light band sweeps once across the brand gradient text,
+   applied to every section heading (h2/h1 "eyebrow" title). */
+
+.qw_shine_heading {
+  position: relative;
+  display: inline-block;
+  background-image:
+    linear-gradient(100deg, transparent 35%, rgba(255, 255, 255, 0.9) 50%, transparent 65%),
+    var(--qw-gradient-text);
+  background-size: 60% 100%, 100% 100%;
+  background-repeat: no-repeat, no-repeat;
+  background-position: -60% 0, 0 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: qw-shine-sweep 3.2s ease-in-out infinite;
+}
+
+@keyframes qw-shine-sweep {
+  0%   { background-position: -60% 0, 0 0; }
+  100% { background-position: 160% 0, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qw_shine_heading { animation: none; background-position: 0 0, 0 0; }
+}
+
+/* ═══════════════════════════════════════════
+   SHARED BUTTON COMPONENT (.btn)
+   Every CTA on the page (book_btn, about_btn,
+   submit_btn, and the location-modal .btn)
+   inherits this premium base.
+   ═══════════════════════════════════════════ */
+
+.btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: "Quicksand", sans-serif !important;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  padding: 16px 38px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  background: var(--qw-gradient);
+  overflow: hidden;
+  box-shadow: var(--qw-shadow-sm);
+  transition:
+    transform 0.3s var(--qw-ease-spring),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* same diagonal shimmer sweep used on the location grid tiles */
+.btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  pointer-events: none;
+}
+
+.btn:hover::before {
+  animation: qw-btn-shimmer 0.6s ease forwards;
+}
+
+@keyframes qw-btn-shimmer {
+  from { left: -100%; }
+  to   { left: 130%; }
+}
+
+/* same lift + scale + glow used on the location grid tiles' :hover */
+.btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--qw-shadow-md), var(--qw-glow-cyan);
+  border-color: transparent;
+}
+
+/* same click feedback used on the location grid tiles' :active */
+.btn:active {
+  transform: translateY(-3px) scale(0.99);
+  transition: transform 0.05s ease;
+}
+
+/* ═══════════════════════════════════════════
+   HERO SECTION
+   ═══════════════════════════════════════════ */
+
+.home_page {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-image:
+    linear-gradient(180deg, rgba(5, 5, 11, 0.35) 0%, rgba(5, 5, 11, 0.55) 55%, var(--qw-bg) 100%),
+    url('../Images/page1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  display: flex;
+  align-items: center;
+}
+
+.overlay {
+  position: relative;
+  inset: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: var(--qw-text);
+  text-align: center;
+  padding: 260px 20px 0px;
+}
+
+.overlay::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  width: 900px;
+  height: 900px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(67, 56, 202, 0.22) 0%, transparent 62%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.overlay > div {
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main_title {
+  font-size: clamp(2rem, 4vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0 0 22px;
+  text-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+.main_title strong {
+  background: var(--qw-gradient-text);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: qw-gradient-drift 6s ease-in-out infinite;
+}
+
+@keyframes qw-gradient-drift {
+  0%, 100% { background-position: 0% center; }
+  50%      { background-position: 100% center; }
+}
+
+.subtitle {
+  font-family: "Quicksand", sans-serif;
+  font-size: clamp(1rem, 1vw, 1.3rem);
+  font-weight: 400;
+  line-height: 1.6;
+  max-width: 640px;
+  color: var(--qw-text-dim);
+  margin: 0 0 30px;
+}
+
+.subtitle strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.book_btn {
+  font-size: 1.05rem;
+  padding: 18px 46px;
+}
+
+/* scroll cue */
+.home_page::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 34px;
+  width: 26px;
+  height: 42px;
+  margin-left: -13px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  z-index: 3;
+}
+
+.home_page {
+  isolation: isolate;
+}
+
+/* HOLD THE ASTRONAUT - Card styles for contact section */
+
+.contact .card {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #171717;
+  color: white;
+  font-family: Montserrat;
+  font-weight: bold;
+  padding: 40px;
+  border-radius: 20px;
+  overflow: hidden;
+  z-index: 1;
+  row-gap: 1.5em;
+  margin: 0;
+}
+
+.contact .card img {
+  width: 15em;
+  margin: 0;
+  animation: move 10s ease-in-out infinite;
+  z-index: 5;
+}
+
+.contact .image:hover {
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.contact .icons svg {
+  width: 20px;
+  height: 20px;
+}
+
+.contact .card::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: -3px;
+  border-radius: 10px;
+  background: radial-gradient(#858585, transparent, transparent);
+  transform: translate(-5px, 250px);
+  transition: 0.4s ease-in-out;
+  z-index: -1;
+}
+
+.contact .card:hover::before {
+  width: 150%;
+  height: 100%;
+  margin-left: -4.25em;
+}
+
+.contact .card::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 20px;
+  background: rgb(23, 23, 23, 0.7);
+  transition: all 0.4s ease-in-out;
+  z-index: -1;
+}
+
+.contact .heading {
+  z-index: 2;
+  transition: 0.4s ease-in-out;
+}
+
+.contact .card:hover .heading {
+  letter-spacing: 0.025em;
+}
+
+.contact .heading::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  opacity: 1;
+  box-shadow: 220px 118px #fff, 280px 176px #fff, 40px 50px #fff,
+    60px 180px #fff, 120px 130px #fff, 180px 176px #fff, 220px 290px #fff,
+    520px 250px #fff, 400px 220px #fff, 50px 350px #fff, 10px 230px #fff;
+  z-index: -1;
+  transition: 1s ease;
+  animation: 1s glowing-stars linear alternate infinite;
+  animation-delay: 0s;
+}
+
+.contact .icons::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  opacity: 1;
+  box-shadow: 140px 20px #fff, 425px 20px #fff, 70px 120px #fff, 20px 130px #fff,
+    110px 80px #fff, 280px 80px #fff, 250px 350px #fff, 280px 230px #fff,
+    220px 190px #fff, 450px 100px #fff, 380px 80px #fff, 520px 50px #fff;
+  z-index: -1;
+  transition: 1.5s ease;
+  animation: 1s glowing-stars linear alternate infinite;
+  animation-delay: 0.4s;
+}
+
+.contact .icons::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  opacity: 1;
+  box-shadow: 490px 330px #fff, 420px 300px #fff, 320px 280px #fff,
+    380px 350px #fff, 546px 170px #fff, 420px 180px #fff, 370px 150px #fff,
+    200px 250px #fff, 80px 20px #fff, 190px 50px #fff, 270px 20px #fff,
+    120px 230px #fff, 350px -1px #fff, 150px 369px #fff;
+  z-index: -1;
+  transition: 2s ease;
+  animation: 1s glowing-stars linear alternate infinite;
+  animation-delay: 0.8s;
+}
+
+.contact .card:hover .heading::before,
+.contact .card:hover .icons::before,
+.contact .card:hover .icons::after {
+  filter: blur(3px);
+}
+
+.contact .image:active {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+.contact .image:active + .heading::before {
+  box-shadow: 240px 20px #9b40fc, 240px 25px #9b40fc, 240px 30px #9b40fc,
+    240px 35px #9b40fc, 240px 40px #9b40fc, 242px 45px #9b40fc,
+    246px 48px #9b40fc, 251px 49px #9b40fc, 256px 48px #9b40fc,
+    260px 45px #9b40fc, 262px 40px #9b40fc;
+  animation: none;
+  filter: blur(0);
+  border-radius: 2px;
+  width: 0.45em;
+  height: 0.45em;
+  scale: 0.65;
+  transform: translateX(9em) translateY(1em);
+}
+
+.contact .image:active ~ .icons::before {
+  box-shadow: 262px 35px #9b40fc, 262px 30px #9b40fc, 262px 25px #9b40fc,
+    262px 20px #9b40fc, 275px 20px #9b40fc, 275px 24px #9b40fc,
+    275px 28px #9b40fc, 275px 32px #9b40fc, 275px 36px #9b40fc,
+    275px 40px #9b40fc, 275px 44px #9b40fc, 275px 48px #9b40fc;
+  animation: none;
+  filter: blur(0);
+  border-radius: 2px;
+  width: 0.45em;
+  height: 0.45em;
+  scale: 0.65;
+  transform: translateX(9em) translateY(1em);
+}
+
+.contact .image:active ~ .icons::after {
+  box-shadow: 238px 60px #9b40fc, 242px 60px #9b40fc, 246px 60px #9b40fc,
+    250px 60px #9b40fc, 254px 60px #9b40fc, 258px 60px #9b40fc,
+    262px 60px #9b40fc, 266px 60px #9b40fc, 270px 60px #9b40fc,
+    274px 60px #9b40fc, 278px 60px #9b40fc, 282px 60px #9b40fc,
+    234px 60px #9b40fc, 234px 60px #9b40fc;
+  animation: none;
+  filter: blur(0);
+  border-radius: 2px;
+  width: 0.45em;
+  height: 0.45em;
+  scale: 0.65;
+  transform: translateX(9em) translateY(1.25em);
+}
+
+.contact .heading::after {
+  content: "";
+  top: -8.5%;
+  left: -8.5%;
+  position: absolute;
+  width: 7.5em;
+  height: 7.5em;
+  border: none;
+  outline: none;
+  border-radius: 50%;
+  background: #f9f9fb;
+  box-shadow: 0px 0px 100px rgba(193, 119, 241, 0.8),
+    0px 0px 100px rgba(135, 42, 211, 0.8), inset #9b40fc 0px 0px 40px -12px;
+  transition: 0.4s ease-in-out;
+  z-index: -1;
+}
+
+.contact .card:hover .heading::after {
+  box-shadow: 0px 0px 200px rgba(193, 119, 241, 1),
+    0px 0px 200px rgba(135, 42, 211, 1), inset #9b40fc 0px 0px 40px -12px;
+}
+
+.contact .icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  column-gap: 1em;
+  z-index: 1;
+}
+
+.contact .instagram,
+.contact .x,
+.contact .discord {
+  position: relative;
+  transition: 0.4s ease-in-out;
+}
+
+.contact .instagram:after,
+.contact .x:after,
+.contact .discord:after {
+  content: "";
+  position: absolute;
+  width: 0.5em;
+  height: 0.5em;
+  left: 0;
+  background-color: white;
+  box-shadow: 0px 0px 10px rgba(233, 233, 233, 0.5),
+    0px 0px 10px rgba(192, 192, 192, 0.5);
+  border-radius: 50%;
+  z-index: -1;
+  transition: 0.3s ease-in-out;
+}
+
+.contact .instagram svg path,
+.contact .x svg path,
+.contact .discord svg path {
+  stroke: #808080;
+  transition: 0.4s ease-in-out;
+}
+
+.contact .instagram:hover svg path {
+  stroke: #cc39a4;
+}
+
+.contact .x:hover svg path {
+  stroke: black;
+}
+
+.contact .discord:hover svg path {
+  stroke: #8c9eff;
+}
+
+.contact .instagram svg,
+.contact .x svg,
+.contact .discord svg {
+  transition: 0.3s ease-in-out;
+}
+
+.contact .instagram:hover svg {
+  scale: 1.4;
+}
+
+.contact .x:hover svg,
+.contact .discord:hover svg {
+  scale: 1.25;
+}
+
+.contact .instagram:hover:after,
+.contact .x:hover:after,
+.contact .discord:hover:after {
+  scale: 4;
+  transform: translateX(0.09em) translateY(0.09em);
+}
+
+.contact .instagram::before {
+  content: "";
+  position: absolute;
+  top: -700%;
+  left: 1050%;
+  rotate: -45deg;
+  width: 5em;
+  height: 1px;
+  background: linear-gradient(90deg, #ffffff, transparent);
+  animation: 4s shootingStar ease-in-out infinite;
+  transition: 1s ease;
+  animation-delay: 1s;
+}
+
+.contact .x::before {
+  content: "";
+  position: absolute;
+  top: -1300%;
+  left: 850%;
+  rotate: -45deg;
+  width: 5em;
+  height: 1px;
+  background: linear-gradient(90deg, #ffffff, transparent);
+  animation: 4s shootingStar ease-in-out infinite;
+  animation-delay: 3s;
+}
+
+.contact .discord::before {
+  content: "";
+  position: absolute;
+  top: -2100%;
+  left: 850%;
+  rotate: -45deg;
+  width: 5em;
+  height: 1px;
+  background: linear-gradient(90deg, #ffffff, transparent);
+  animation: 4s shootingStar ease-in-out infinite;
+  animation-delay: 5s;
+}
+
+.contact .card:hover .instagram::before,
+.contact .card:hover .x::before,
+.contact .card:hover .discord::before {
+  filter: blur(3px);
+}
+
+.contact .image:active ~ .icons .instagram::before,
+.contact .image:active ~ .icons .x::before,
+.contact .image:active ~ .icons .discord::before {
+  animation: none;
+  opacity: 0;
+}
+
+/* ═══════════════════════════════════════════
+   FANCY CTA BUTTON (qw_fancy_btn)
+   Shared "torn corner + rising particles" button,
+   used for Book Now, Read More, and Send Message.
+   ═══════════════════════════════════════════ */
+
+.qw_fancy_btn {
+  --round: 0.9rem;
+  cursor: pointer;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: "Quicksand", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  color: #fff;
+  padding: 15px 34px;
+  border: none;
+  outline: none;
+  border-radius: var(--round);
+  background:
+    radial-gradient(65.28% 65.28% at 50% 100%, rgba(147, 51, 234, 0.85) 0%, rgba(147, 51, 234, 0) 100%),
+    var(--qw-gradient);
+  box-shadow: var(--qw-shadow-sm);
+  transition: transform 0.3s var(--qw-ease-spring), box-shadow 0.25s ease;
+}
+
+.qw_fancy_btn::before,
+.qw_fancy_btn::after {
+  content: "";
+  position: absolute;
+  inset: var(--space);
+  transition: all 0.5s ease-in-out;
+  border-radius: calc(var(--round) - var(--space));
+  z-index: 0;
+}
+
+.qw_fancy_btn::before {
+  --space: 1px;
+  background: linear-gradient(177.95deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.qw_fancy_btn::after {
+  --space: 2px;
+  background:
+    radial-gradient(65.28% 65.28% at 50% 100%, rgba(147, 51, 234, 0.85) 0%, rgba(147, 51, 234, 0) 100%),
+    var(--qw-gradient);
+}
+
+.qw_fancy_btn:hover {
+  box-shadow: var(--qw-shadow-md), var(--qw-glow-cyan);
+}
+
+.qw_fancy_btn:active {
+  transform: scale(0.96);
+}
+
+.qw_fancy_btn_fold {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 1rem;
+  width: 1rem;
+  display: inline-block;
+  transition: all 0.5s ease-in-out;
+  background: radial-gradient(100% 75% at 55%, rgba(147, 51, 234, 0.85) 0%, rgba(147, 51, 234, 0) 100%);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+  border-bottom-left-radius: 0.5rem;
+  border-top-right-radius: var(--round);
+}
+
+.qw_fancy_btn_fold::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150%;
+  height: 150%;
+  transform: rotate(45deg) translateX(0%) translateY(-18px);
+  background-color: var(--qw-text);
+  pointer-events: none;
+}
+
+.qw_fancy_btn:hover .qw_fancy_btn_fold {
+  margin-top: -1rem;
+  margin-right: -1rem;
+}
+
+.qw_fancy_btn_points {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.qw_fancy_btn_point {
+  bottom: -10px;
+  position: absolute;
+  animation: qw-fancy-btn-float infinite ease-in-out;
+  pointer-events: none;
+  width: 2px;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 9999px;
+}
+
+@keyframes qw-fancy-btn-float {
+  0%   { transform: translateY(0); }
+  85%  { opacity: 0; }
+  100% { transform: translateY(-55px); opacity: 0; }
+}
+
+.qw_fancy_btn_point:nth-child(1)  { left: 10%; opacity: 1;   animation-duration: 2.35s; animation-delay: 0.2s; }
+.qw_fancy_btn_point:nth-child(2)  { left: 30%; opacity: 0.7; animation-duration: 2.5s;  animation-delay: 0.5s; }
+.qw_fancy_btn_point:nth-child(3)  { left: 25%; opacity: 0.8; animation-duration: 2.2s;  animation-delay: 0.1s; }
+.qw_fancy_btn_point:nth-child(4)  { left: 44%; opacity: 0.6; animation-duration: 2.05s; }
+.qw_fancy_btn_point:nth-child(5)  { left: 50%; opacity: 1;   animation-duration: 1.9s; }
+.qw_fancy_btn_point:nth-child(6)  { left: 75%; opacity: 0.5; animation-duration: 1.5s;  animation-delay: 1.5s; }
+.qw_fancy_btn_point:nth-child(7)  { left: 88%; opacity: 0.9; animation-duration: 2.2s;  animation-delay: 0.2s; }
+.qw_fancy_btn_point:nth-child(8)  { left: 58%; opacity: 0.8; animation-duration: 2.25s; animation-delay: 0.2s; }
+.qw_fancy_btn_point:nth-child(9)  { left: 98%; opacity: 0.6; animation-duration: 2.6s;  animation-delay: 0.1s; }
+.qw_fancy_btn_point:nth-child(10) { left: 65%; opacity: 1;   animation-duration: 2.5s;  animation-delay: 0.2s; }
+
+.qw_fancy_btn_inner {
+  z-index: 2;
+  gap: 8px;
+  position: relative;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease-in-out;
+}
+
+.qw_fancy_btn_icon {
+  width: 18px;
+  height: 18px;
+  transition: fill 0.1s linear;
+}
+
+.qw_fancy_btn:focus-visible .qw_fancy_btn_icon {
+  fill: #fff;
+}
+
+.qw_fancy_btn:hover .qw_fancy_btn_icon {
+  fill: transparent;
+  animation:
+    qw-fancy-btn-dasharray 1s linear forwards,
+    qw-fancy-btn-filled 0.1s linear forwards 0.95s;
+}
+
+@keyframes qw-fancy-btn-dasharray {
+  from { stroke-dasharray: 0 0 0 0; }
+  to   { stroke-dasharray: 68 68 0 0; }
+}
+
+@keyframes qw-fancy-btn-filled {
+  to { fill: #fff; }
+}
+
+/* hero CTA reads slightly larger than the other two */
+.book_btn.qw_fancy_btn {
+  font-size: 1.05rem;
+  padding: 15px 20px;
+}
+
+/* fills the form width, per .submit_btn in contact.css */
+.submit_btn.qw_fancy_btn {
+  width: 100%;
+}
+
+/* Animations */
+@keyframes shootingStar {
+  0% {
+    transform: translateX(0) translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateX(-55em) translateY(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(-70em) translateY(0);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+    opacity: 0;
+  }
+}
+
+@keyframes move {
+  0% {
+    transform: translateX(0em) translateY(0em);
+  }
+  25% {
+    transform: translateY(-1em) translateX(-1em);
+    rotate: -10deg;
+  }
+  50% {
+    transform: translateY(1em) translateX(-1em);
+  }
+  75% {
+    transform: translateY(-1.25em) translateX(1em);
+    rotate: 10deg;
+  }
+  100% {
+    transform: translateX(0em) translateY(0em);
+  }
+}
+
+@keyframes glowing-stars {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 767px) {
+
+  html,
+  body {
+    overflow-x: hidden;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .home_page {
+    background-attachment: scroll;
+    min-height: 92vh;
+  }
+
+  .overlay {
+    padding: 100px 22px 70px;
+  }
+
+  .main_title {
+    font-size: 2rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  header {
+    padding: 14px;
+  }
+
+  .btn {
+    padding: 13px 28px;
+    font-size: 0.95rem;
+  }
+
+  .book_btn {
+    padding: 14px 32px;
+  }
+
+  nav {
+    padding: 0px
+  }
+
+  .home_page::after {
+    bottom: 20px;
+    width: 20px;
+    height: 32px;
+  }
+
+  .qw_fancy_btn {
+    padding: 13px 26px;
+    font-size: 0.95rem;
+  }
+
+  .book_btn.qw_fancy_btn {
+    padding: 14px 20px;
+  }
+}

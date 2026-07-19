@@ -1,0 +1,341 @@
+/* ---------- WRAPPER ---------- */
+.pg_about_wrapper {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    /* transparent so .stars-container (imported from about.css, same markup
+       pattern as the Home page's About section) shows through underneath */
+    background-color: var(--qw-bg);
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 130px 24px 100px;
+    box-sizing: border-box;
+    font-family: "DM Sans", sans-serif;
+    z-index: 1;
+}
+
+/* readability overlay over the starfield, same technique as
+   .about_hero::before / .about_offer::before */
+.pg_about_wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(5, 5, 11, 0.55) 0%, rgba(5, 5, 11, 0.35) 40%, rgba(5, 5, 11, 0.65) 100%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Ambient glow blobs — same drifting-flare language used across
+   About/Fleet/How It Works/Reviews/Locations/Contact */
+.pg_about_ambient_a,
+.pg_about_ambient_b {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(100px);
+}
+
+.pg_about_ambient_a {
+    top: -14%;
+    left: -10%;
+    width: 46vw;
+    height: 46vw;
+    max-width: 620px;
+    background: radial-gradient(circle, rgba(67, 56, 202, 0.2) 0%, transparent 70%);
+    animation: pg-flare-a 15s ease-in-out infinite;
+}
+
+.pg_about_ambient_b {
+    bottom: -16%;
+    right: -8%;
+    width: 42vw;
+    height: 42vw;
+    max-width: 560px;
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.16) 0%, transparent 70%);
+    animation: pg-flare-b 12s ease-in-out infinite;
+}
+
+@keyframes pg-flare-a {
+    0%, 100% { opacity: 0.8; transform: translate(0, 0) scale(1); }
+    50%      { opacity: 1; transform: translate(3%, 4%) scale(1.12); }
+}
+
+@keyframes pg-flare-b {
+    0%, 100% { opacity: 0.75; transform: translate(0, 0) scale(1); }
+    50%      { opacity: 1; transform: translate(-3%, -3%) scale(1.15); }
+}
+
+.pg_about_section {
+    position: relative;
+    z-index: 1;
+    max-width: 1150px;
+    width: 100%;
+    animation: pgFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------- HEADER & TYPOGRAPHY ---------- */
+.pg_about_header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.pg_about_badge_wrap {
+    display: flex;
+    justify-content: center;
+}
+
+.pg_about_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    background: rgba(147, 51, 234, 0.12);
+    backdrop-filter: blur(var(--qw-blur-md));
+    -webkit-backdrop-filter: blur(var(--qw-blur-md));
+    border: 1px solid var(--qw-border-cyan);
+    color: var(--qw-text);
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-bottom: 20px;
+}
+
+.pg_about_badge svg {
+    width: 14px;
+    height: 14px;
+    color: var(--qw-cyan);
+}
+
+.pg_about_title {
+    font-family: "Quicksand", sans-serif;
+    font-size: clamp(2.4rem, 5vw, 3rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    margin: 0px;
+}
+
+/* reuses the shared "Energy Line" divider system defined once in home.css
+   via the [class^="blueline"] attribute selector — same shimmer pulse as
+   every other section divider on the site */
+.blueline6 {
+    width: 90px;
+    margin: 20px auto 0;
+}
+
+/* ---------- PREMIUM SHARED GLASS CARDS ---------- */
+.pg_mission_card,
+.pg_stat_box {
+    background: var(--qw-glass);
+    backdrop-filter: blur(var(--qw-blur-md));
+    -webkit-backdrop-filter: blur(var(--qw-blur-md));
+    border: 1px solid var(--qw-border);
+    box-shadow: var(--qw-shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition:
+        transform var(--qw-t-base) var(--qw-ease),
+        border-color var(--qw-t-base) var(--qw-ease),
+        box-shadow var(--qw-t-base) var(--qw-ease);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Integrated Micro-glow on Hover */
+.pg_mission_card:hover,
+.pg_stat_box:hover {
+    border-color: var(--qw-border-strong);
+    transform: translateY(-6px);
+    box-shadow: var(--qw-shadow-md), var(--qw-glow-cyan);
+}
+
+/* ---------- MAIN GRID ---------- */
+.pg_about_grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 48px;
+    margin-bottom: 80px;
+    align-items: center;
+}
+
+.pg_about_text h2 {
+    font-size: 2.1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 24px auto;
+}
+
+.pg_about_text p {
+    color: var(--qw-text-dim);
+    margin-bottom: 24px;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    font-family: "DM Sans", sans-serif;
+}
+
+.pg_about_text strong {
+    color: var(--qw-cyan);
+    font-weight: 700;
+}
+
+.pg_mission_card {
+    padding: 40px;
+    border-radius: var(--qw-r-lg);
+    border-color: var(--qw-border-cyan);
+}
+
+.pg_card_glow {
+    position: absolute;
+    top: -20%;
+    right: -20%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.28) 0%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.pg_mission_badge {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    background: rgba(147, 51, 234, 0.14);
+    border: 1px solid var(--qw-border-cyan);
+    color: var(--qw-cyan);
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.pg_mission_badge svg {
+    width: 13px;
+    height: 13px;
+}
+
+.pg_mission_card p {
+    position: relative;
+    z-index: 1;
+    color: var(--qw-text-dim);
+    font-size: 1.08rem;
+    line-height: 1.7;
+    font-family: "DM Sans", sans-serif;
+}
+
+/* ---------- STATS BAR ---------- */
+.pg_stats_bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin: 80px 0;
+}
+
+.pg_stat_box {
+    padding: 32px 20px;
+    text-align: center;
+    border-radius: var(--qw-r-md);
+}
+
+.pg_stat_box h4 {
+    font-family: "Quicksand", sans-serif;
+    font-size: 2.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px 0;
+    background: var(--qw-gradient-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.pg_stat_box span {
+    color: var(--qw-text-faint);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* ---------- FEATURES ---------- */
+.pg_features_section {
+    margin-top: 40px;
+}
+
+.pg_features_section h3 {
+    font-family: "Quicksand", sans-serif;
+    font-size: 2.1rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.pg_features_grid {
+    /* grid-template-columns/gap come from .about_features (about.css) since
+       this element carries both classes; this just centers the grid within
+       the page's max-width */
+    margin: 0 auto;
+}
+
+/* ---------- ACTION BUTTON ---------- */
+/* pg_back_btn now carries the shared .btn class from home.css (same
+   gradient/shimmer/lift as Book Now, Read More, Send Message) — this rule
+   only adjusts spacing since .btn already supplies color/background/shape */
+.pg_btn_container {
+    display: flex;
+    justify-content: center;
+    margin: 80px 0 20px 0;
+}
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes pgFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------- FULL BREAKPOINT RESPONSIVENESS ---------- */
+@media (max-width: 1024px) {
+    .pg_about_title { font-size: 3rem; }
+    .pg_about_grid { gap: 32px; }
+    .pg_stat_box h4 { font-size: 2.25rem; }
+}
+
+@media (max-width: 850px) {
+    .pg_about_grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    .pg_features_grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    .pg_about_text { text-align: center; }
+    .pg_about_header { margin-bottom: 50px; }
+    .pg_stats_bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pg_about_wrapper { padding: 60px 16px 70px; }
+    .pg_about_title { font-size: 2.1rem; }
+    .pg_about_text h2 { font-size: 1.6rem; }
+    .pg_mission_card { padding: 28px; }
+    .pg_stat_box { padding: 20px; }
+    .pg_back_btn { width: 100%; padding: 16px; }
+}

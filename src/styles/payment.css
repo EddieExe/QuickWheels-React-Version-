@@ -1,0 +1,731 @@
+.payment_container {
+    padding: 0px 30px 30px 30px;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #0a0a0f !important;
+    background-image: none !important;
+    position: relative;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Blue Light Effect - Top Glow */
+.payment_container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(4, 0, 255, 0.25), rgba(76, 227, 247, 0.1), transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    animation: breathe 4s ease-in-out infinite;
+}
+
+/* Secondary Ambient Glow */
+.payment_container::after {
+    content: '';
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(circle at 70% 100%, rgba(76, 227, 247, 0.08), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Content above background */
+.payment_container>* {
+    position: relative;
+    z-index: 1;
+}
+
+/* Breathe Animation for Blue Light */
+@keyframes breathe {
+
+    0%,
+    100% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ---------- TITLE SECTION (EXACT MATCH WITH ADDONS) ---------- */
+.payment_title {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeInDown 0.8s ease-out;
+}
+
+.payment_title h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 30%, #4ce3f7, #0400ff);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+    animation: gradientShift 4s ease infinite;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+@keyframes gradientShift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.payment_title h1::after {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0400ff, #4ce3f7);
+    border-radius: 3px;
+    animation: widthExpand 0.8s ease-out 0.3s forwards;
+}
+
+@keyframes widthExpand {
+    from {
+        width: 0;
+        opacity: 0;
+    }
+
+    to {
+        width: 200px;
+        opacity: 1;
+    }
+}
+
+/* Two Column Grid */
+.payment_grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 30px;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.1s forwards;
+    opacity: 0;
+}
+
+/* Cards */
+.driver_info_card,
+.booking_summary_card {
+    background: rgba(20, 25, 45, 0.85);
+    backdrop-filter: blur(15px);
+    border-radius: 24px;
+    border: 1px solid rgba(76, 227, 247, 0.2);
+    overflow: hidden;
+    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.2s forwards;
+    opacity: 0;
+}
+
+/* Card Header */
+.card_header {
+    padding: 20px 25px 0 25px;
+    border-bottom: 1px solid rgba(76, 227, 247, 0.15);
+}
+
+.card_header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+.blueline {
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, #0400ff, #4ce3f7);
+    border: none;
+    border-radius: 3px;
+    margin-bottom: 15px;
+}
+
+/* Driver Info */
+.driver_form {
+    padding: 20px 25px 25px 25px;
+}
+
+.info_row {
+    margin-bottom: 18px;
+}
+
+.info_row label {
+    display: block;
+    color: #4ce3f7;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.two_column_grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+}
+
+.two_column_grid .info_row {
+    margin-bottom: 0;
+}
+
+.disabled_input {
+    font-family: quicksand;
+    width: 93%;
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(76, 227, 247, 0.15);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.95rem;
+    cursor: not-allowed;
+}
+
+.disabled_input:disabled {
+    color: #fff;
+    opacity: 1;
+}
+
+/* Booking Content */
+.booking_content {
+    padding: 20px 25px 25px 25px;
+}
+
+/* --- Payment Page Specific Add-ons Layout --- */
+
+.payment_booking_section {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(76, 227, 247, 0.1);
+}
+
+.payment_booking_section h3 {
+    color: #4ce3f7;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* 2:2 Grid specifically for the payment page */
+.payment_addons_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+
+/* Scoped card styling to avoid conflict with .addon_card */
+.payment_addon_card {
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    /* Force override if needed */
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.2s ease;
+    min-height: 60px;
+    box-sizing: border-box;
+    /* Reset any animations from the main page */
+    animation: none !important;
+    transform: none !important;
+}
+
+.payment_addon_card:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(76, 227, 247, 0.3) !important;
+}
+
+/* Payment Method Selector */
+.payment_method_selector {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.payment_method_option {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255,255,255,0.05);
+}
+
+.payment_method_option.active {
+  border-color: #4ce3f7;
+  background: rgba(76,227,247,0.1);
+}
+
+.payment_method_option input {
+  margin-right: 8px;
+}
+
+/* Card Form */
+.card_form, .billing_form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form_group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form_group label {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 600;
+}
+
+.form_group input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.3);
+  color: #fff;
+  font-family: 'Quicksand', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.form_group input:focus {
+  outline: none;
+  border-color: #4ce3f7;
+}
+
+.form_group input.error_input {
+  border-color: #ff4d4d;
+}
+
+.form_row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.field_error {
+  color: #ff4d4d;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+/* Vehicle Preview */
+.vehicle_preview {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.summary_car_image_small {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* PayPal Message */
+.paypal_message {
+  padding: 20px;
+  background: rgba(255,165,0,0.1);
+  border: 1px solid rgba(255,165,0,0.3);
+  border-radius: 10px;
+  text-align: center;
+}
+
+/* Spinner Animation */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.confirm_btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form_row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .payment_method_selector {
+    flex-direction: column;
+  }
+}
+
+/* Selected State */
+.payment_addon_card.is_selected {
+    border-color: #4ce3f7 !important;
+    background: rgba(76, 227, 247, 0.08);
+}
+
+.payment_addon_info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.payment_addon_name {
+    margin: 0 !important;
+    font-weight: 600;
+    font-size: 13px;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.payment_check_icon {
+    color: #4ce3f7;
+    font-weight: bold;
+}
+
+.payment_addon_price {
+    margin: 4px 0 0 0 !important;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Ensure 1 column on small mobile screens */
+@media (max-width: 400px) {
+    .payment_addons_grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Car Info */
+.payment_car_info {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.summary_car_image {
+    height: 100px;
+    object-fit: contain;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+.car_model_name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.car_price {
+    font-size: 1rem;
+    font-weight: 700;
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Trip Info */
+.trip_info {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+.trip_row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.trip_row strong {
+    color: #4ce3f7;
+}
+
+/* Add-ons */
+.addons_list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.addon_row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9rem;
+}
+
+.addon_row strong {
+    color: #4ce3f7;
+    font-size: 0.9rem;
+}
+
+/* Price Summary */
+.price_summary {
+    background: rgba(4, 0, 255, 0.08);
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin: 15px 0;
+    border: 1px solid rgba(76, 227, 247, 0.15);
+}
+
+.price_row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.price_row.total {
+    padding-top: 10px;
+    margin-top: 6px;
+    border-top: 1px solid rgba(76, 227, 247, 0.15);
+    font-size: 1rem;
+}
+
+.price_row.total strong {
+    font-size: 1.3rem;
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Confirm Button */
+.confirm_btn {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
+.confirm_btn.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 0.8s ease infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Modal */
+.modal-content {
+    background: rgba(20, 25, 45, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 24px;
+    border: 1px solid rgba(76, 227, 247, 0.3);
+    padding: 30px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    margin: auto;
+    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+.modal-content h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #fff, #4ce3f7);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.modal-content p {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 10px 0;
+}
+
+.order_btn {
+    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 28px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.3s ease;
+}
+
+.order_btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(4, 0, 255, 0.3);
+}
+
+/* Animation Keyframes */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .payment_grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .booking_content {
+        padding: 20px;
+    }
+
+    .payment_container {
+        padding: 20px 16px;
+    }
+
+    .payment_title h1 {
+        font-size: 2rem;
+    }
+
+    .card_header h2 {
+        font-size: 1.3rem;
+        margin: 10px auto;
+    }
+
+    .card_header {
+        padding: 20px 20px 0 20px;
+    }
+
+    .driver_form {
+        padding: 20px;
+    }
+
+    .disabled_input {
+        width: 90%;
+    }
+
+    .payment_booking_section h3 {
+        font-size: 1rem;
+        margin: 10px auto;
+    }
+
+    .summary_car_image {
+        width: 100%;
+        height: auto;
+    }
+
+    .payment_car_info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .car_model_name {
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    .car_price {
+        font-size: 1rem;
+        margin: 10px auto;
+    }
+
+    .trip_info {
+        font-size: 15px;
+        padding: 10px
+    }
+
+    .price_row {
+        font-size: 15px;
+    }
+
+    .price_row.total {
+        font-size: 1rem;
+    }
+
+    /* Booking confirmation */
+    .modal-content {
+        padding: 20px;
+        width: 80%;
+        margin: 15vh auto;
+    }
+
+    .modal-content h1 {
+        font-size: 1.8rem;
+        margin: 20px auto 30px auto;
+    }
+}

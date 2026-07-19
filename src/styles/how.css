@@ -1,0 +1,303 @@
+/* How It Works Section */
+/* src/styles/how.css */
+
+.how_it_works_section {
+    --how-border-strong: rgba(147, 51, 234, 0.4);
+
+    position: relative;
+    isolation: isolate;
+    padding: 70px 20px 60px;
+    background: var(--qw-bg);
+    text-align: center;
+    width: auto;
+    height: auto;
+    overflow: hidden;
+}
+
+/* ── Ambient glow blobs (same drifting-flare language as About/Fleet) ── */
+.how_ambient_a,
+.how_ambient_b {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(100px);
+}
+
+.how_ambient_a {
+    top: -14%;
+    left: 50%;
+    width: 60vw;
+    height: 34vw;
+    max-width: 900px;
+    max-height: 500px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse, rgba(67, 56, 202, 0.22) 0%, transparent 65%);
+    animation: how-flare-a 15s ease-in-out infinite;
+}
+
+.how_ambient_b {
+    bottom: -18%;
+    right: -8%;
+    width: 40vw;
+    height: 40vw;
+    max-width: 520px;
+    background: radial-gradient(circle, rgba(147, 51, 234, 0.14) 0%, transparent 70%);
+    animation: how-flare-b 12s ease-in-out infinite;
+}
+
+@keyframes how-flare-a {
+    0%, 100% { opacity: 0.85; transform: translateX(-50%) scale(1); }
+    50%      { opacity: 1; transform: translateX(-50%) scale(1.1); }
+}
+
+@keyframes how-flare-b {
+    0%, 100% { opacity: 0.7; transform: translate(0, 0) scale(1); }
+    50%      { opacity: 1; transform: translate(-4%, -3%) scale(1.15); }
+}
+
+.how_it_works_section > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* the catch-all above matches every direct child, including these
+   decorative overlays — restore their absolute positioning with a
+   higher-specificity rule or they collapse into huge in-flow blocks */
+.how_it_works_section > .how_ambient_a,
+.how_it_works_section > .how_ambient_b,
+.how_it_works_section > .qw_spots {
+    position: absolute;
+    z-index: 0;
+}
+
+/* ── Badge ── */
+.how_badge_wrap {
+    display: flex;
+    justify-content: center;
+}
+
+.how_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    background: rgba(147, 51, 234, 0.12);
+    backdrop-filter: blur(var(--qw-blur-md));
+    -webkit-backdrop-filter: blur(var(--qw-blur-md));
+    border: 1px solid var(--qw-border-cyan);
+    color: var(--qw-text);
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-bottom: 22px;
+}
+
+.how_badge svg {
+    width: 14px;
+    height: 14px;
+    color: var(--qw-cyan);
+}
+
+.section_title {
+    position: relative;
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--qw-text);
+    margin: 0 auto;
+    text-align: center;
+    letter-spacing: -0.02em;
+}
+
+.blueline3 {
+    width: 90px;
+    margin: 20px auto 0;
+}
+
+.section_description {
+    font-family: "DM Sans", sans-serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    margin: 30px auto 48px;
+    color: var(--qw-text-dim);
+    max-width: 1100px;
+}
+
+.section_description strong {
+    color: #fff;
+    font-weight: 700;
+}
+
+.steps_container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+.step_card {
+    position: relative;
+    background: var(--qw-glass);
+    backdrop-filter: blur(var(--qw-blur-sm));
+    -webkit-backdrop-filter: blur(var(--qw-blur-sm));
+    border: 1px solid var(--qw-border);
+    border-radius: var(--qw-r-lg);
+    box-shadow: var(--qw-shadow-sm);
+    padding: 0;
+    max-width: 300px;
+    width: 100%;
+    text-align: left;
+    overflow: hidden;
+    cursor: pointer;
+    counter-increment: qw-step;
+    transition:
+        transform var(--qw-t-base) var(--qw-ease-spring),
+        box-shadow var(--qw-t-base) var(--qw-ease),
+        border-color var(--qw-t-base) var(--qw-ease);
+}
+
+.steps_container {
+    counter-reset: qw-step;
+}
+
+.step_card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: var(--qw-gradient);
+    opacity: 0;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    transition: opacity var(--qw-t-base) var(--qw-ease);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.step_card:hover {
+    transform: translateY(-14px);
+    box-shadow: var(--qw-shadow-lg), var(--qw-glow-cyan);
+    border-color: transparent;
+}
+
+.step_card:hover::before {
+    opacity: 1;
+}
+
+.step_image {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    display: block;
+    filter: saturate(1.05) brightness(0.92);
+    transition: transform var(--qw-t-slow) var(--qw-ease);
+}
+
+.step_card:hover .step_image {
+    transform: scale(1.06);
+}
+
+/* numbered badge — the sequence is real (Step 1–4), so it earns a marker */
+.step_card::after {
+    content: counter(qw-step);
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--qw-gradient);
+    color: #04040a;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 6px 18px rgba(147, 51, 234, 0.45);
+    z-index: 3;
+}
+
+.step_content {
+    position: relative;
+    padding: 22px 22px 26px;
+    background: var(--qw-surface-2);
+}
+
+.step_title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 10px;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+.step_description {
+    font-family: "DM Sans", sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--qw-text-dim);
+}
+
+
+/* Small Smartphones */
+@media only screen and (max-width: 767px) {
+    .how_it_works_section {
+        padding: 50px 16px;
+    }
+
+    .how_badge {
+        font-size: 0.78rem;
+        padding: 7px 16px;
+        margin-bottom: 16px;
+    }
+
+    .section_title {
+        font-size: 1.7rem;
+    }
+
+    .blueline3 {
+        height: 3px;
+        width: 70px;
+    }
+
+    .section_description {
+        width: 100%;
+        font-size: 0.92rem;
+        margin: 22px 0 34px;
+    }
+
+    .steps_container {
+        gap: 1.4rem;
+    }
+
+    .step_card {
+        max-width: 100%;
+    }
+
+    .step_image {
+        height: 160px;
+    }
+
+    .step_title {
+        font-size: 1.05rem;
+    }
+
+    .step_description {
+        font-size: 0.88rem;
+    }
+
+    .step_card:hover {
+        transform: translateY(-8px);
+    }
+}

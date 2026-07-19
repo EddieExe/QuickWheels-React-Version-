@@ -1,0 +1,1187 @@
+/* --- GLOBAL STYLES --- */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: "Quicksand", sans-serif;
+    background-color: #0f172a;
+}
+
+/* --- UTILITIES & SCROLLBAR --- */
+strong {
+    background-image: var(--qw-gradient-text);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: #0f172a;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: #2563eb;
+    border-radius: 10px;
+    border: 2px solid #0f172a;
+}
+
+/* =========================================================
+   PREMIUM NAVBAR ("pnav-*")
+   Floating white pill navbar, sticky, shrinks 80% -> 60%
+   ========================================================= */
+
+:root {
+    --pnav-bg: #ffffff;
+    --pnav-text: #1e1b3a;
+    --pnav-text-muted: #57536b;
+    --pnav-accent-a: #4338ca;
+    --pnav-accent-b: #9333ea;
+    --pnav-radius: 999px;
+}
+
+.pnav-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    width: 100%;
+    padding: 22px 0;
+    display: flex;
+    justify-content: center;
+    background: transparent;
+    pointer-events: none;
+}
+
+.pnav-shell {
+    pointer-events: auto;
+    max-width: 1200px;
+    min-width: 320px;
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    background-color: var(--pnav-bg);
+    border-radius: var(--pnav-radius);
+    padding: 10px 12px 10px 28px;
+    border: 1px solid rgba(15, 23, 42, 0.04);
+    box-shadow:
+        0 10px 30px rgba(15, 23, 42, 0.18),
+        0 2px 8px rgba(15, 23, 42, 0.08);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    position: relative;
+}
+
+.pnav-shell:hover {
+    box-shadow:
+        0 14px 38px rgba(15, 23, 42, 0.22),
+        0 3px 10px rgba(15, 23, 42, 0.1);
+}
+
+/* --- BRAND / LOGO --- */
+.pnav-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pnav-brand:hover {
+    transform: scale(1.04);
+}
+
+.pnav-logo {
+    height: 38px;
+    width: auto;
+    display: block;
+}
+
+/* --- NAV LINKS --- */
+.pnav-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 2.2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.pnav-link {
+    position: relative;
+    text-decoration: none;
+    color: var(--pnav-text-muted);
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 6px 2px;
+    white-space: nowrap;
+    transition: color 0.25s ease;
+}
+
+.pnav-link:hover {
+    color: var(--pnav-text);
+}
+
+.pnav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--pnav-accent-a), var(--pnav-accent-b));
+    transform: translateX(-50%);
+    border-radius: 2px;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pnav-link:hover::after {
+    width: 100%;
+}
+
+/* --- RIGHT ACTIONS --- */
+.pnav-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+/* Search button */
+.pnav-search-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    background-color: #f5f6fb;
+    color: var(--pnav-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.pnav-search-btn svg {
+    width: 19px;
+    height: 19px;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.pnav-search-btn:hover {
+    background-color: #ececf7;
+    transform: translateY(-1px);
+}
+
+.pnav-search-btn:hover svg {
+    transform: rotate(-12deg) scale(1.08);
+}
+
+/* Sign In button (gradient pill, matches reference "Contact" button) */
+.pnav-signin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 12px 26px;
+    border-radius: var(--pnav-radius);
+    background-image: linear-gradient(135deg, var(--pnav-accent-a), var(--pnav-accent-b));
+    background-size: 160% auto;
+    background-position: left center;
+    box-shadow: 0 8px 20px rgba(67, 56, 202, 0.35);
+    transition: background-position 0.4s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    white-space: nowrap;
+}
+
+.pnav-signin-btn:hover {
+    background-position: right center;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(147, 51, 234, 0.4);
+}
+
+.pnav-signin-btn:active {
+    transform: scale(0.97);
+}
+
+/* --- PROFILE (logged in state) --- */
+.pnav-profile-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* fancy-btn treatment minus the torn-corner fold: gradient fill, edge
+   highlight layers, rising particles, hover glow. Radius stays at
+   --pnav-radius (999px / full pill) since that's already the maximum. */
+.pnav-profile-btn {
+    all: unset;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 15px 20px;
+    border-radius: var(--pnav-radius);
+    color: #fff;
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    background:
+        radial-gradient(65.28% 65.28% at 50% 100%, rgba(147, 51, 234, 0.85) 0%, rgba(147, 51, 234, 0) 100%),
+        linear-gradient(135deg, var(--pnav-accent-a), var(--pnav-accent-b));
+    box-shadow: 0 8px 20px rgba(67, 56, 202, 0.35);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+}
+
+.pnav-profile-btn::before,
+.pnav-profile-btn::after {
+    content: "";
+    position: absolute;
+    inset: var(--space);
+    transition: all 0.5s ease-in-out;
+    border-radius: calc(var(--pnav-radius) - var(--space));
+    z-index: 0;
+}
+
+.pnav-profile-btn::before {
+    --space: 1px;
+    background: linear-gradient(177.95deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.pnav-profile-btn::after {
+    --space: 2px;
+    background:
+        radial-gradient(65.28% 65.28% at 50% 100%, rgba(147, 51, 234, 0.85) 0%, rgba(147, 51, 234, 0) 100%),
+        linear-gradient(135deg, var(--pnav-accent-a), var(--pnav-accent-b));
+}
+
+.pnav-profile-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(147, 51, 234, 0.4);
+}
+
+.pnav-profile-btn:active {
+    transform: scale(0.97);
+}
+
+.pnav-profile-btn-points {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.pnav-profile-btn-point {
+    bottom: -10px;
+    position: absolute;
+    animation: pnav-profile-btn-float infinite ease-in-out;
+    pointer-events: none;
+    width: 2px;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 9999px;
+}
+
+@keyframes pnav-profile-btn-float {
+    0%   { transform: translateY(0); }
+    85%  { opacity: 0; }
+    100% { transform: translateY(-30px); opacity: 0; }
+}
+
+.pnav-profile-btn-point:nth-child(1)  { left: 10%; opacity: 1;   animation-duration: 1.8s; animation-delay: 0.2s; }
+.pnav-profile-btn-point:nth-child(2)  { left: 25%; opacity: 0.7; animation-duration: 2s;   animation-delay: 0.5s; }
+.pnav-profile-btn-point:nth-child(3)  { left: 40%; opacity: 0.8; animation-duration: 1.7s; animation-delay: 0.1s; }
+.pnav-profile-btn-point:nth-child(4)  { left: 55%; opacity: 0.6; animation-duration: 1.6s; }
+.pnav-profile-btn-point:nth-child(5)  { left: 70%; opacity: 1;   animation-duration: 1.5s; }
+.pnav-profile-btn-point:nth-child(6)  { left: 85%; opacity: 0.5; animation-duration: 1.9s; animation-delay: 0.3s; }
+.pnav-profile-btn-point:nth-child(7)  { left: 15%; opacity: 0.9; animation-duration: 2.1s; animation-delay: 0.4s; }
+.pnav-profile-btn-point:nth-child(8)  { left: 60%; opacity: 0.8; animation-duration: 1.75s; animation-delay: 0.15s; }
+.pnav-profile-btn-point:nth-child(9)  { left: 92%; opacity: 0.6; animation-duration: 2s;   animation-delay: 0.05s; }
+.pnav-profile-btn-point:nth-child(10) { left: 48%; opacity: 1;   animation-duration: 1.85s; animation-delay: 0.25s; }
+
+.pnav-profile-btn-inner {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pnav-profile-btn-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.3s var(--qw-ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+.pnav-profile-btn:hover .pnav-profile-btn-icon {
+    transform: scale(1.15) rotate(-4deg);
+}
+
+/* --- DROPDOWN MENU (kept dark for contrast against the white pill) --- */
+.pnav-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 15px);
+    width: auto;
+    min-width: 220px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, var(--pnav-accent-a) 0%, rgba(67, 56, 202, 0) 55%);
+    background-color: rgba(147, 51, 234, 0.18);
+    padding: 2px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    animation: pnavSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pnav-dropdown-inner {
+    background-color: #171726;
+    border-radius: 13px;
+    padding: 20px 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.pnav-dropdown-header {
+    padding: 5px;
+}
+
+.pnav-user-name {
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 1.05rem;
+    margin: 0;
+}
+
+.pnav-user-email {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 4px 0 0 0;
+}
+
+.pnav-dropdown-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 10px 0;
+}
+
+.pnav-dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.2s;
+}
+
+.pnav-dropdown-link:hover {
+    background: rgba(147, 51, 234, 0.12);
+    color: #c084fc;
+    padding-left: 15px;
+}
+
+.pnav-dropdown-link svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+}
+
+/* --- EXPANDABLE SIGN OUT BUTTON --- */
+.pnav-signout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    background-color: #ec003f;
+    margin: 15px auto 0 auto;
+}
+
+.pnav-signout-btn:hover {
+    width: 140px;
+    transform: translateY(-2px);
+    background-color: #ff1a53;
+    box-shadow: 0 8px 20px rgba(236, 0, 63, 0.4);
+    border-radius: 40px;
+    transition-duration: .3s;
+}
+
+.pnav-signout-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.5s ease;
+}
+
+.pnav-sign-icon {
+    width: 42px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.pnav-sign-icon svg {
+    width: 18px;
+    fill: white;
+}
+
+.pnav-sign-icon svg path {
+    fill: white;
+}
+
+.pnav-signout-btn:hover .pnav-sign-icon {
+    width: 30%;
+    transition-duration: .3s;
+    padding-left: 10px;
+    transform: rotate(-30deg);
+}
+
+.pnav-sign-text {
+    font-family: quicksand, sans-serif;
+    position: absolute;
+    left: 50px;
+    white-space: nowrap;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s ease;
+}
+
+.pnav-signout-btn:hover .pnav-sign-text {
+    opacity: 1;
+    padding-right: 10px;
+    transform: translateX(0);
+    transition-delay: 0.1s;
+}
+
+@keyframes pnavSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- HAMBURGER (hidden on desktop) --- */
+.pnav-hamburger {
+    display: none;
+    cursor: pointer;
+    border: none;
+    background: #f5f6fb;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    position: relative;
+    z-index: 10001;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.pnav-hamburger:hover {
+    background: #ececf7;
+}
+
+.pnav-hamburger span {
+    display: block;
+    height: 2px;
+    width: 18px;
+    background: var(--pnav-text);
+    border-radius: 12px;
+    transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+}
+
+.pnav-hamburger.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.pnav-hamburger.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.pnav-hamburger.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* --- PREMIUM MOBILE MENU (dark panel, floats below the pill) ---
+   Backdrop blur removed per request — the panel is now fully opaque so
+   it reads as "just the navbar" with nothing bleeding through from the
+   page behind it. Stray off-brand blue/cyan (#0400ff / #4ce3f7) swapped
+   for --pnav-accent-a / --pnav-accent-b so this matches the rest of the
+   navbar's color language instead of introducing a third palette. */
+@media (max-width: 900px) {
+    .pnav-header {
+        padding: 16px 0;
+    }
+
+    .pnav-shell {
+        width: 92% !important;
+        padding: 8px 10px 8px 18px;
+    }
+
+    .pnav-hamburger {
+        display: flex;
+    }
+
+    .pnav-logo {
+        height: 30px;
+    }
+
+    .pnav-search-btn {
+        display: none;
+    }
+
+    .pnav-links {
+        position: fixed;
+        top: 90px;
+        right: -100%;
+        width: min(78%, 320px);
+        height: auto;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+
+        background: #0f0f1e;
+        border-radius: 20px;
+        border: 1px solid rgba(147, 51, 234, 0.22);
+
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 12px;
+        padding: 20px;
+
+        box-shadow:
+            0 20px 40px rgba(0, 0, 0, 0.45),
+            inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+        transition: right 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        z-index: 999;
+        overflow-x: hidden;
+    }
+
+    .pnav-links::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, var(--pnav-accent-a), var(--pnav-accent-b));
+        opacity: 0.14;
+        z-index: -1;
+        border-radius: 20px;
+    }
+
+    .pnav-links::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, transparent 40%, rgba(0, 0, 0, 0.3) 100%);
+        pointer-events: none;
+        z-index: -1;
+        border-radius: 20px;
+    }
+
+    .pnav-links.active {
+        right: 15px;
+    }
+
+    .pnav-links li {
+        width: 100%;
+        list-style: none;
+        opacity: 0;
+        transform: translateY(15px);
+        transition: transform 0.5s ease, opacity 0.5s ease;
+        z-index: 2;
+    }
+
+    .pnav-links.active li {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .pnav-links.active li:nth-child(1) { transition-delay: 0.1s; }
+    .pnav-links.active li:nth-child(2) { transition-delay: 0.2s; }
+    .pnav-links.active li:nth-child(3) { transition-delay: 0.3s; }
+    .pnav-links.active li:nth-child(4) { transition-delay: 0.4s; }
+    .pnav-links.active li:nth-child(5) { transition-delay: 0.5s; }
+    .pnav-links.active li:nth-child(6) { transition-delay: 0.6s; }
+    .pnav-links.active li:nth-child(7) { transition-delay: 0.7s; }
+
+    .pnav-link {
+        font-family: "Quicksand", sans-serif;
+        text-decoration: none;
+        color: #fff;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+        overflow: hidden;
+    }
+
+    .pnav-link:hover {
+        background: linear-gradient(135deg, var(--pnav-accent-a), var(--pnav-accent-b));
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(67, 56, 202, 0.3);
+        border-color: transparent;
+    }
+
+    .pnav-link::after {
+        display: none;
+    }
+
+    .pnav-signin-btn {
+        padding: 10px 18px;
+        font-size: 0.85rem;
+    }
+
+    .pnav-profile-btn span,
+    .pnav-profile-btn-inner {
+        display: none;
+    }
+
+    .pnav-profile-btn {
+        padding: 10px;
+        border-radius: 50%;
+    }
+
+    .pnav-profile-btn-icon {
+        margin: 0;
+    }
+}
+
+@media (min-width: 901px) {
+    .pnav-hamburger {
+        display: none;
+    }
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   DEALER DASHBOARD HEADER ("dnav-*")
+   Premium dark purple theme matching profile page
+   Full width rectangular design (not pill/tube shaped)
+   ───────────────────────────────────────────────────────────── */
+
+/* ─── Dealer Header Container ─── */
+/* In header.css */
+.dnav-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  width: 100%;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  background: transparent;
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.dnav-shell {
+  pointer-events: auto;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 12px 32px;
+  height: 76px; /* Fixed height to match sidebar */
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+  
+  background:
+    radial-gradient(ellipse 60% 100% at 15% 0%, rgba(147,51,234,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 90% at 95% 100%, rgba(67,56,202,0.16) 0%, transparent 65%),
+    linear-gradient(180deg, #120e20 0%, #0c0c16 100%);
+  
+  border-bottom: 1px solid rgba(168,85,247,0.25);
+  box-shadow: 0 12px 24px -12px rgba(0,0,0,0.5);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* ── Drifting purple glow (same as prf-header-row::before) ── */
+.dnav-shell::before {
+    content: "";
+    position: absolute;
+    top: -45%;
+    left: 55%;
+    width: 280px;
+    height: 280px;
+    background: radial-gradient(circle, rgba(147,51,234,0.28) 0%, transparent 70%);
+    filter: blur(46px);
+    pointer-events: none;
+    z-index: 0;
+    animation: dnav-header-drift 9s ease-in-out infinite;
+}
+
+@keyframes dnav-header-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.75; }
+    50%      { transform: translate(-34px, 22px) scale(1.15); opacity: 1; }
+}
+
+/* ── Energy line at bottom (same as prf-header-row::after) ── */
+.dnav-shell::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(147,51,234,0.65), rgba(67,56,202,0.55), transparent);
+    background-size: 200% 100%;
+    animation: dnav-header-line-slide 5s ease-in-out infinite;
+    z-index: 1;
+}
+
+@keyframes dnav-header-line-slide {
+    0%, 100% { background-position: 0% 0; }
+    50%      { background-position: 100% 0; }
+}
+
+.dnav-shell:hover {
+    border-bottom-color: rgba(168,85,247,0.4);
+    box-shadow: 0 12px 24px -12px rgba(0,0,0,0.5), 0 0 30px rgba(147,51,234,0.08);
+}
+
+/* ─── Brand / Logo ─── */
+.dnav-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+    cursor: default;
+}
+
+.dnav-logo {
+    height: 45px;
+    width: auto;
+    display: block;
+    filter: brightness(0) invert(1);
+}
+
+/* ─── Stats Display ─── */
+.dnav-stats {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 0 16px;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    border-left: 1px solid rgba(255, 255, 255, 0.06);
+    position: relative;
+    z-index: 2;
+}
+
+.dnav-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+.dnav-stat-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.3px;
+}
+
+.dnav-stat-value.revenue { color: #10b981; }
+.dnav-stat-value.bookings { color: #60a5fa; }
+.dnav-stat-value.fleet { color: #fbbf24; }
+
+.dnav-stat-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* ─── Actions ─── */
+.dnav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* ── Pending badge ── */
+.dnav-pending-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.08);
+    color: #ef4444;
+    cursor: pointer;
+    font-family: "Quicksand", sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    white-space: nowrap;
+}
+
+.dnav-pending-btn:hover {
+    background: rgba(239, 68, 68, 0.16);
+    border-color: rgba(239, 68, 68, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.2);
+}
+
+.dnav-pending-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #ef4444;
+    animation: dnavPulseDot 1.5s ease-in-out infinite;
+    flex-shrink: 0;
+}
+
+/* ── Add Car button — same as home/bell buttons ── */
+.dnav-add-btn {
+  position: relative;
+  width: 110px;
+  height: 44px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-family: "Quicksand";
+  font-size: 14px;
+  font-weight: 600;
+  gap: 6px;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.75);
+  outline: none;
+  transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.dnav-add-btn:hover {
+  transform: translateY(-2px);
+  background-color: rgba(255,255,255,0.07);
+  border-color: rgba(147,51,234,0.35);
+  color: #fff;
+  font-size: 14.5px;
+  box-shadow: 0 10px 25px -5px rgba(67,56,202,0.35), 0 0 1px 1px rgba(255,255,255,0.1) inset;
+}
+
+.dnav-add-btn:active {
+  transform: scale(0.85) translateY(0);
+}
+
+.dnav-add-btn svg {
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dnav-add-btn:hover svg {
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* ── Home button (icon only) ── */
+.dnav-home-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--r-md, 12px);
+    border: 1px solid rgba(168,85,247,0.2);
+    background: rgba(168,85,247,0.06);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dnav-home-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(147,51,234,0.1), rgba(67,56,202,0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dnav-home-btn:hover {
+    background: rgba(168,85,247,0.15);
+    border-color: rgba(168,85,247,0.4);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(147,51,234,0.2);
+}
+
+.dnav-home-btn:hover::before {
+    opacity: 1;
+}
+
+.dnav-home-btn svg {
+    position: relative;
+    z-index: 1;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.dnav-home-btn:hover svg {
+    animation: dnavHomeBounce 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes dnavHomeBounce {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.15); }
+    50% { transform: scale(0.95); }
+}
+
+/* ── Notification bell ── */
+.dnav-bell-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--r-md, 12px);
+    border: 1px solid rgba(168,85,247,0.2);
+    background: rgba(168,85,247,0.06);
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dnav-bell-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(147,51,234,0.1), rgba(67,56,202,0.05));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.dnav-bell-btn:hover {
+    background: rgba(168,85,247,0.15);
+    border-color: rgba(168,85,247,0.4);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(147,51,234,0.2);
+}
+
+.dnav-bell-btn:hover::before {
+    opacity: 1;
+}
+
+.dnav-bell-btn svg {
+    position: relative;
+    z-index: 1;
+}
+
+.dnav-bell-btn:hover svg {
+    animation: dnavBellRing 0.9s ease-in-out both;
+}
+
+@keyframes dnavBellRing {
+    0%, 100% { transform: rotate(0deg); transform-origin: top center; }
+    15% { transform: rotate(12deg); }
+    30% { transform: rotate(-12deg); }
+    45% { transform: rotate(6deg); }
+    60% { transform: rotate(-6deg); }
+    75% { transform: rotate(3deg); }
+}
+
+.dnav-bell-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    border-radius: 50%;
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 800;
+    color: #fff;
+    border: 2px solid #0c0c16;
+    box-shadow: 0 0 12px rgba(255, 75, 43, 0.4);
+    pointer-events: none;
+    padding: 0 4px;
+    z-index: 2;
+}
+
+/* ── Profile button ── */
+.dnav-profile-btn {
+  padding: 12px 20px !important;
+  font-size: 15px !important;
+  border-radius: 12px !important;
+}
+
+.dnav-profile-btn .qw_fancy_btn_fold {
+  height: 0.8rem !important;
+  width: 0.8rem !important;
+  border-bottom-left-radius: 0.4rem !important;
+}
+
+/* ─── Animations ─── */
+@keyframes dnavPulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+    .dnav-stats {
+        display: none;
+    }
+    
+    .dnav-brand-text {
+        display: none;
+    }
+    
+    .dnav-shell {
+        padding: 10px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dnav-shell {
+        padding: 8px 16px;
+        gap: 0.8rem;
+    }
+    
+    .dnav-logo {
+        height: 28px;
+    }
+    
+    .dnav-pending-btn {
+        display: none;
+    }
+    
+    .dnav-addcar-btn {
+        display: none;
+    }
+    
+    .dnav-avatar-btn .dnav-avatar-name {
+        display: none;
+    }
+    
+    .dnav-avatar-btn {
+        padding: 6px;
+        border-radius: var(--r-md, 12px);
+    }
+    
+    .dnav-home-btn,
+    .dnav-bell-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .dnav-actions {
+        gap: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .dnav-shell {
+        height: 66px;
+        padding: 6px 12px;
+        gap: 0.4rem;
+    }
+    
+    .dnav-logo {
+        height: 32px;
+    }
+    
+    /* .dnav-home-btn,
+    .dnav-bell-btn {
+        width: 32px;
+        height: 32px;
+    } */
+    
+    .dnav-home-btn svg,
+    .dnav-bell-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .dnav-avatar-icon {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+
+    .dnav-profile-btn {
+        height: 36px;
+        font-size: 13.5px !important;
+        padding: 12px 15px !important;
+    }
+}
+
+/* Reduce motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .dnav-shell::before,
+    .dnav-shell::after,
+    .dnav-addcar-btn::before,
+    .dnav-avatar-btn::before,
+    .dnav-home-btn svg,
+    .dnav-bell-btn svg {
+        animation: none !important;
+    }
+}

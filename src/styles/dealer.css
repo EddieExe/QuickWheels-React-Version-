@@ -1,0 +1,109 @@
+/* Dealer Dashboard — universal dark-purple aesthetic layer.
+   Starfield + ambient glow mirror profile.css's .prf_stars/.prf_ambient_a/b
+   exactly, just renamed dd_* to keep this file's classes self-contained. */
+
+:root {
+  --dd-indigo: #4338ca;
+  --dd-purple: #9333ea;
+  --dd-violet: #7c3aed;
+  --dd-gradient: linear-gradient(115deg, var(--dd-indigo) 0%, var(--dd-violet) 45%, var(--dd-purple) 100%);
+  --dd-glow: 0 0 40px rgba(147, 51, 234, 0.22);
+}
+
+.dd_stars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.dd_star_layer {
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-repeat: repeat;
+}
+
+.dd_star_layer_a {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.85) 100%, transparent),
+    radial-gradient(1px 1px at 90px 120px, rgba(255, 255, 255, 0.6) 100%, transparent),
+    radial-gradient(1.5px 1.5px at 150px 60px, rgba(255, 255, 255, 0.75) 100%, transparent),
+    radial-gradient(1px 1px at 200px 180px, rgba(255, 255, 255, 0.55) 100%, transparent);
+  background-size: 220px 220px;
+  opacity: 0.4;
+  animation: dd-stars-drift 90s linear infinite;
+}
+
+.dd_star_layer_b {
+  background-image:
+    radial-gradient(1px 1px at 40px 80px, rgba(168, 85, 247, 0.65) 100%, transparent),
+    radial-gradient(1px 1px at 130px 20px, rgba(255, 255, 255, 0.5) 100%, transparent),
+    radial-gradient(1.5px 1.5px at 180px 140px, rgba(255, 255, 255, 0.6) 100%, transparent);
+  background-size: 260px 260px;
+  opacity: 0.28;
+  animation: dd-stars-drift 140s linear infinite reverse;
+}
+
+.dd_star_layer_c {
+  background-image:
+    radial-gradient(1px 1px at 60px 10px, rgba(255, 255, 255, 0.4) 100%, transparent),
+    radial-gradient(1px 1px at 160px 100px, rgba(168, 85, 247, 0.4) 100%, transparent);
+  background-size: 300px 300px;
+  opacity: 0.2;
+  animation: dd-stars-drift 200s linear infinite;
+}
+
+@keyframes dd-stars-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-220px, -220px, 0); }
+}
+
+.dd_ambient_a,
+.dd_ambient_b {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(110px);
+}
+
+.dd_ambient_a {
+  top: -14%;
+  left: -8%;
+  width: 44vw;
+  height: 44vw;
+  max-width: 620px;
+  background: radial-gradient(circle, rgba(67, 56, 202, 0.22) 0%, transparent 70%);
+  animation: dd-flare-a 15s ease-in-out infinite;
+}
+
+.dd_ambient_b {
+  bottom: -16%;
+  right: -8%;
+  width: 40vw;
+  height: 40vw;
+  max-width: 540px;
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.16) 0%, transparent 70%);
+  animation: dd-flare-b 12s ease-in-out infinite;
+}
+
+@keyframes dd-flare-a {
+  0%, 100% { opacity: 0.8; transform: translate(0, 0) scale(1); }
+  50%      { opacity: 1;   transform: translate(3%, 4%) scale(1.12); }
+}
+
+@keyframes dd-flare-b {
+  0%, 100% { opacity: 0.7; transform: translate(0, 0) scale(1); }
+  50%      { opacity: 1;   transform: translate(-3%, -3%) scale(1.15); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dd_star_layer,
+  .dd_ambient_a,
+  .dd_ambient_b {
+    animation: none;
+  }
+}
