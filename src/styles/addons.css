@@ -1,48 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap');
+
+/* ═══════════════════════════════════════════════════════
+   QUICKWHEELS ADD-ONS — PREMIUM DESIGN SYSTEM
+   Dark purple aesthetic, matches fleet.css / booking.css / profile.css
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  --ad-purple:        #a855f7;
+  --ad-purple-mid:     #9333ea;
+  --ad-purple-deep:    #6d28d9;
+  --ad-purple-bright:  #c084fc;
+  --ad-violet:         #7c3aed;
+
+  --ad-brand-gradient:    linear-gradient(135deg, var(--ad-purple-deep) 0%, var(--ad-purple) 100%);
+  --ad-brand-gradient-3:  linear-gradient(135deg, var(--ad-purple-deep) 0%, var(--ad-purple-mid) 45%, var(--ad-purple-bright) 100%);
+  --ad-glass-gradient:    linear-gradient(135deg, rgba(147,51,234,0.14) 0%, rgba(168,85,247,0.04) 100%);
+
+  --ad-bg-base:     #05050b;
+  --ad-border:      rgba(255,255,255,0.08);
+  --ad-border-hi:   rgba(168,85,247,0.4);
+  --ad-text-sec:    rgba(255,255,255,0.65);
+  --ad-text-muted:  rgba(255,255,255,0.4);
+
+  --ad-shadow-glow: 0 0 24px rgba(147,51,234,0.35);
+  --ad-shadow-lg:   0 20px 48px rgba(0,0,0,0.5);
+
+  --ad-r-sm: 8px;
+  --ad-r-md: 12px;
+  --ad-r-lg: 20px;
+
+  --ad-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --ad-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ad-ease-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ---------- 0. ICON SYSTEM ---------- */
+.ad-icon {
+    display: inline-block;
+    vertical-align: -2px;
+    flex-shrink: 0;
+    color: currentColor;
+}
+
+.ad-icon-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
 /* ---------- 1. SECTION CONTAINER ---------- */
 .addons-section {
-    padding: 0px 30px 30px 30px;
+    padding: 120px 30px 40px 30px;
     width: 100%;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #0a0a0f !important;
+    background: var(--ad-bg-base) !important;
     background-image: none !important;
     position: relative;
     overflow-x: hidden;
     box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
 }
 
-/* Blue Light Effect - Top Glow */
+/* Ambient Purple Glow — top, drifts + breathes, same language as Fleet page */
 .addons-section::before {
     content: '';
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: radial-gradient(ellipse at 50% 0%, rgba(4, 0, 255, 0.25), rgba(76, 227, 247, 0.1), transparent 60%);
+    top: -10%;
+    left: -10%;
+    width: 70vw;
+    height: 70vw;
+    max-width: 900px;
+    background: radial-gradient(ellipse at center, rgba(109, 40, 217, 0.32), rgba(168, 85, 247, 0.12), transparent 65%);
     pointer-events: none;
     z-index: 0;
-    animation: breathe 4s ease-in-out infinite;
+    filter: blur(20px);
+    animation: ad-flare-drift-a 16s ease-in-out infinite;
+}
+
+/* Secondary ambient glow — bottom right, drifts opposite direction */
+.addons-section::after {
+    content: '';
+    position: fixed;
+    bottom: -12%;
+    right: -10%;
+    width: 55vw;
+    height: 55vw;
+    max-width: 700px;
+    background: radial-gradient(circle at 70% 100%, rgba(147, 51, 234, 0.22), rgba(192,132,252,0.05) 55%, transparent 75%);
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(30px);
+    animation: ad-flare-drift-b 13s ease-in-out infinite;
+}
+
+@keyframes ad-flare-drift-a {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(4%, 3%) scale(1.06); }
+}
+
+@keyframes ad-flare-drift-b {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(-4%, -3%) scale(1.05); }
+}
+
+/* Content sits above the background layers */
+.addons-section > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Drifting starfield layer, identical module to the Fleet page ── */
+.ad_stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.ad_star_layer {
+    position: absolute;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background-repeat: repeat;
+}
+
+.ad_star_layer_a {
+    background-image:
+        radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.85) 100%, transparent),
+        radial-gradient(1px 1px at 90px 120px, rgba(255,255,255,0.65) 100%, transparent),
+        radial-gradient(1.5px 1.5px at 150px 60px, rgba(255,255,255,0.75) 100%, transparent),
+        radial-gradient(1px 1px at 200px 180px, rgba(255,255,255,0.55) 100%, transparent);
+    background-size: 220px 220px;
+    opacity: 0.4;
+    animation: ad-stars-drift 90s linear infinite;
+}
+
+.ad_star_layer_b {
+    background-image:
+        radial-gradient(1px 1px at 40px 80px, rgba(168,85,247,0.8) 100%, transparent),
+        radial-gradient(1px 1px at 130px 20px, rgba(255,255,255,0.55) 100%, transparent),
+        radial-gradient(1.5px 1.5px at 180px 140px, rgba(255,255,255,0.65) 100%, transparent);
+    background-size: 260px 260px;
+    opacity: 0.3;
+    animation: ad-stars-drift 140s linear infinite reverse;
+}
+
+.ad_star_layer_c {
+    background-image:
+        radial-gradient(1px 1px at 60px 10px, rgba(255,255,255,0.45) 100%, transparent),
+        radial-gradient(1px 1px at 160px 100px, rgba(168,85,247,0.55) 100%, transparent);
+    background-size: 300px 300px;
+    opacity: 0.2;
+    animation: ad-stars-drift 200s linear infinite;
+}
+
+@keyframes ad-stars-drift {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-220px, -220px, 0); }
+}
+
+.ad_ambient_a,
+.ad_ambient_b {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(110px);
+}
+
+.ad_ambient_a {
+    top: 30%;
+    left: 60%;
+    width: 30vw;
+    height: 30vw;
+    max-width: 420px;
+    background: radial-gradient(circle, rgba(147,51,234,0.16) 0%, transparent 70%);
+    animation: ad-flare-drift-a 20s ease-in-out infinite reverse;
+}
+
+.ad_ambient_b {
+    top: 55%;
+    left: 5%;
+    width: 26vw;
+    height: 26vw;
+    max-width: 360px;
+    background: radial-gradient(circle, rgba(109,40,217,0.14) 0%, transparent 70%);
+    animation: ad-flare-drift-b 18s ease-in-out infinite reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ad_star_layer,
+    .ad_ambient_a,
+    .ad_ambient_b,
+    .addons-section::before,
+    .addons-section::after {
+        animation: none !important;
+    }
 }
 
 /* ---------- 2. TITLE SECTION ---------- */
 .addons_title {
-    font-size: 2.5rem;
-    background: linear-gradient(135deg, #ffffff 30%, #4ce3f7, #0400ff);
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #ffffff 30%, var(--ad-purple-bright), var(--ad-purple-deep));
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -1px;
-    animation: fadeInDown 0.8s ease-out, gradientShift 4s ease infinite;
+    animation: fadeInDown 0.8s ease-out, ad-gradientShift 4s ease infinite;
     position: relative;
+    text-align: center;
 }
 
-@keyframes gradientShift {
+@keyframes ad-gradientShift {
     0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    50%      { background-position: 100% 50%; }
 }
 
 .addons_title::after {
@@ -53,73 +232,69 @@
     transform: translateX(-50%);
     width: 0;
     height: 3px;
-    background: linear-gradient(90deg, #0400ff, #4ce3f7);
+    background: linear-gradient(90deg, var(--ad-purple-deep), var(--ad-purple-bright));
     border-radius: 3px;
     animation: widthExpand 0.8s ease-out 0.3s forwards;
 }
 
 @keyframes widthExpand {
     from { width: 0; opacity: 0; }
-    to { width: 200px; opacity: 1; }
+    to   { width: 200px; opacity: 1; }
 }
 
 .addons_description {
     text-align: center;
-    font-size: 1.1rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 50px;
+    font-size: 1rem;
+    color: var(--ad-text-sec);
+    margin: 22px 0 30px;
     animation: fadeInUp 0.6s ease-out 0.1s forwards;
     opacity: 0;
+    max-width: 560px;
 }
 
 /* ---------- 3. ADDONS GRID ---------- */
 #addons-list {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: 300px;    /* 👈 fixed card width */
-    gap: 25px;
-    overflow-x: auto;
-    padding-bottom: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
     width: 100%;
     max-width: 1300px;
-    margin: 0px auto 30px auto;
+    margin: 0 auto 36px auto;
+    animation: fadeInUp 1s ease-out 0.35s forwards;
+    opacity: 0;
 }
 
-/* ---------- 4. ADDON CARD (Glassmorphism) ---------- */
+/* ---------- 4. ADDON CARD (glassmorphism, matches .fleet_card) ---------- */
 .addon_card {
     display: flex;
     flex-direction: column;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--ad-r-lg);
+    border: 1px solid var(--ad-border);
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: all 0.4s var(--ad-ease-smooth);
     cursor: pointer;
     position: relative;
     height: 100%;
-    animation: cardReveal 0.6s cubic-bezier(0.23, 1, 0.32, 1) backwards;
+    animation: cardReveal 0.6s var(--ad-ease-smooth) backwards;
+    will-change: transform;
 }
 
-/* Stagger Animation for Cards */
 .addon_card:nth-child(1) { animation-delay: 0.05s; }
 .addon_card:nth-child(2) { animation-delay: 0.1s; }
 .addon_card:nth-child(3) { animation-delay: 0.15s; }
 .addon_card:nth-child(4) { animation-delay: 0.2s; }
+.addon_card:nth-child(5) { animation-delay: 0.25s; }
+.addon_card:nth-child(6) { animation-delay: 0.3s; }
 
 @keyframes cardReveal {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Card Top Glow Effect */
+/* Top shimmer sweep on hover — matches .fleet_card::before */
 .addon_card::before {
     content: '';
     position: absolute;
@@ -127,25 +302,27 @@
     left: -100%;
     right: 100%;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #4ce3f7, #0400ff, transparent);
-    transition: all 0.5s ease;
+    background: linear-gradient(90deg, transparent, var(--ad-purple-bright), var(--ad-purple-deep), transparent);
+    transition: all 0.5s var(--ad-ease-smooth);
+    z-index: 2;
 }
 
-.addon_card:hover::before {
+.addon_card:hover::before,
+.addon_card.addon_selected::before {
     left: -50%;
     right: -50%;
 }
 
-/* Card Glow on Hover */
+/* Radial glow on hover — matches .fleet_card::after */
 .addon_card::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(76, 227, 247, 0.1), transparent);
+    background: radial-gradient(circle at 50% 0%, rgba(168,85,247,0.12), transparent 65%);
     opacity: 0;
     transition: opacity 0.4s ease;
     pointer-events: none;
-    border-radius: 20px;
+    border-radius: var(--ad-r-lg);
 }
 
 .addon_card:hover::after {
@@ -153,142 +330,284 @@
 }
 
 .addon_card:hover {
-    transform: translateY(-8px);
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(76, 227, 247, 0.4);
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 20px rgba(76, 227, 247, 0.1);
+    transform: translateY(-6px);
+    background: rgba(168, 85, 247, 0.07);
+    border-color: var(--ad-border-hi);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45), 0 0 20px rgba(147, 51, 234, 0.2);
 }
 
-/* Selected Card State */
+.addon_card:active {
+    transform: translateY(-3px) scale(0.99);
+    transition-duration: 0.15s;
+}
+
+/* Selected card state — purple glow, matches Fleet's selected-card treatment */
 .addon_card.addon_selected {
-    border-color: rgba(76, 227, 247, 0.6);
-    background: rgba(76, 227, 247, 0.08);
-    box-shadow: 0 0 20px rgba(76, 227, 247, 0.2);
+    border-color: var(--ad-border-hi);
+    background: rgba(168, 85, 247, 0.09);
+    box-shadow: 0 0 0 1px rgba(168,85,247,0.35), 0 12px 32px rgba(147,51,234,0.25);
 }
 
-.addon_card.addon_selected::before {
-    opacity: 1;
-    left: -50%;
-    right: -50%;
+/* ---------- Card image + selected badge ---------- */
+.addon_image_wrap {
+    position: relative;
+    width: 100%;
+    height: 170px;
+    flex-shrink: 0;
+    overflow: hidden;
 }
 
-/* Card Image */
 .addon_image {
     width: 100%;
-    height: 200px;
+    height: 100%;
     object-fit: cover;
-    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    display: block;
+    transition: transform 0.5s var(--ad-ease-smooth);
 }
 
 .addon_card:hover .addon_image {
-    transform: scale(1.05);
+    transform: scale(1.06);
 }
 
-/* Card Content */
+/* "Selected" pill — same recipe as .fl-badge-selected on the Fleet page */
+.addon_badge_selected {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--ad-brand-gradient-3);
+    background-size: 180% 180%;
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: 0 4px 16px rgba(147,51,234,0.4);
+    animation: ad-badge-in 0.35s var(--ad-ease-spring), ad-pill-glow 2.4s ease-in-out infinite;
+    letter-spacing: 0.02em;
+}
+
+@keyframes ad-badge-in {
+    from { opacity: 0; transform: translateY(-6px) scale(0.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes ad-pill-glow {
+    0%, 100% { box-shadow: 0 6px 20px rgba(147,51,234,0.45), 0 0 0 1px rgba(168,85,247,0.25); }
+    50%      { box-shadow: 0 6px 26px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.4); }
+}
+
+/* ---------- Card content ---------- */
 .addon_content {
-    padding: 10px 20px;
+    padding: 16px 18px 18px;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
 .addon_title {
-    font-size: 1.5rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #fff;
-    margin: 15px 0 10px 0;
-    position: relative;
-    display: inline-block;
+    margin: 0 0 8px 0;
 }
 
 .addon_description {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    color: var(--ad-text-sec);
     line-height: 1.5;
-    margin: 10px auto;
+    margin: 0 0 14px 0;
+    flex: 1;
 }
 
-/* Price Styling */
-.addon_content strong {
-    font-size: 1.2rem;
+.addon_price_row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,0.06);
 }
 
-/* Selected Badge */
-.addon_content p:last-child {
-    margin-top: 10px;
+.addon_price {
+    font-size: 1.05rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--ad-purple-bright), var(--ad-purple-deep));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.addon_price span {
+    font-size: 0.7rem;
     font-weight: 600;
-    animation: fadeInUp 0.3s ease;
+    color: var(--ad-text-muted);
+    -webkit-text-fill-color: var(--ad-text-muted);
 }
 
-.addon_content p:last-child[style*="green"] {
-    color: #4ce3f7 !important;
-    display: flex;
+.addon_toggle_hint {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--ad-text-muted);
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    transition: color 0.3s var(--ad-ease-smooth);
 }
 
-.addon_content p:last-child[style*="green"]::before {
-    content: '✓';
-    font-size: 1rem;
+.addon_card.addon_selected .addon_toggle_hint {
+    color: var(--ad-purple-bright);
 }
 
-/* ---------- 5. BUTTONS SECTION ---------- */
-.buttons {
-    display: flex;
-    gap: 20px;
-    animation: fadeInUp 0.6s ease-out 0.3s forwards;
-    opacity: 0;
-    height: 40px;
-}
-
-.skip_btn {
-    font-size: 0.95rem;
+/* ---------- 5. SUMMARY BAR ---------- */
+.addons_footer_row {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto 30px;
+    flex-wrap: wrap;
 }
 
-/* Skip Button Hover Effect */
-.skip_btn:last-child {
-    background: rgba(255, 255, 255, 0.08);
-    color: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+.addons_summary_bar {
+    flex: 1;
+    min-width: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 22px;
+    background: var(--ad-glass-gradient);
+    border: 1px solid rgba(168,85,247,0.22);
+    border-radius: var(--ad-r-lg);
+    animation: fadeInUp 0.5s var(--ad-ease-out) 0.2s backwards;
 }
 
-.skip_btn:last-child:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(76, 227, 247, 0.3);
+.addons_summary_left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.addons_summary_label {
+    font-size: 0.8rem;
+    color: var(--ad-text-sec);
+    font-weight: 600;
+}
+
+.addons_summary_total {
+    font-size: 1.4rem;
+    font-weight: 800;
     color: #fff;
 }
 
-/* ---------- 6. ANIMATIONS ---------- */
+.addons_summary_total span {
+    font-size: 0.85rem;
+    color: var(--ad-text-muted);
+    font-weight: 600;
+}
+
+.addons_summary_count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(168,85,247,0.12);
+    border: 1px solid rgba(168,85,247,0.3);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ad-purple-bright);
+}
+
+/* ---------- 6. BUTTONS SECTION ---------- */
+.buttons {
+    display: flex;
+    gap: 16px;
+    animation: fadeInUp 0.6s ease-out 0.3s forwards;
+    opacity: 0;
+    flex-shrink: 0;
+    margin-left: auto;
+}
+
+.skip_btn {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 48px;
+    padding: 0 32px;
+    border-radius: var(--ad-r-md);
+    border: none;
+    cursor: pointer;
+    transition:
+        transform 0.25s var(--ad-ease-out),
+        box-shadow 0.25s var(--ad-ease-smooth),
+        background 0.3s var(--ad-ease-smooth);
+}
+
+/* Primary — "Proceed to Payment" */
+.skip_btn:first-child {
+    color: #fff;
+    background: var(--ad-brand-gradient-3);
+    background-size: 180% 180%;
+    background-position: 0% 50%;
+    box-shadow: 0 6px 20px rgba(147,51,234,0.35);
+}
+
+.skip_btn:first-child:hover {
+    background-position: 100% 50%;
+    box-shadow: 0 10px 28px rgba(147,51,234,0.5);
+    transform: translateY(-2px);
+}
+
+.skip_btn:first-child:active {
+    transform: translateY(0);
+}
+
+/* Secondary — "Skip" */
+.skip_btn:last-child {
+    background: rgba(168,85,247,0.08);
+    color: rgba(255,255,255,0.8);
+    border: 1px solid rgba(168,85,247,0.28);
+}
+
+.skip_btn:last-child:hover {
+    background: rgba(168,85,247,0.16);
+    border-color: rgba(168,85,247,0.5);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(147,51,234,0.25);
+    transform: translateY(-2px);
+}
+
+.skip_btn:last-child:active {
+    transform: translateY(0);
+}
+
+/* ---------- 7. ANIMATIONS ---------- */
 @keyframes fadeInDown {
-    from { 
-        opacity: 0; 
-        transform: translateY(-40px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
+    from { opacity: 0; transform: translateY(-40px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInUp {
-    from { 
-        opacity: 0; 
-        transform: translateY(40px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
-    }
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ---------- 9. EMPTY STATE (if needed) ---------- */
+/* ---------- 8. EMPTY STATE ---------- */
 .empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--ad-text-sec);
 }
 
 .empty-state svg {
@@ -298,41 +617,208 @@
     opacity: 0.5;
 }
 
+/* ═══════════════════════════════════════════════════════
+   9. RESPONSIVE — tiered from desktop down to small phones
+   ═══════════════════════════════════════════════════════ */
 
-/* ---------- 7. RESPONSIVE DESIGN ---------- */
-
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
     .addons-section {
-        padding: 0px 20px 30px 20px;
-    }
-
-    .addons_title {
-        font-size: 2rem;
-    }
-
-    .addons_description {
-        font-size: 15px;
+        padding: 0px 22px 32px 22px;
     }
 
     #addons-list {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
+        grid-template-columns: repeat(3, 1fr);
     }
 
-    /* .addon_image {
-        height: 150px;
-    } */
+    .addons_title {
+        font-size: 2.1rem;
+    }
+}
+
+@media (max-width: 900px) {
+    #addons-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .addons-section {
+        padding: 0px 16px 28px 16px;
+    }
+
+    .addons_title {
+        font-size: 1.8rem;
+        letter-spacing: -0.5px;
+    }
+
+    .addons_description {
+        font-size: 0.92rem;
+        margin: 18px 0 28px;
+    }
+
+    #addons-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .addon_image_wrap {
+        height: 120px;
+    }
+
+    .addon_content {
+        padding: 12px 12px 14px;
+    }
 
     .addon_title {
-        font-size: 1.1rem;
+        font-size: 0.95rem;
+        margin-bottom: 5px;
     }
 
     .addon_description {
-        font-size: 15px;
+        font-size: 0.72rem;
+        line-height: 1.4;
+        margin-bottom: 10px;
+        /* Keep two-column cards from growing too tall on small phones */
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
-    .addon_content strong {
-        font-size: 1rem;
+    .addon_price_row {
+        padding-top: 8px;
+    }
+
+    .addon_price {
+        font-size: 0.85rem;
+    }
+
+    .addon_toggle_hint {
+        display: none;
+    }
+
+    .addon_badge_selected {
+        top: 8px;
+        right: 8px;
+        padding: 4px 9px;
+        font-size: 9px;
+    }
+
+    .addons_footer_row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
+
+    .addons_summary_bar {
+        width: 100%;
+        min-width: 0;
+        padding: 12px 16px;
+        gap: 10px;
+    }
+
+    .addons_summary_total {
+        font-size: 1.15rem;
+    }
+
+    .buttons {
+        flex-direction: row;
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .skip_btn {
+        flex: 1;
+        width: auto;
+        height: 46px;
+    }
+}
+
+@media (max-width: 479px) {
+    .addons-section {
+        padding: 0px 10px 24px 10px;
+    }
+
+    .addons_title {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+
+    .addons_title::after {
+        bottom: -10px;
+    }
+
+    .addons_description {
+        font-size: 0.82rem;
+        margin: 14px 0 22px;
+    }
+
+    /* Explicitly 2 columns at this breakpoint */
+    #addons-list {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .addon_card {
+        border-radius: var(--ad-r-md);
+    }
+
+    .addon_image_wrap {
+        height: 92px;
+    }
+
+    .addon_content {
+        padding: 10px 10px 12px;
+    }
+
+    .addon_title {
+        font-size: 0.82rem;
+        margin-bottom: 4px;
+        line-height: 1.25;
+    }
+
+    .addon_description {
+        font-size: 0.68rem;
+        margin-bottom: 8px;
+        -webkit-line-clamp: 2;
+    }
+
+    .addon_price_row {
+        padding-top: 6px;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .addon_price {
+        font-size: 0.78rem;
+    }
+
+    .addon_price span {
+        font-size: 0.62rem;
+    }
+
+    .addon_badge_selected {
+        top: 6px;
+        right: 6px;
+        padding: 3px 8px;
+        font-size: 8px;
+        gap: 3px;
+    }
+
+    .addons_summary_bar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 14px;
+    }
+
+    .addons_summary_total {
+        font-size: 1.05rem;
+    }
+
+    .skip_btn {
+        font-size: 0.85rem;
+        padding: 0 20px;
     }
 }

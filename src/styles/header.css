@@ -194,6 +194,7 @@ body::-webkit-scrollbar-thumb {
     text-decoration: none;
     color: #fff;
     font-weight: 700;
+    font-family: "Quicksand";
     font-size: 0.95rem;
     padding: 12px 26px;
     border-radius: var(--pnav-radius);
@@ -320,6 +321,16 @@ body::-webkit-scrollbar-thumb {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+}
+
+/* Full name shows by default (desktop/tablet); short 2-letter version is
+   only revealed at the 479px breakpoint below. */
+.pnav-profile-btn-name-full {
+    display: inline;
+}
+
+.pnav-profile-btn-name-short {
+    display: none;
 }
 
 .pnav-profile-btn-icon {
@@ -1079,6 +1090,12 @@ body::-webkit-scrollbar-thumb {
   border-bottom-left-radius: 0.4rem !important;
 }
 
+/* ── Mobile sidebar toggle — hidden on desktop by default (also set
+   inline in the JSX); restored via the breakpoints below. ── */
+.mobile-menu-btn {
+  display: none;
+}
+
 /* ─── Animations ─── */
 @keyframes dnavPulseDot {
     0%, 100% { opacity: 1; transform: scale(1); }
@@ -1100,77 +1117,230 @@ body::-webkit-scrollbar-thumb {
     }
 }
 
+/* Sidebar goes off-canvas below this width on both dashboards — the
+   hamburger needs to appear at the same breakpoint. */
+@media (max-width: 900px) {
+    .mobile-menu-btn {
+        display: flex !important;
+    }
+}
+
 @media (max-width: 768px) {
     .dnav-shell {
         padding: 8px 16px;
-        gap: 0.8rem;
+        gap: 0.6rem;
     }
-    
+
     .dnav-logo {
-        height: 28px;
+        height: 30px;
     }
-    
+
     .dnav-pending-btn {
         display: none;
     }
-    
-    .dnav-addcar-btn {
+
+    /* Revenue/Bookings/Users strip (admin) and the "DEALER DASHBOARD"
+       text (dealer) — both hidden at this width, matching how neither
+       shows up in the mobile reference screenshots. Desktop is
+       untouched since this only fires inside the media query. */
+    .header-stats,
+    .admin-role-badge-wrapper,
+    .dnav-title-block {
+        display: none !important;
+    }
+
+    /* Add Car in the HEADER — icon only, label hidden. Scoped to
+       .dnav-add-btn-header only so the identical-looking button inside
+       the sidebar (plain .dnav-add-btn, full width) is never affected. */
+    .dnav-add-btn-header {
+        width: 42px !important;
+    }
+    .dnav-add-btn-header span {
         display: none;
     }
-    
-    .dnav-avatar-btn .dnav-avatar-name {
-        display: none;
-    }
-    
-    .dnav-avatar-btn {
-        padding: 6px;
-        border-radius: var(--r-md, 12px);
-    }
-    
+
     .dnav-home-btn,
     .dnav-bell-btn {
         width: 36px;
         height: 36px;
     }
-    
+
     .dnav-actions {
-        gap: 6px;
+        gap: 8px;
+    }
+
+    /* Profile pill shrinks but keeps the icon + full name, same
+       treatment as the reference (Aditya / Samiksha stay fully
+       readable, not collapsed to initials). */
+    .dnav-profile-btn {
+        padding: 9px 16px !important;
+        font-size: 13px !important;
     }
 }
 
-@media (max-width: 480px) {
+/* ─── ≤479px: phones ─── */
+@media (max-width: 479px) {
     .dnav-shell {
-        height: 66px;
-        padding: 6px 12px;
-        gap: 0.4rem;
+        padding: 6px 10px;
+        gap: 6px;
+        height: 70px;
     }
-    
+
     .dnav-logo {
-        height: 32px;
+        height: 30px;
     }
-    
-    /* .dnav-home-btn,
+
+    .dnav-actions {
+        gap: 6px;
+    }
+
+    .mobile-menu-btn,
+    .dnav-home-btn,
     .dnav-bell-btn {
-        width: 32px;
-        height: 32px;
-    } */
-    
+        width: 36px !important;
+        height: 36px !important;
+    }
+    .mobile-menu-btn svg,
     .dnav-home-btn svg,
     .dnav-bell-btn svg {
-        width: 16px;
-        height: 16px;
+        width: 15px;
+        height: 15px;
     }
-    
-    .dnav-avatar-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 11px;
+
+    /* Header's Add Car button is removed entirely at this width — it's
+       still reachable via the sidebar's own Add Car button (which
+       keeps its full "Add Car" text, unaffected since it's not
+       .dnav-add-btn-header). */
+    .dnav-add-btn-header {
+        display: none !important;
     }
 
     .dnav-profile-btn {
+        padding: 9px 13px !important;
+        font-size: 12px !important;
         height: 36px;
-        font-size: 13.5px !important;
-        padding: 12px 15px !important;
+    }
+    .dnav-profile-btn .qw_fancy_btn_icon {
+        width: 15px;
+        height: 15px;
+    }
+
+    .dnav-bell-badge {
+        min-width: 15px;
+        height: 15px;
+        font-size: 8px;
+        top: -3px;
+        right: -3px;
+        border-width: 1.5px;
+    }
+}
+
+@media (max-width: 479px) {
+    .pnav-header {
+        padding: 10px 0;
+    }
+
+    .pnav-shell {
+        padding: 5px 6px 5px 14px;
+    }
+
+    .pnav-links {
+        width: 160px;
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .pnav-link {
+        font-size: 12px;
+        padding: 8px 16px;
+    }
+
+    .pnav-actions {
+        gap: 10px;
+    }
+
+    .pnav-signin-btn {
+        font-size: 13.5px;
+        padding: 9px 16px;
+    }
+
+    .pnav-hamburger {
+        border-radius: 50%;
+        height: 35px;
+        width: 35px;
+        gap: 4px;
+    }
+
+    .pnav-hamburger span {
+        width: 15px;
+    }
+
+    /* Profile button: show icon + first 2 letters of the name instead
+       of the icon-only circle inherited from the 900px breakpoint. */
+    .pnav-profile-btn {
+        width: auto;
+        padding: 9px 16px;
+        font-size: 13.5px;
+        border-radius: var(--pnav-radius);
+    }
+
+    .pnav-profile-btn-inner {
+        display: inline-flex !important;
+        gap: 6px;
+    }
+
+    .pnav-profile-btn-name-full {
+        display: none;
+    }
+
+    .pnav-profile-btn-name-short {
+        display: inline;
+        font-size: 13px;
+        letter-spacing: 0.2px;
+    }
+
+    .pnav-dropdown {
+        right: 0;
+        left: auto;
+        min-width: 200px;
+        max-width: calc(100vw - 24px);
+    }
+
+    .pnav-dropdown-inner {
+        padding: 10px;
+    }
+
+    .pnav-user-name {
+        font-size: 15px;
+    }
+
+    .pnav-user-email {
+        font-size: 12px;
+    }
+
+    .pnav-dropdown-divider {
+        margin: 5px 0;
+    }
+
+    .pnav-dropdown-link {
+        padding: 8px;
+        font-size: 13.5px;
+        gap: 8px;
+    }
+
+    .pnav-signout-btn {
+        margin: 10px auto;
+        height: 30px;
+        width: 30px;
+    }
+
+    .pnav-signout-btn svg {
+        height: 12px;
+        width: 12px;
+    }
+
+    .pnav-sign-text {
+        font-size: 13.5px
     }
 }
 

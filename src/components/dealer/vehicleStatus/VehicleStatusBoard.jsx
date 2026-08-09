@@ -366,10 +366,10 @@ function PremiumStatusCard({ car, dealerId, onStatusChange, isSelected, onSelect
             <img src={displayImage} alt={car.model} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <p style={{ margin: 0, color: "#fff", fontSize: "13px", fontWeight: "700", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+            <p className="car_model_name" style={{ margin: 0, color: "#fff", fontSize: "13px", fontWeight: "700", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {car.model}
             </p>
-            <p style={{ margin: "1px 0 0", color: "rgba(255,255,255,0.35)", fontSize: "10px" }}>
+            <p className="car_number_plate" style={{ margin: "1px 0 0", color: "rgba(255,255,255,0.35)", fontSize: "10px" }}>
               {car.numberPlate || "No plate"} · {car.type || "—"}
             </p>
           </div>
@@ -569,13 +569,7 @@ export default function VehicleStatusBoard({
           .status-card-compact > div:first-child {
             width: 44px !important;
             height: 34px !important;
-          }
-          .status-card-compact p:first-of-type {
-            font-size: 12px !important;
-          }
-          .status-card-compact p:last-of-type {
-            font-size: 9px !important;
-          }
+          }                    
           .status-badge {
             padding: 3px 7px !important;
           }
@@ -633,24 +627,34 @@ export default function VehicleStatusBoard({
           }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 479px) {
+          .section-header-row {
+            margin: 0px !important;
+          }
+          .vs-container {
+            padding: 0px !important;
+          }
+          .vehicle_status_board {
+            padding: 14px !important;
+          }
           .status-card-compact {
-            padding: 8px 10px 8px 34px !important;
-            gap: 8px !important;
+            padding: 10px 10px 10px 38px !important;
+            gap: 10px !important;
           }
           .status-card-compact > div:first-child {
             width: 38px !important;
             height: 30px !important;
             border-radius: 8px !important;
           }
-          .status-card-compact p:first-of-type {
-            font-size: 11px !important;
+          .car_model_name {
+            font-size: 12px !important;
           }
-          .status-card-compact p:last-of-type {
-            font-size: 8px !important;
+          .car_number_plate {
+            font-size: 10px !important;
+            margin-top: 3px !important;
           }
           .status-badge {
-            padding: 2px 6px !important;
+            padding: 5px !important;
           }
           .status-badge span {
             font-size: 8px !important;
@@ -686,7 +690,7 @@ export default function VehicleStatusBoard({
         }
       `}</style>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "16px", fontFamily: "Quicksand,sans-serif" }}>
+      <div className="vehicle_container" style={{ display: "flex", flexDirection: "column", gap: "16px", fontFamily: "Quicksand,sans-serif" }}>
 
         <div className="vsb-results-count" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <p style={{ margin: 0, fontSize: "11px", color: "rgba(255,255,255,0.3)", fontWeight: "600" }}>

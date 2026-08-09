@@ -100,6 +100,170 @@
   50%      { opacity: 1;   transform: translate(-3%, -3%) scale(1.15); }
 }
 
+/* ══════════════════════════════════════════════════════
+   BOOKINGS TAB — filter pairing
+   ══════════════════════════════════════════════════════ */
+
+/* Pairs stay stacked on desktop sidebar (too narrow to split) */
+.bookings-filter-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* On tablet/mobile, split each row into 2 equal columns */
+@media (max-width: 768px) {
+  .bookings-filter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .bookings-filter-row input,
+  .bookings-filter-row select {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 11.5px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    height: 40px !important;
+  }
+
+  /* Extra left padding so text clears the icon, and right
+     padding on selects so text clears the chevron */
+  .bookings-filter-row input {
+    padding-left: 34px !important;
+  }
+  .bookings-filter-row select {
+    padding: 10px 26px 10px 34px !important;
+  }
+
+  /* Pull icon/chevron in slightly and shrink so they don't
+     crowd the truncated label in a half-width column */
+  .bookings-filter-row .filter-input-icon,
+  .bookings-filter-row .filter-select-icon {
+    left: 12px !important;
+  }
+  .bookings-filter-row .filter-input-icon svg,
+  .bookings-filter-row .filter-select-icon svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  .bookings-filter-row .filter-select-chevron {
+    right: 10px !important;
+    font-size: 9px !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   FLEET TAB — filter pairing
+   ══════════════════════════════════════════════════════ */
+
+.fleet-filter-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ══════════════════════════════════════════════════════
+   ALL 479px-AND-BELOW RULES — consolidated into ONE block
+   ══════════════════════════════════════════════════════ */
+@media (max-width: 479px) {
+  .qw_shine_heading {
+    font-size: 18px !important;
+  }
+
+  /* ── Fleet filter rows → 2 equal columns ── */
+  .fleet-filter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .fleet-filter-row select,
+  .fleet-filter-row button {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 11px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    height: 40px !important;
+  }
+
+  /* A bit more breathing room than before between icon and label */
+  .fleet-filter-row select {
+    padding: 10px 28px 10px 34px !important;
+  }
+
+  .fleet-filter-row .filter-select-icon {
+    left: 12px !important;
+  }
+  .fleet-filter-row .filter-select-icon svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  .fleet-filter-row .filter-select-chevron {
+    right: 10px !important;
+    font-size: 9px !important;
+  }
+
+  /* Add New Car button spacing */
+  .fleet-filter-row button {
+    padding: 0 8px !important;
+    gap: 5px !important;
+    justify-content: center !important;
+  }
+
+  .fleet-filter-row button span {
+    font-size: 10.5px !important;
+  }
+
+  .fleet-filter-row button svg {
+    width: 13px !important;
+    height: 13px !important;
+    flex-shrink: 0;
+  }
+
+  /* ── Bookings filter rows → 2 equal columns, extra icon/label gap ── */
+  .bookings-filter-row select,
+  .bookings-filter-row input {
+    font-size: 11px !important;
+  }
+
+  .bookings-filter-row input {
+    padding-left: 34px !important;
+  }
+  .bookings-filter-row select {
+    padding: 10px 28px 10px 34px !important;
+  }
+
+  .bookings-filter-row .filter-input-icon,
+  .bookings-filter-row .filter-select-icon {
+    left: 12px !important;
+  }
+  .bookings-filter-row .filter-input-icon svg,
+  .bookings-filter-row .filter-select-icon svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  .bookings-filter-row .filter-select-chevron {
+    right: 10px !important;
+    font-size: 9px !important;
+  }
+  .add_car_btn {
+    border-radius: 12px !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .dd_star_layer,
   .dd_ambient_a,

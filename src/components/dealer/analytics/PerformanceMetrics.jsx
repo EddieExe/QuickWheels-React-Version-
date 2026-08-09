@@ -195,8 +195,17 @@ export default function PerformanceMetrics({ bookings }) {
           .perf-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
           .perf-card { padding: 16px 18px !important; }
         }
-        @media (max-width: 420px) {
+        @media (max-width: 480px) {
           .perf-root { padding: 14px !important; border-radius: 16px !important; }
+          .perf-card {
+            padding: 14px !important;
+          }
+          .perf-perct {
+            font-size: 20px !important;
+          }
+          .csat-root p {
+            font-size: 12px !important;
+          }
         }
       `}</style>
 
@@ -247,7 +256,7 @@ export default function PerformanceMetrics({ bookings }) {
                 On-Time
               </span>
             </div>
-            <span style={{ 
+            <span className="perf-perct" style={{ 
               fontSize: "26px", 
               fontWeight: "800", 
               color: onTimeColor,
@@ -307,7 +316,7 @@ export default function PerformanceMetrics({ bookings }) {
                 Damage Rate
               </span>
             </div>
-            <span style={{ 
+            <span className="perf-perct" style={{ 
               fontSize: "26px", 
               fontWeight: "800", 
               color: damageColor,
@@ -361,7 +370,7 @@ export default function PerformanceMetrics({ bookings }) {
                 Trip Duration
               </span>
             </div>
-            <span style={{ 
+            <span className="perf-perct" style={{ 
               fontSize: "26px", 
               fontWeight: "800", 
               color: T.cyan,

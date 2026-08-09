@@ -1,268 +1,675 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap');
+
+/* ═══════════════════════════════════════════════════════
+   QUICKWHEELS PAYMENT — PREMIUM DESIGN SYSTEM
+   Dark purple aesthetic, matches fleet.css / addons.css
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  --pay-purple:        #a855f7;
+  --pay-purple-mid:     #9333ea;
+  --pay-purple-deep:    #6d28d9;
+  --pay-purple-bright:  #c084fc;
+
+  --pay-brand-gradient:    linear-gradient(135deg, var(--pay-purple-deep) 0%, var(--pay-purple) 100%);
+  --pay-brand-gradient-3:  linear-gradient(135deg, var(--pay-purple-deep) 0%, var(--pay-purple-mid) 45%, var(--pay-purple-bright) 100%);
+  --pay-glass-gradient:    linear-gradient(135deg, rgba(147,51,234,0.14) 0%, rgba(168,85,247,0.04) 100%);
+
+  --pay-bg-base:     #05050b;
+  --pay-border:      rgba(255,255,255,0.08);
+  --pay-border-hi:   rgba(168,85,247,0.4);
+  --pay-text-sec:    rgba(255,255,255,0.65);
+  --pay-text-muted:  rgba(255,255,255,0.4);
+
+  --pay-r-sm: 8px;
+  --pay-r-md: 12px;
+  --pay-r-lg: 20px;
+  --pay-r-xl: 24px;
+
+  --pay-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --pay-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --pay-ease-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ---------- 1. SECTION CONTAINER ---------- */
 .payment_container {
-    padding: 0px 30px 30px 30px;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: #0a0a0f !important;
-    background-image: none !important;
-    position: relative;
-    overflow-x: hidden;
-    box-sizing: border-box;
+  padding: 120px 30px 24px 30px;
+  width: 100%;
+  /* height: 100vh; */
+  /* max-height: 100vh; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--pay-bg-base) !important;
+  background-image: none !important;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: 'Quicksand', sans-serif;
 }
 
-/* Blue Light Effect - Top Glow */
+/* Ambient purple glow — top */
 .payment_container::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: radial-gradient(ellipse at 50% 0%, rgba(4, 0, 255, 0.25), rgba(76, 227, 247, 0.1), transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-    animation: breathe 4s ease-in-out infinite;
+  content: '';
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  width: 70vw;
+  height: 70vw;
+  max-width: 900px;
+  background: radial-gradient(ellipse at center, rgba(109, 40, 217, 0.32), rgba(168, 85, 247, 0.12), transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(20px);
+  animation: pay-flare-drift-a 16s ease-in-out infinite;
 }
 
-/* Secondary Ambient Glow */
+/* Ambient purple glow — bottom right */
 .payment_container::after {
-    content: '';
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(circle at 70% 100%, rgba(76, 227, 247, 0.08), transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+  content: '';
+  position: fixed;
+  bottom: -12%;
+  right: -10%;
+  width: 55vw;
+  height: 55vw;
+  max-width: 700px;
+  background: radial-gradient(circle at 70% 100%, rgba(147, 51, 234, 0.22), rgba(192,132,252,0.05) 55%, transparent 75%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(30px);
+  animation: pay-flare-drift-b 13s ease-in-out infinite;
 }
 
-/* Content above background */
-.payment_container>* {
-    position: relative;
-    z-index: 1;
+@keyframes pay-flare-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(4%, 3%) scale(1.06); }
 }
 
-/* Breathe Animation for Blue Light */
-@keyframes breathe {
-
-    0%,
-    100% {
-        opacity: 0.8;
-    }
-
-    50% {
-        opacity: 1;
-    }
+@keyframes pay-flare-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-4%, -3%) scale(1.05); }
 }
 
-/* ---------- TITLE SECTION (EXACT MATCH WITH ADDONS) ---------- */
+.payment_container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Drifting starfield layer ── */
+.pay_stars {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.pay_star_layer {
+  position: absolute;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  background-repeat: repeat;
+}
+
+.pay_star_layer_a {
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.85) 100%, transparent),
+    radial-gradient(1px 1px at 90px 120px, rgba(255,255,255,0.65) 100%, transparent),
+    radial-gradient(1.5px 1.5px at 150px 60px, rgba(255,255,255,0.75) 100%, transparent),
+    radial-gradient(1px 1px at 200px 180px, rgba(255,255,255,0.55) 100%, transparent);
+  background-size: 220px 220px;
+  opacity: 0.4;
+  animation: pay-stars-drift 90s linear infinite;
+}
+
+.pay_star_layer_b {
+  background-image:
+    radial-gradient(1px 1px at 40px 80px, rgba(168,85,247,0.8) 100%, transparent),
+    radial-gradient(1px 1px at 130px 20px, rgba(255,255,255,0.55) 100%, transparent),
+    radial-gradient(1.5px 1.5px at 180px 140px, rgba(255,255,255,0.65) 100%, transparent);
+  background-size: 260px 260px;
+  opacity: 0.3;
+  animation: pay-stars-drift 140s linear infinite reverse;
+}
+
+.pay_star_layer_c {
+  background-image:
+    radial-gradient(1px 1px at 60px 10px, rgba(255,255,255,0.45) 100%, transparent),
+    radial-gradient(1px 1px at 160px 100px, rgba(168,85,247,0.55) 100%, transparent);
+  background-size: 300px 300px;
+  opacity: 0.2;
+  animation: pay-stars-drift 200s linear infinite;
+}
+
+@keyframes pay-stars-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-220px, -220px, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pay_star_layer,
+  .payment_container::before,
+  .payment_container::after {
+    animation: none !important;
+  }
+}
+
+/* ---------- 2. TITLE SECTION ---------- */
 .payment_title {
-    text-align: center;
-    margin-bottom: 40px;
-    animation: fadeInDown 0.8s ease-out;
+  text-align: center;
+  margin-bottom: 24px;
+  flex-shrink: 0;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.payment_title p {
+  font-size: 14px !important;
+  margin-top: 0px !important;
 }
 
 .payment_title h1 {
-    font-size: 2.5rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #ffffff 30%, #4ce3f7, #0400ff);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -1px;
-    animation: gradientShift 4s ease infinite;
-    position: relative;
-    display: inline-block;
-    margin-bottom: 10px;
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 30%, var(--pay-purple-bright), var(--pay-purple-deep));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+  animation: pay-gradientShift 4s ease infinite;
+  position: relative;
+  display: inline-block;
+  margin: 0px 0px 10px !important;
 }
 
-@keyframes gradientShift {
-
-    0%,
-    100% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
+@keyframes pay-gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
 }
 
-.payment_title h1::after {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #0400ff, #4ce3f7);
-    border-radius: 3px;
-    animation: widthExpand 0.8s ease-out 0.3s forwards;
-}
-
-@keyframes widthExpand {
-    from {
-        width: 0;
-        opacity: 0;
-    }
-
-    to {
-        width: 200px;
-        opacity: 1;
-    }
-}
-
-/* Two Column Grid */
+/* ---------- 3. TWO-COLUMN GRID ---------- */
 .payment_grid {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 30px;
-    max-width: 1100px;
-    width: 100%;
-    margin: 0 auto;
-    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.1s forwards;
-    opacity: 0;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 24px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  align-items: start;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 24px;
+  scrollbar-gutter: stable;
+  animation: fadeInUp 0.6s var(--pay-ease-smooth) 0.1s forwards;
+  opacity: 0;
 }
 
-/* Cards */
+/* ---------- 4. CARDS ---------- */
 .driver_info_card,
 .booking_summary_card {
-    background: rgba(20, 25, 45, 0.85);
-    backdrop-filter: blur(15px);
-    border-radius: 24px;
-    border: 1px solid rgba(76, 227, 247, 0.2);
-    overflow: hidden;
-    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) 0.2s forwards;
-    opacity: 0;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: var(--pay-r-xl);
+  border: 1px solid var(--pay-border);
+  overflow: hidden;
+  animation: fadeInUp 0.6s var(--pay-ease-smooth) 0.2s forwards;
+  opacity: 0;
+  transition: border-color 0.4s var(--pay-ease-smooth), box-shadow 0.4s var(--pay-ease-smooth);
+}
+
+.driver_info_card:hover,
+.booking_summary_card:hover {
+  border-color: rgba(168,85,247,0.22);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.35);
 }
 
 /* Card Header */
 .card_header {
-    padding: 20px 25px 0 25px;
-    border-bottom: 1px solid rgba(76, 227, 247, 0.15);
+  padding: 22px 25px 0 25px;
+  background: linear-gradient(135deg, rgba(109,40,217,0.08), rgba(192,132,252,0.02));
 }
 
 .card_header h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 12px 0;
 }
 
 .blueline {
-    width: 100px;
-    height: 3px;
-    background: linear-gradient(90deg, #0400ff, #4ce3f7);
-    border: none;
-    border-radius: 3px;
-    margin-bottom: 15px;
+  width: 70px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pay-purple-deep), var(--pay-purple-bright));
+  border: none;
+  border-radius: 3px;
+  /* margin-bottom: 18px; */
 }
 
-/* Driver Info */
+/* ---------- 5. DRIVER FORM ---------- */
 .driver_form {
-    padding: 20px 25px 25px 25px;
+  padding: 25px;
 }
 
 .info_row {
-    margin-bottom: 18px;
+  margin-bottom: 18px;
 }
 
 .info_row label {
-    display: block;
-    color: #4ce3f7;
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-bottom: 10px;
+  display: block;
+  color: var(--pay-purple-bright);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.info_value {
+  position: relative;
 }
 
 .two_column_grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 14px;
 }
 
 .two_column_grid .info_row {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .disabled_input {
-    font-family: quicksand;
-    width: 93%;
-    padding: 12px 14px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(76, 227, 247, 0.15);
-    border-radius: 10px;
-    color: #fff;
-    font-size: 0.95rem;
-    cursor: not-allowed;
+  font-family: 'Quicksand', sans-serif;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--pay-border);
+  border-radius: var(--pay-r-md);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: not-allowed;
+  transition: border-color 0.3s var(--pay-ease-smooth);
 }
 
 .disabled_input:disabled {
-    color: #fff;
-    opacity: 1;
+  color: #fff;
+  opacity: 1;
 }
 
-/* Booking Content */
+.warning_text {
+  color: #ffa500;
+  font-size: 11px;
+  font-weight: 600;
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
+/* ---------- 6. BOOKING SUMMARY CONTENT ---------- */
 .booking_content {
-    padding: 20px 25px 25px 25px;
+  padding: 25px;
 }
-
-/* --- Payment Page Specific Add-ons Layout --- */
 
 .payment_booking_section {
-    margin-bottom: 24px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid rgba(76, 227, 247, 0.1);
+  margin-bottom: 22px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.payment_booking_section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .payment_booking_section h3 {
-    color: #4ce3f7;
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 16px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+  color: var(--pay-purple-bright);
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin: 0 0 14px 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-/* 2:2 Grid specifically for the payment page */
-.payment_addons_grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    width: 100%;
+/* ---------- 7. TRIP INFO ---------- */
+.trip_info {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--pay-border);
+  border-radius: var(--pay-r-md);
+  padding: 6px 18px;
 }
 
-/* Scoped card styling to avoid conflict with .addon_card */
-.payment_addon_card {
-    display: flex;
-    align-items: center;
-    padding: 12px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    /* Force override if needed */
-    background: rgba(255, 255, 255, 0.03);
-    transition: all 0.2s ease;
-    min-height: 60px;
-    box-sizing: border-box;
-    /* Reset any animations from the main page */
-    animation: none !important;
-    transform: none !important;
+.trip_row {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 0;
+  color: var(--pay-text-sec);
+  font-size: 0.85rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-.payment_addon_card:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(76, 227, 247, 0.3) !important;
+.trip_row:last-child {
+  border-bottom: none;
 }
 
-/* Payment Method Selector */
+.trip_row strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ---------- 8. VEHICLE + ADD-ONS SIDE BY SIDE ---------- */
+.payment_vehicle_addons_row {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+/* Vehicle Column */
+.payment_vehicle_column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment_vehicle_column h3 {
+  color: var(--pay-purple-bright);
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Car Preview - Stacked Layout */
+.payment_car_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--pay-border);
+  border-radius: var(--pay-r-md);
+  padding: 16px;
+  text-align: center;
+}
+
+.summary_car_image {
+  /* max-width: 180px; */
+  height: auto;
+  max-height: 120px;
+  object-fit: contain;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: var(--pay-r-sm);
+}
+
+.car_details_text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+
+.car_model_name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+.car_price {
+  font-size: 1rem;
+  font-weight: 800;
+  background: linear-gradient(30deg, var(--pay-purple-deep), var(--pay-purple-bright));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.car_price span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--pay-text-muted);
+  -webkit-text-fill-color: var(--pay-text-muted);
+}
+
+/* Vehicle Features Compact */
+.vehicle_features_compact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--pay-border);
+  border-radius: var(--pay-r-sm);
+}
+
+.feature_item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.feature_label {
+  color: var(--pay-text-muted);
+  min-width: 40px;
+  font-weight: 600;
+}
+
+.feature_stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.feature_value {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Add-ons Column */
+.payment_addons_column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.payment_addons_column h3 {
+  color: var(--pay-purple-bright);
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.payment_addons_vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.payment_addon_vertical_item {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  border-radius: var(--pay-r-sm);
+  cursor: pointer;
+  border: 1px solid var(--pay-border);
+  background: rgba(255, 255, 255, 0.03);
+  transition: all 0.2s var(--pay-ease-smooth);
+  min-height: 40px;
+}
+
+.payment_addon_vertical_item:hover {
+  background: rgba(168,85,247,0.06);
+  border-color: rgba(168,85,247,0.25);
+}
+
+.payment_addon_vertical_item.is_selected {
+  border-color: rgba(168,85,247,0.5);
+  background: rgba(168, 85, 247, 0.1);
+}
+
+.payment_addon_vertical_info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+
+.payment_addon_left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.payment_addon_icon {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.payment_addon_vertical_name {
+  margin: 0;
+  font-weight: 600;
+  font-size: 12px;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.payment_addon_vertical_item.is_selected .payment_addon_vertical_name {
+  color: var(--pay-purple-bright);
+}
+
+.payment_addon_vertical_price {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--pay-purple-bright);
+  white-space: nowrap;
+}
+
+.payment_addon_vertical_item.is_selected .payment_addon_vertical_price {
+  color: var(--pay-purple-bright);
+}
+
+/* ---------- 9. PRICE SUMMARY ---------- */
+.price_summary {
+  background: var(--pay-glass-gradient);
+  border-radius: var(--pay-r-md);
+  padding: 6px 18px;
+  margin: 16px 0 0;
+  border: 1px solid rgba(168, 85, 247, 0.2);
+}
+
+.price_row {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 0;
+  color: var(--pay-text-sec);
+  font-size: 0.85rem;
+}
+
+.price_row.total {
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(168, 85, 247, 0.2);
+  font-size: 0.95rem;
+  align-items: center;
+}
+
+.price_row.total span {
+  color: #fff;
+  font-weight: 700;
+}
+
+.price_row.total strong {
+  font-size: 1.35rem;
+  background: linear-gradient(30deg, var(--pay-purple-deep), var(--pay-purple-bright));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---------- 10. CONFIRM BUTTON ---------- */
+.confirm_btn {
+  width: 100%;
+  margin-top: 20px;
+  height: 52px;
+  border-radius: var(--pay-r-md);
+  border: none;
+  cursor: pointer;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1rem !important;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fff;
+  background: var(--pay-brand-gradient-3);
+  background-size: 180% 180%;
+  background-position: 0% 50%;
+  box-shadow: 0 6px 24px rgba(147,51,234,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition:
+    transform 0.25s var(--pay-ease-out),
+    box-shadow 0.25s var(--pay-ease-smooth),
+    background-position 0.4s var(--pay-ease-smooth);
+}
+
+.confirm_btn:hover:not(:disabled) {
+  background-position: 100% 50%;
+  box-shadow: 0 10px 32px rgba(147,51,234,0.5);
+  transform: translateY(-2px);
+}
+
+.confirm_btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.confirm_btn.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.confirm_btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- 11. PAYMENT METHOD SELECTOR ---------- */
 .payment_method_selector {
   display: flex;
-  gap: 15px;
+  gap: 12px;
   margin-top: 10px;
 }
 
@@ -272,24 +679,25 @@
   align-items: center;
   justify-content: center;
   padding: 12px;
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--pay-r-md);
   cursor: pointer;
-  transition: all 0.3s ease;
-  background: rgba(255,255,255,0.05);
+  transition: all 0.3s var(--pay-ease-smooth);
+  background: rgba(255,255,255,0.03);
 }
 
 .payment_method_option.active {
-  border-color: #4ce3f7;
-  background: rgba(76,227,247,0.1);
+  border-color: var(--pay-purple);
+  background: rgba(168,85,247,0.1);
 }
 
 .payment_method_option input {
   margin-right: 8px;
 }
 
-/* Card Form */
-.card_form, .billing_form {
+/* ---------- 12. CARD / BILLING FORM ---------- */
+.card_form,
+.billing_form {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -303,23 +711,23 @@
 
 .form_group label {
   font-size: 13px;
-  color: rgba(255,255,255,0.7);
+  color: var(--pay-text-sec);
   font-weight: 600;
 }
 
 .form_group input {
   padding: 12px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--pay-r-sm);
+  border: 1px solid rgba(255,255,255,0.15);
   background: rgba(0,0,0,0.3);
   color: #fff;
   font-family: 'Quicksand', sans-serif;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s var(--pay-ease-smooth);
 }
 
 .form_group input:focus {
   outline: none;
-  border-color: #4ce3f7;
+  border-color: var(--pay-purple);
 }
 
 .form_group input.error_input {
@@ -338,14 +746,13 @@
   margin-top: 4px;
 }
 
-/* Vehicle Preview */
 .vehicle_preview {
   display: flex;
   align-items: center;
   gap: 15px;
   padding: 12px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--pay-r-md);
   margin-bottom: 15px;
 }
 
@@ -353,379 +760,500 @@
   width: 80px;
   height: 60px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--pay-r-sm);
 }
 
-/* PayPal Message */
 .paypal_message {
   padding: 20px;
   background: rgba(255,165,0,0.1);
   border: 1px solid rgba(255,165,0,0.3);
-  border-radius: 10px;
+  border-radius: var(--pay-r-md);
   text-align: center;
 }
 
-/* Spinner Animation */
-.spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 50%;
-  border-top-color: #fff;
-  animation: spin 0.8s linear infinite;
-  margin-right: 8px;
+/* ---------- 13. MODAL ---------- */
+.modal-content {
+  background: linear-gradient(135deg,#12122a 0%,#0a0a1a 100%);
+  backdrop-filter: blur(15px);
+  border-radius: var(--pay-r-xl);
+  border: 1px solid rgba(192,132,252,0.25);
+  padding: 30px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  margin: auto;
+  animation: fadeInUp 0.6s var(--pay-ease-smooth) forwards;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.modal-content h1 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  background: linear-gradient(135deg, #fff, var(--pay-purple-bright));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.confirm_btn.loading {
-  opacity: 0.7;
-  cursor: not-allowed;
+.modal-content p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 10px 0;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+.order_btn {
+  background: var(--pay-brand-gradient);
+  border: none;
+  border-radius: 30px;
+  padding: 10px 28px;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: all 0.3s var(--pay-ease-smooth);
+}
+
+.order_btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(109, 40, 217, 0.4);
+}
+
+/* ---------- 13b. BOOKING RECEIPT SCREEN ---------- */
+.receipt_wrap {
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* padding: 20px 4px 40px; */
+  scrollbar-gutter: stable;
+}
+
+.receipt_success_badge {
+  animation: fadeInDown 0.7s var(--pay-ease-smooth);
+}
+
+.receipt_success_icon {
+  transition: transform 0.4s var(--pay-ease-spring);
+}
+
+.receipt_success_badge:hover .receipt_success_icon {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+.receipt_card {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(168, 85, 247, 0.2);
+  border-radius: var(--pay-r-xl);
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: fadeInUp 0.6s var(--pay-ease-smooth) 0.15s backwards;
+  transition: border-color 0.4s var(--pay-ease-smooth), box-shadow 0.4s var(--pay-ease-smooth);
+}
+
+.receipt_card:hover {
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5), 0 0 30px rgba(147, 51, 234, 0.12);
+}
+
+.receipt_header {
+  background: linear-gradient(135deg, rgba(109, 40, 217, 0.15), rgba(168, 85, 247, 0.08));
+  padding: 20px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.receipt_id_badge {
+  background: rgba(168, 85, 247, 0.1);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: var(--pay-purple-bright);
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.3s var(--pay-ease-smooth);
+}
+
+.receipt_header:hover .receipt_id_badge {
+  border-color: rgba(168, 85, 247, 0.55);
+  box-shadow: 0 0 14px rgba(147, 51, 234, 0.25);
+}
+
+.receipt_body {
+  padding: 24px 28px;
+}
+
+/* ---------- 13c. RECEIPT TWO-COLUMN LAYOUT ---------- */
+.receipt_body_grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  align-items: start;
+  gap: 28px;
+}
+
+.receipt_left_col {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 20px;
+  align-self: start;
+}
+
+.receipt_right_col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.receipt_right_col .receipt_note_box {
+  margin-bottom: 0;
+}
+
+@media (max-width: 900px) {
+  .receipt_body_grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .receipt_left_col {
+    position: static;
+    top: auto;
+  }
+}
+
+.receipt_section_box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 12px 16px;
+  transition: border-color 0.3s var(--pay-ease-smooth), background 0.3s var(--pay-ease-smooth);
+}
+
+.receipt_section_box:hover {
+  border-color: rgba(168, 85, 247, 0.25);
+  background: rgba(168, 85, 247, 0.03);
+}
+
+.receipt_badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.25s var(--pay-ease-spring);
+}
+
+.receipt_badge:hover {
+  transform: translateY(-2px);
+}
+
+.receipt_note_box {
+  background: rgba(255, 165, 0, 0.08);
+  border: 1px solid rgba(255, 165, 0, 0.25);
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  transition: border-color 0.3s var(--pay-ease-smooth);
+}
+
+.receipt_note_box:hover {
+  border-color: rgba(255, 165, 0, 0.45);
+}
+
+.receipt_status_box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 24px;
+  transition: border-color 0.3s var(--pay-ease-smooth);
+}
+
+.receipt_status_box:hover {
+  border-color: rgba(168, 85, 247, 0.25);
+}
+
+.receipt_status_row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.receipt_status_row:last-child {
+  margin-bottom: 0;
+}
+
+.receipt_actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.receipt_btn {
+  flex: 1;
+  justify-content: center;
+  font-family: 'Quicksand', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition:
+    transform 0.25s var(--pay-ease-out),
+    box-shadow 0.25s var(--pay-ease-smooth),
+    background 0.3s var(--pay-ease-smooth),
+    border-color 0.3s var(--pay-ease-smooth);
+}
+
+.receipt_btn_primary {
+  background: var(--pay-brand-gradient-3);
+  background-size: 180% 180%;
+  background-position: 0% 50%;
+  border: none;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(147, 51, 234, 0.3);
+}
+
+.receipt_btn_primary:hover {
+  background-position: 100% 50%;
+  box-shadow: 0 10px 28px rgba(147, 51, 234, 0.45);
+  transform: translateY(-2px);
+}
+
+.receipt_btn_secondary {
+  background: rgba(168, 85, 247, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.receipt_btn_secondary:hover {
+  background: rgba(168, 85, 247, 0.14);
+  border-color: rgba(168, 85, 247, 0.4);
+  transform: translateY(-2px);
+}
+
+/* ---------- 14. ANIMATIONS ---------- */
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   15. RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+
+/* Tablet & Medium Screens */
+@media (max-width: 1024px) {
+  .payment_container {
+    padding: 0px 22px 32px 22px;
+  }
+
+  .payment_grid {
+    max-width: 720px;
+  }
+
+  .payment_vehicle_addons_row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .summary_car_image {
+    max-width: 150px;
+    max-height: 100px;
+  }
+}
+
+/* Small Tablets & Large Phones */
+@media (max-width: 800px) {
+  .payment_grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .payment_vehicle_addons_row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Mobile Phones */
+@media (max-width: 767px) {
+  .payment_container {
+    padding: 0px 16px 28px 16px;
+  }
+
+  .payment_title h1 {
+    font-size: 1.8rem;
+  }
+
+  .payment_title p {
+    font-size: 14px !important;
+  }
+
+  .card_header {
+    padding: 18px 20px 0 20px;
+  }
+
+  .card_header h2 {
+    font-size: 1.15rem;
+  }
+
+  .driver_form {
+    padding: 4px 20px 20px 20px;
+  }
+
+  .disabled_input {
+    font-size: 0.85rem;
+  }
+
+  .booking_content {
+    padding: 18px 20px 20px 20px;
+  }
+
+  .payment_booking_section h3 {
+    font-size: 0.75rem;
+  }
+
+  .payment_vehicle_addons_row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .payment_car_info {
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+  }
+
+  .summary_car_image {
+    max-width: 160px;
+    max-height: 110px;
+  }
+
+  .car_details_text {
+    align-items: center;
+  }
+
+  .trip_info,
+  .price_summary {
+    padding: 4px 14px;
+  }
+
+  .trip_row,
+  .price_row {
+    font-size: 0.8rem;
+  }
+
+  .price_row.total strong {
+    font-size: 1.15rem;
+  }
+
+  .confirm_btn {
+    height: 48px;
+    font-size: 0.92rem;
+  }
+
+  .modal-content {
+    padding: 22px;
+    margin: 15vh auto;
+  }
+
+  .modal-content h1 {
+    font-size: 1.5rem;
+  }
+
+  .payment_method_selector {
+    flex-direction: column;
+  }
+
   .form_row {
     grid-template-columns: 1fr;
     gap: 15px;
   }
-  
-  .payment_method_selector {
-    flex-direction: column;
+
+  .payment_addon_vertical_item {
+    padding: 10px 14px;
+    min-height: 46px;
+  }
+
+  .payment_addon_vertical_name {
+    font-size: 13px;
+  }
+
+  .payment_addon_vertical_price {
+    font-size: 14px;
+  }
+
+  .vehicle_features_compact {
+    padding: 12px 14px;
+  }
+
+  .feature_item {
+    font-size: 12px;
   }
 }
 
-/* Selected State */
-.payment_addon_card.is_selected {
-    border-color: #4ce3f7 !important;
-    background: rgba(76, 227, 247, 0.08);
-}
+/* Small Phones */
+@media (max-width: 479px) {
+  .payment_container {
+    padding: 80px 10px 20px;
+  }
 
-.payment_addon_info {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
+  .receipt_success_badge {
+    margin-bottom: 30px !important;
+  }
 
-.payment_addon_name {
-    margin: 0 !important;
-    font-weight: 600;
-    font-size: 13px;
-    color: #ffffff;
-    line-height: 1.2;
-}
+  .receipt_success_badge h1 {
+    font-size: 1.3rem !important;
+  }
 
-.payment_check_icon {
-    color: #4ce3f7;
-    font-weight: bold;
-}
+  .receipt_success_badge p {
+    font-size: 11px !important;
+  }
 
-.payment_addon_price {
-    margin: 4px 0 0 0 !important;
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.5);
-}
+  .receipt_header {
+    padding: 14px;
+  }
 
-/* Ensure 1 column on small mobile screens */
-@media (max-width: 400px) {
-    .payment_addons_grid {
-        grid-template-columns: 1fr;
-    }
-}
+  .receipt_body {
+    padding: 14px 10px;
+  }
 
-/* Car Info */
-.payment_car_info {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 12px;
-    padding: 12px;
-}
+  .receipt_id_badge {
+    font-size: 10px;
+  }
 
-.summary_car_image {
-    height: 100px;
-    object-fit: contain;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-}
+  .receipt_section_box {
+    padding: 10px 12px;
+  }
 
-.car_model_name {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 4px;
-}
+  .receipt_status_box {
+    padding: 10px 12px;
+  }
 
-.car_price {
-    font-size: 1rem;
-    font-weight: 700;
-    background: linear-gradient(30deg, #0400ff, #4ce3f7);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+  .receipt_status_row span {
+    font-size: 11px !important;
+  }
 
-/* Trip Info */
-.trip_info {
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 10px;
-    padding: 10px 20px;
-}
+  .receipt_btn {
+    font-size: 10.5px;
+    padding: 10px 16px;
+  }
 
-.trip_row {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-}
-
-.trip_row strong {
-    color: #4ce3f7;
-}
-
-/* Add-ons */
-.addons_list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.addon_row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 8px;
-    color: rgba(255, 255, 255, 0.85);
-    font-size: 0.9rem;
-}
-
-.addon_row strong {
-    color: #4ce3f7;
-    font-size: 0.9rem;
-}
-
-/* Price Summary */
-.price_summary {
-    background: rgba(4, 0, 255, 0.08);
-    border-radius: 12px;
-    padding: 10px 20px;
-    margin: 15px 0;
-    border: 1px solid rgba(76, 227, 247, 0.15);
-}
-
-.price_row {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 0.9rem;
-}
-
-.price_row.total {
-    padding-top: 10px;
-    margin-top: 6px;
-    border-top: 1px solid rgba(76, 227, 247, 0.15);
-    font-size: 1rem;
-}
-
-.price_row.total strong {
-    font-size: 1.3rem;
-    background: linear-gradient(30deg, #0400ff, #4ce3f7);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* Confirm Button */
-.confirm_btn {
-    width: 100%;
-    margin-top: 20px;
-    border-radius: 10px;
-}
-
-.confirm_btn.loading {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-
-.spinner {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    margin-right: 8px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: #fff;
-    animation: spin 0.8s ease infinite;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Modal */
-.modal-content {
-    background: rgba(20, 25, 45, 0.95);
-    backdrop-filter: blur(15px);
-    border-radius: 24px;
-    border: 1px solid rgba(76, 227, 247, 0.3);
-    padding: 30px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-    margin: auto;
-    animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-}
-
-.modal-content h1 {
-    font-size: 1.8rem;
-    margin-bottom: 15px;
-    background: linear-gradient(135deg, #fff, #4ce3f7);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.modal-content p {
-    color: rgba(255, 255, 255, 0.9);
-    margin: 10px 0;
-}
-
-.order_btn {
-    background: linear-gradient(30deg, #0400ff, #4ce3f7);
-    border: none;
-    border-radius: 30px;
-    padding: 10px 28px;
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 15px;
-    transition: all 0.3s ease;
-}
-
-.order_btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(4, 0, 255, 0.3);
-}
-
-/* Animation Keyframes */
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-40px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Responsive */
-@media (max-width: 800px) {
-    .payment_grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .booking_content {
-        padding: 20px;
-    }
-
-    .payment_container {
-        padding: 20px 16px;
-    }
-
-    .payment_title h1 {
-        font-size: 2rem;
-    }
-
-    .card_header h2 {
-        font-size: 1.3rem;
-        margin: 10px auto;
-    }
-
-    .card_header {
-        padding: 20px 20px 0 20px;
-    }
-
-    .driver_form {
-        padding: 20px;
-    }
-
-    .disabled_input {
-        width: 90%;
-    }
-
-    .payment_booking_section h3 {
-        font-size: 1rem;
-        margin: 10px auto;
-    }
-
-    .summary_car_image {
-        width: 100%;
-        height: auto;
-    }
-
-    .payment_car_info {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .car_model_name {
-        font-size: 1.2rem;
-        margin: 0;
-    }
-
-    .car_price {
-        font-size: 1rem;
-        margin: 10px auto;
-    }
-
-    .trip_info {
-        font-size: 15px;
-        padding: 10px
-    }
-
-    .price_row {
-        font-size: 15px;
-    }
-
-    .price_row.total {
-        font-size: 1rem;
-    }
-
-    /* Booking confirmation */
-    .modal-content {
-        padding: 20px;
-        width: 80%;
-        margin: 15vh auto;
-    }
-
-    .modal-content h1 {
-        font-size: 1.8rem;
-        margin: 20px auto 30px auto;
-    }
+  .receipt_section_box span, .receipt_note_box p {
+    font-size: 11px !important;
+  }
 }

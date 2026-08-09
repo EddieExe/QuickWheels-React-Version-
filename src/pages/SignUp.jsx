@@ -337,7 +337,7 @@ function SignUp() {
   }, []);
 
   return (
-    <div className="auth-container">
+    <div className="auth-container signup-page">
       <div className="stars-container">
         <div id="stars"></div>
         <div id="stars2"></div>
@@ -568,7 +568,7 @@ function SignUp() {
                   value={formData.businessAddress}
                   onChange={handleChange}
                 />
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                <div className="two_col_grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                   <Field 
                     label="City"  
                     name="city"  
@@ -584,7 +584,7 @@ function SignUp() {
                     onChange={handleChange}
                   />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+                <div className="two_col_grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                   <Field 
                     label="Country" 
                     name="country" 
@@ -604,7 +604,7 @@ function SignUp() {
                 <div style={{ display: "flex", gap: "10px" }}>
                   <button type="button" onClick={() => setStep(1)}
                     className="secondary_btn" style={{ flex: 0.5 }}>
-                    ← Back
+                    Back
                   </button>
                   <button
                     type="button"
@@ -620,7 +620,7 @@ function SignUp() {
                     className="signup_btn signin_btn btn"
                     style={{ flex: 1 }}
                   >
-                    More Details →
+                    More Details
                   </button>
                 </div>
               </>
@@ -673,7 +673,7 @@ function SignUp() {
                 <div style={{ display: "flex", gap: "10px" }}>
                   <button type="button" onClick={() => setStep(2)}
                     className="secondary_btn" style={{ flex: 0.5 }}>
-                    ← Back
+                    Back
                   </button>
                   <button
                     type="submit"
@@ -693,7 +693,7 @@ function SignUp() {
         {accountType === "user" && (
           <button
             type="submit"
-            className="book_btn qw_fancy_btn signup_btn"
+            className="qw_fancy_btn signup_btn"
             disabled={loading}
           >
             <FancyButtonFx />

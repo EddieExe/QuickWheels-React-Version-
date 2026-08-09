@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import ImageCarousel from "./ImageCarousel";
 
 const fmtCurrency = (n) =>
   new Intl.NumberFormat("en-US", {
@@ -149,6 +150,7 @@ function StatusPill({ booking }) {
 function StatCard({ label, value, sub, color = "#a855f7", icon }) {
   return (
     <div
+      className="stat-card-inner"
       style={{
         padding: "16px 18px",
         background: "rgba(255,255,255,0.025)",
@@ -157,6 +159,8 @@ function StatCard({ label, value, sub, color = "#a855f7", icon }) {
         display: "flex",
         alignItems: "center",
         gap: "14px",
+        height: "100%",
+        boxSizing: "border-box",
         transition: "all 0.2s ease",
       }}
       onMouseEnter={(e) => {
@@ -171,6 +175,7 @@ function StatCard({ label, value, sub, color = "#a855f7", icon }) {
       }}
     >
       <div
+        className="stat-icon"
         style={{
           width: "38px",
           height: "38px",
@@ -186,8 +191,9 @@ function StatCard({ label, value, sub, color = "#a855f7", icon }) {
       >
         {icon}
       </div>
-      <div>
+      <div style={{ minWidth: 0 }}>
         <p
+          className="stat-value"
           style={{
             margin: "0 0 2px",
             fontSize: "18px",
@@ -199,6 +205,7 @@ function StatCard({ label, value, sub, color = "#a855f7", icon }) {
           {value}
         </p>
         <p
+          className="stat-label"
           style={{
             margin: 0,
             fontSize: "10px",
@@ -212,6 +219,7 @@ function StatCard({ label, value, sub, color = "#a855f7", icon }) {
         </p>
         {sub && (
           <p
+            className="stat-sub"
             style={{
               margin: "2px 0 0",
               fontSize: "10px",
@@ -337,23 +345,9 @@ export default function CarDetailModal({
   onDelete,
 }) {
   const [activeTab, setActiveTab] = useState("overview");
-  const [imgLoaded, setImgLoaded] = useState(false);
   const [deleteGuard, setDeleteGuard] = useState(false);
-  const [activeImgIndex, setActiveImgIndex] = useState(0);
-  const [imgTransitioning, setImgTransitioning] = useState(false);
 
   const carImages = car.images?.length ? car.images : car.image ? [car.image] : [];
-  const hasMultipleImages = carImages.length > 1;
-
-  function goToImage(index) {
-    if (index === activeImgIndex || imgTransitioning) return;
-    setImgTransitioning(true);
-    setTimeout(() => {
-      setActiveImgIndex(index);
-      setImgLoaded(false);
-      setImgTransitioning(false);
-    }, 180);
-  }
 
   const carBookings = useMemo(
     () =>
@@ -459,10 +453,6 @@ export default function CarDetailModal({
           0%, 100% { opacity: 1; transform: scale(1); }
           50% { opacity: .5; transform: scale(.75); }
         }
-        @keyframes shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
         .cdm-scroll::-webkit-scrollbar { width: 4px; }
         .cdm-scroll::-webkit-scrollbar-track { background: transparent; }
         .cdm-scroll::-webkit-scrollbar-thumb { background: rgba(168,85,247,0.2); border-radius: 4px; }
@@ -473,13 +463,6 @@ export default function CarDetailModal({
           background: rgba(239,68,68,0.15) !important;
           color: #ef4444 !important;
           transform: rotate(90deg);
-        }
-        .cdm-gallery-btn {
-          transition: all 0.3s cubic-bezier(0.16,1,0.3,1) !important;
-        }
-        .cdm-gallery-btn:hover {
-          background: rgba(147,51,234,0.25) !important;
-          border-color: #a855f7 !important;
         }
         .cdm-danger-zone {
           background: rgba(239,68,68,0.03) !important;
@@ -540,6 +523,486 @@ export default function CarDetailModal({
           background: rgba(255,255,255,0.1) !important;
           color: #fff !important;
         }
+
+        /* === RESPONSIVE STYLES === */
+        @media (max-width: 768px) {
+          .cdm-modal {
+            width: 95vw !important;
+            max-height: 95vh !important;
+            border-radius: 16px !important;
+          }
+          .cdm-hero {
+            height: 180px !important;
+          }
+          .cdm-model-name {
+            font-size: 20px !important;
+          }
+          .cdm-price {
+            font-size: 22px !important;
+          }
+          .cdm-tabs-wrapper {
+            padding: 12px 14px 0 !important;
+            gap: 2px !important;
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+          }
+          .cdm-tab {
+            padding: 7px 12px !important;
+            font-size: 11px !important;
+            white-space: nowrap !important;
+          }
+          .cdm-actions {
+            gap: 4px !important;
+            padding-bottom: 8px !important;
+          }
+          .cdm-actions button {
+            padding: 5px 10px !important;
+            font-size: 10px !important;
+          }
+          .cdm-actions button svg {
+            width: 10px !important;
+            height: 10px !important;
+          }
+          .cdm-content {
+            padding: 16px 14px 30px !important;
+          }
+          .cdm-stats-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+          }
+          .cdm-stat-card {
+            padding: 12px 14px !important;
+            gap: 10px !important;
+          }
+          .cdm-stat-card .stat-icon {
+            width: 30px !important;
+            height: 30px !important;
+          }
+          .cdm-stat-card .stat-value {
+            font-size: 15px !important;
+          }
+          .cdm-stat-card .stat-label {
+            font-size: 8px !important;
+          }
+          .cdm-stat-card .stat-sub {
+            font-size: 8px !important;
+          }
+          .cdm-breakdown-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+          .cdm-specs-grid {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+          }
+          .cdm-facts-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+          }
+          .cdm-fact-item {
+            padding: 6px 0 !important;
+          }
+          .cdm-fact-item span:first-child {
+            font-size: 10px !important;
+          }
+          .cdm-fact-item span:last-child {
+            font-size: 10px !important;
+          }
+          .cdm-booking-headers {
+            grid-template-columns: 1fr 100px 80px 70px 60px !important;
+            gap: 8px !important;
+            padding: 0 10px 8px !important;
+          }
+          .cdm-booking-headers p {
+            font-size: 7px !important;
+          }
+          .cdm-booking-row {
+            grid-template-columns: 1fr 100px 80px 70px 60px !important;
+            gap: 8px !important;
+            padding: 10px 12px !important;
+          }
+          .cdm-booking-row .customer-name {
+            font-size: 11px !important;
+          }
+          .cdm-booking-row .customer-id {
+            font-size: 8px !important;
+          }
+          .cdm-booking-row .route-text {
+            font-size: 9px !important;
+          }
+          .cdm-booking-row .route-sub {
+            font-size: 8px !important;
+          }
+          .cdm-booking-row .date-text {
+            font-size: 9px !important;
+          }
+          .cdm-booking-row .amount-text {
+            font-size: 12px !important;
+          }
+          .cdm-danger-zone {
+            padding: 14px !important;
+          }
+          .cdm-danger-zone h3 {
+            font-size: 11px !important;
+          }
+          .cdm-danger-zone p {
+            font-size: 11px !important;
+          }
+        }
+
+        @media (max-width: 479px) {
+          .cdm-modal {
+            width: 100vw !important;
+            max-height: 100vh !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+          }
+          .cdm-hero {
+            height: 250px !important;
+          }
+          .cdm-hero .carousel-image {
+            height: 250px !important;
+          }
+          .cdm-close-btn {
+            top: 10px !important;
+            right: 10px !important;
+            width: 32px !important;
+            height: 32px !important;
+          }
+          .cdm-close-btn svg {
+            width: 16px !important;
+            height: 16px !important;
+          }
+          .cdm-live-badge {
+            top: 10px !important;
+            left: 10px !important;
+            padding: 3px 10px !important;
+            font-size: 10px !important;
+          }
+          .cdm-model-type {
+            font-size: 10px !important;
+            margin-bottom: 1px !important;
+          }
+          .cdm-model-name {
+            font-size: 18px !important;
+          }
+          .cdm-price {
+            font-size: 20px !important;
+          }
+          .cdm-price-label {
+            font-size: 8px !important;
+          }
+          .cdm-tabs-wrapper {
+            padding: 8px 8px 0 !important;
+            gap: 2px !important;
+          }
+          .cdm-tab {
+            padding: 5px 8px !important;
+            font-size: 11px !important;
+          }
+          .cdm-actions {
+            gap: 3px !important;
+            padding-bottom: 6px !important;
+          }
+          .cdm-actions button {
+            padding: 6px 8px !important;
+            font-size: 11px !important;
+            border-radius: 6px !important;
+          }
+          .cdm-actions button svg {
+            width: 10px !important;
+            height: 10px !important;
+          }
+          .cdm-content {
+            padding: 10px 10px 20px !important;
+          }
+          .cdm-stats-grid {
+            grid-template-columns: 1fr 1fr !important;
+            grid-auto-rows: 1fr !important;
+            align-items: stretch !important;
+            gap: 6px !important;
+          }
+          .cdm-stat-card {
+            height: 100% !important;
+            padding: 0px !important;
+          }
+          .cdm-stat-card .stat-card-inner {
+            height: 100% !important;
+            box-sizing: border-box !important;
+            padding: 10px 8px !important;
+            gap: 8px !important;
+            border-radius: 10px !important;
+          }
+          .cdm-stat-card .stat-icon {
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 6px !important;
+            flex-shrink: 0 !important;
+          }
+          .cdm-stat-card .stat-icon svg {
+            width: 12px !important;
+            height: 12px !important;
+          }
+          .cdm-stat-card .stat-value {
+            font-size: 13.5px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+          }
+          .cdm-stat-card .stat-label {
+            font-size: 9px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+          }
+          .cdm-stat-card .stat-sub {
+            font-size: 8px !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+          }
+          .cdm-monthly-revenue {
+            padding: 14px !important;
+            margin-bottom: 14px !important;
+            border-radius: 12px !important;
+          }
+          .cdm-monthly-revenue h3 {
+            font-size: 13.5px !important;
+          }
+          .cdm-monthly-revenue .total-revenue {
+            font-size: 14px !important;
+          }
+          .cdm-monthly-revenue .chart-container {
+            height: 100px !important;
+            gap: 4px !important;
+          }
+          .cdm-monthly-revenue .chart-bar-label {
+            font-size: 8px !important;
+          }
+          .cdm-monthly-revenue .chart-month-label {
+            font-size: 8px !important;
+          }
+          .cdm-breakdown-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+          .cdm-breakdown-box {
+            padding: 14px !important;
+            border-radius: 12px !important;
+          }
+          .cdm-breakdown-box h3 {
+            font-size: 13.5px !important;
+            margin-bottom: 12px !important;
+          }
+          .cdm-breakdown-item {
+            margin-bottom: 14px !important;
+          }
+          .cdm-breakdown-item .label {
+            font-size: 11px !important;
+          }
+          .cdm-breakdown-item .value {
+            font-size: 11px !important;
+          }
+          .cdm-breakdown-item .bar {
+            height: 4px !important;
+          }
+          .cdm-specs-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+          }
+          .cdm-specs-box {
+            padding: 14px !important;
+            border-radius: 12px !important;
+          }
+          .cdm-specs-box h3 {
+            font-size: 10px !important;
+            margin-bottom: 12px !important;
+          }
+          .cdm-specs-inner {
+            grid-template-columns: 1fr 1fr !important;
+          }
+          .cdm-spec-item {
+            padding: 8px 4px !important;
+          }
+          .cdm-spec-item .label {
+            font-size: 7px !important;
+          }
+          .cdm-spec-item .value {
+            font-size: 10px !important;
+          }
+          .cdm-doc-item {
+            padding: 8px 0 !important;
+          }
+          .cdm-doc-item .label {
+            font-size: 10px !important;
+          }
+          .cdm-doc-item .value {
+            font-size: 10px !important;
+          }
+          .cdm-facts-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 6px !important;
+          }
+          .cdm-fact-box {
+            padding: 12px !important;
+            border-radius: 12px !important;
+          }
+          .cdm-fact-box h3 {
+            font-size: 13.5px !important;
+            margin-bottom: 10px !important;
+          }
+          .cdm-fact-item {
+            padding: 0px !important;
+          }
+          .cdm-fact-item span:first-child {
+            font-size: 11px !important;
+          }
+          .cdm-fact-item span:last-child {
+            font-size: 11px !important;
+          }
+          .cdm-description-box {
+            padding: 14px !important;
+            border-radius: 12px !important;
+            margin-bottom: 12px !important;
+          }
+          .cdm-description-box h3 {
+            font-size: 10px !important;
+            margin-bottom: 8px !important;
+          }
+          .cdm-description-box p {
+            font-size: 11px !important;
+          }
+          .cdm-danger-zone {
+            padding: 12px !important;
+            border-radius: 12px !important;
+          }
+          .cdm-danger-zone h3 {
+            font-size: 10px !important;
+          }
+          .cdm-danger-zone p {
+            font-size: 10px !important;
+            margin-bottom: 10px !important;
+          }
+          .cdm-remove-btn {
+            padding: 6px 12px !important;
+            font-size: 10px !important;
+          }
+          .cdm-remove-btn svg {
+            width: 10px !important;
+            height: 10px !important;
+          }
+          .cdm-confirm-remove {
+            padding: 5px 12px !important;
+            font-size: 10px !important;
+          }
+          .cdm-cancel-remove {
+            padding: 5px 10px !important;
+            font-size: 10px !important;
+          }
+          /* Booking row mobile */
+          .cdm-booking-headers {
+            display: none !important;
+          }
+          .cdm-booking-row {
+            grid-template-columns: 1fr !important;
+            gap: 4px !important;
+            padding: 10px 12px !important;
+          }
+          .cdm-booking-row .customer-section {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+          }
+          .cdm-booking-row .customer-name {
+            font-size: 13.5px !important;
+            margin-bottom: 3px !important;
+          }
+          .cdm-booking-row .customer-id {
+            font-size: 10px !important;
+          }
+          .cdm-booking-row .route-text {
+            font-size: 11px !important;
+          }
+          .cdm-booking-row .route-sub {
+            font-size: 10px !important;
+          }
+          .cdm-booking-row .date-text {
+            font-size: 11px !important;
+          }
+          .cdm-booking-row .route-section {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+          }
+          .cdm-booking-row .date-section {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+          }
+          .cdm-booking-row .amount-section {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+          }
+          .cdm-booking-row .amount-text {
+            font-size: 15px !important;
+          }
+          .cdm-booking-row .status-pill {
+            align-self: flex-start !important;
+          }
+          /* Empty state */
+          .cdm-empty-state {
+            padding: 40px 20px !important;
+          }
+          .cdm-empty-state svg {
+            width: 32px !important;
+            height: 32px !important;
+          }
+          .cdm-empty-state p {
+            font-size: 12px !important;
+          }
+          .cdm-specs-box h3 {
+            font-size: 12px !important;
+          }
+          .cdm-spec-item .label {
+            font-size: 11px !important;
+          }
+          .cdm-spec-item .value {
+            font-size: 11px !important;
+          }
+          .cdm-doc-item .label {
+            font-size: 11px !important;
+          }
+          .cdm-doc-item .value {
+            font-size: 11px !important;
+          }
+          .cdm-facts-grid div {
+            padding: 14px !important;
+          }
+          .cdm-facts-grid div p {
+            font-size: 11px !important;
+          }
+          .cdm-description-box h3 {
+            font-size: 12px !important;
+          }
+          .cdm-danger-zone h3 {
+            font-size: 13.5px !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+          .cdm-danger-zone p {
+            font-size: 11px !important;
+          }
+          .cdm-remove-btn {
+            font-size: 11px !important;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+          }
+          .cdm-remove-btn svg {
+            width: 12px !important;
+            height: 12px !important;
+          }
+        }
       `}</style>
 
       <div
@@ -554,6 +1017,7 @@ export default function CarDetailModal({
       />
 
       <div
+        className="cdm-modal"
         style={{
           position: "fixed",
           inset: "0",
@@ -574,6 +1038,7 @@ export default function CarDetailModal({
       >
         {/* Hero Image Section */}
         <div
+          className="cdm-hero"
           style={{
             position: "relative",
             height: "220px",
@@ -581,111 +1046,28 @@ export default function CarDetailModal({
             overflow: "hidden",
           }}
         >
-          <img
-            src={carImages[activeImgIndex] || "/Images/placeholder-car.png"}
+          <ImageCarousel
+            images={carImages}
             alt={car.model}
-            onLoad={() => setImgLoaded(true)}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              display: "block",
-              transition: "opacity 0.3s ease",
-              opacity: imgLoaded && !imgTransitioning ? 1 : 0,
-            }}
+            height="220px"
+            dotColor="#a855f7"
+            arrows
+            counter
+            loop
           />
+
           <div
             style={{
               position: "absolute",
               inset: 0,
               background:
                 "linear-gradient(to top,rgba(10,10,22,1) 0%,rgba(10,10,22,0.5) 50%,rgba(10,10,22,0.15) 100%)",
+              pointerEvents: "none",
             }}
           />
 
-          {hasMultipleImages && (
-            <>
-              <button
-                onClick={() => goToImage((activeImgIndex - 1 + carImages.length) % carImages.length)}
-                className="cdm-gallery-btn"
-                style={{
-                  position: "absolute", left: "12px", top: "50%",
-                  transform: "translateY(-50%)", width: "32px", height: "32px",
-                  borderRadius: "50%", background: "rgba(10,10,22,0.7)",
-                  backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.15)",
-                  color: "#fff", cursor: "pointer", display: "flex",
-                  alignItems: "center", justifyContent: "center",
-                  zIndex: 5,
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-
-              <button
-                onClick={() => goToImage((activeImgIndex + 1) % carImages.length)}
-                className="cdm-gallery-btn"
-                style={{
-                  position: "absolute", right: "12px", top: "50%",
-                  transform: "translateY(-50%)", width: "32px", height: "32px",
-                  borderRadius: "50%", background: "rgba(10,10,22,0.7)",
-                  backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.15)",
-                  color: "#fff", cursor: "pointer", display: "flex",
-                  alignItems: "center", justifyContent: "center",
-                  zIndex: 5,
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="9 18 15 12 9 6" />
-                </svg>
-              </button>
-
-              <div style={{
-                position: "absolute", bottom: "58px", left: "50%",
-                transform: "translateX(-50%)", display: "flex", gap: "6px", zIndex: 5,
-              }}>
-                {carImages.map((_, i) => (
-                  <div
-                    key={i}
-                    onClick={() => goToImage(i)}
-                    style={{
-                      width: i === activeImgIndex ? "18px" : "5px",
-                      height: "5px", borderRadius: "3px", cursor: "pointer",
-                      background: i === activeImgIndex ? "#a855f7" : "rgba(255,255,255,0.4)",
-                      transition: "all 0.25s cubic-bezier(0.4,0,0.2,1)",
-                      boxShadow: i === activeImgIndex ? "0 0 12px rgba(168,85,247,0.5)" : "none",
-                    }}
-                  />
-                ))}
-              </div>
-
-              <div style={{
-                position: "absolute", bottom: "58px", right: "16px",
-                background: "rgba(0,0,0,0.55)", backdropFilter: "blur(8px)",
-                border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px",
-                padding: "3px 9px", fontSize: "10px", fontWeight: "700",
-                color: "rgba(255,255,255,0.7)", zIndex: 5,
-              }}>
-                {activeImgIndex + 1} / {carImages.length}
-              </div>
-            </>
-          )}
-
-          {!imgLoaded && (
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                background: "linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.07) 50%, rgba(255,255,255,0.03) 100%)",
-                backgroundSize: "200% 100%",
-                animation: "shimmer 1.5s infinite",
-              }}
-            />
-          )}
-
           <button
-            className="cdm-close"
+            className="cdm-close-btn"
             onClick={onClose}
             style={{
               position: "absolute",
@@ -703,6 +1085,7 @@ export default function CarDetailModal({
               alignItems: "center",
               justifyContent: "center",
               transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+              zIndex: 10,
             }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -712,6 +1095,7 @@ export default function CarDetailModal({
           </button>
 
           <div
+            className="cdm-live-badge"
             style={{
               position: "absolute",
               top: "16px",
@@ -729,6 +1113,7 @@ export default function CarDetailModal({
               backdropFilter: "blur(12px)",
               border: `1px solid ${car.isAvailable ? "rgba(34,197,94,0.4)" : "rgba(239,68,68,0.4)"}`,
               color: "#fff",
+              zIndex: 10,
             }}
           >
             <span
@@ -749,6 +1134,7 @@ export default function CarDetailModal({
               bottom: "16px",
               left: "20px",
               right: "20px",
+              zIndex: 10,
             }}
           >
             <div
@@ -760,6 +1146,7 @@ export default function CarDetailModal({
             >
               <div>
                 <p
+                  className="cdm-model-type"
                   style={{
                     margin: "0 0 3px",
                     fontSize: "11px",
@@ -772,18 +1159,19 @@ export default function CarDetailModal({
                   {car.type}
                 </p>
                 <h2
+                  className="cdm-model-name"
                   style={{
                     margin: 0,
                     fontSize: "26px",
                     lineHeight: 1,
                   }}
-                  className="qw_shine_heading"
                 >
                   {car.model}
                 </h2>
               </div>
               <div style={{ textAlign: "right" }}>
                 <p
+                  className="cdm-price"
                   style={{
                     margin: 0,
                     fontSize: "28px",
@@ -795,6 +1183,7 @@ export default function CarDetailModal({
                   ${car.price}
                 </p>
                 <p
+                  className="cdm-price-label"
                   style={{
                     margin: "2px 0 0",
                     fontSize: "10px",
@@ -811,12 +1200,14 @@ export default function CarDetailModal({
 
         {/* Tabs */}
         <div
+          className="cdm-tabs-wrapper"
           style={{
             display: "flex",
             gap: "4px",
             padding: "16px 20px 0",
             borderBottom: "1px solid rgba(255,255,255,0.07)",
             flexShrink: 0,
+            alignItems: "center",
           }}
         >
           {TABS.map((tab) => (
@@ -843,12 +1234,14 @@ export default function CarDetailModal({
                     ? "2px solid #a855f7"
                     : "2px solid transparent",
                 transition: "all 0.2s ease",
+                whiteSpace: "nowrap",
               }}
             >
               {tab.label}
             </button>
           ))}
           <div
+            className="cdm-actions"
             style={{
               marginLeft: "auto",
               display: "flex",
@@ -935,12 +1328,13 @@ export default function CarDetailModal({
 
         {/* Content */}
         <div
-          className="cdm-scroll"
+          className="cdm-content"
           style={{ flex: 1, overflowY: "auto", padding: "24px 20px 40px" }}
         >
           {activeTab === "overview" && (
             <div style={{ animation: "cdm-fadeUp 0.3s ease" }}>
               <div
+                className="cdm-stats-grid"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr 1fr 1fr",
@@ -948,59 +1342,68 @@ export default function CarDetailModal({
                   marginBottom: "24px",
                 }}
               >
-                <StatCard
-                  label="Total Revenue"
-                  value={fmtCurrency(stats.revenue)}
-                  sub="From confirmed bookings"
-                  color="#22c55e"
-                  icon={
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="12" y1="1" x2="12" y2="23" />
-                      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                    </svg>
-                  }
-                />
-                <StatCard
-                  label="Total Bookings"
-                  value={stats.total}
-                  sub={`${stats.completed} completed`}
-                  color="#a855f7"
-                  icon={
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                    </svg>
-                  }
-                />
-                <StatCard
-                  label="Avg. Booking Value"
-                  value={fmtCurrency(stats.avgValue)}
-                  sub="Per confirmed trip"
-                  color="#8b5cf6"
-                  icon={
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <line x1="18" y1="20" x2="18" y2="10" />
-                      <line x1="12" y1="20" x2="12" y2="4" />
-                      <line x1="6" y1="20" x2="6" y2="14" />
-                    </svg>
-                  }
-                />
-                <StatCard
-                  label="Avg. Rental Duration"
-                  value={`${stats.avgDays.toFixed(1)}d`}
-                  sub="Days per booking"
-                  color="#f59e0b"
-                  icon={
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                  }
-                />
+                <div className="cdm-stat-card">
+                  <StatCard
+                    label="Total Revenue"
+                    value={fmtCurrency(stats.revenue)}
+                    sub="From confirmed bookings"
+                    color="#22c55e"
+                    icon={
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                      </svg>
+                    }
+                  />
+                </div>
+                <div className="cdm-stat-card">
+                  <StatCard
+                    label="Total Bookings"
+                    value={stats.total}
+                    sub={`${stats.completed} completed`}
+                    color="#a855f7"
+                    icon={
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                      </svg>
+                    }
+                  />
+                </div>
+                <div className="cdm-stat-card">
+                  <StatCard
+                    label="Avg. Booking Value"
+                    value={fmtCurrency(stats.avgValue)}
+                    sub="Per confirmed trip"
+                    color="#8b5cf6"
+                    icon={
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10" />
+                        <line x1="12" y1="20" x2="12" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="14" />
+                      </svg>
+                    }
+                  />
+                </div>
+                <div className="cdm-stat-card">
+                  <StatCard
+                    label="Avg. Rental Duration"
+                    value={`${stats.avgDays.toFixed(1)}d`}
+                    sub="Days per booking"
+                    color="#f59e0b"
+                    icon={
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                      </svg>
+                    }
+                  />
+                </div>
               </div>
 
               {monthlyData.length > 0 && (
                 <div
+                  className="cdm-monthly-revenue"
                   style={{
                     background: "rgba(255,255,255,0.02)",
                     border: "1px solid rgba(255,255,255,0.06)",
@@ -1039,6 +1442,7 @@ export default function CarDetailModal({
                       </p>
                     </div>
                     <span
+                      className="total-revenue"
                       style={{
                         color: "#22c55e",
                         fontWeight: "800",
@@ -1049,6 +1453,7 @@ export default function CarDetailModal({
                     </span>
                   </div>
                   <div
+                    className="chart-container"
                     style={{
                       display: "flex",
                       alignItems: "flex-end",
@@ -1070,6 +1475,7 @@ export default function CarDetailModal({
                           }}
                         >
                           <span
+                            className="chart-bar-label"
                             style={{
                               color: "#a855f7",
                               fontSize: "9px",
@@ -1092,6 +1498,7 @@ export default function CarDetailModal({
                             }}
                           />
                           <span
+                            className="chart-month-label"
                             style={{
                               color: "rgba(255,255,255,0.3)",
                               fontSize: "9px",
@@ -1108,6 +1515,7 @@ export default function CarDetailModal({
               )}
 
               <div
+                className="cdm-breakdown-grid"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr",
@@ -1116,6 +1524,7 @@ export default function CarDetailModal({
                 }}
               >
                 <div
+                  className="cdm-breakdown-box"
                   style={{
                     background: "rgba(255,255,255,0.02)",
                     border: "1px solid rgba(255,255,255,0.06)",
@@ -1161,7 +1570,7 @@ export default function CarDetailModal({
                       ? ((value / stats.total) * 100).toFixed(0)
                       : 0;
                     return (
-                      <div key={label} style={{ marginBottom: "12px" }}>
+                      <div key={label} className="cdm-breakdown-item" style={{ marginBottom: "12px" }}>
                         <div
                           style={{
                             display: "flex",
@@ -1170,6 +1579,7 @@ export default function CarDetailModal({
                           }}
                         >
                           <span
+                            className="label"
                             style={{
                               fontSize: "12px",
                               color: "rgba(255,255,255,0.55)",
@@ -1178,6 +1588,7 @@ export default function CarDetailModal({
                             {label}
                           </span>
                           <span
+                            className="value"
                             style={{
                               fontSize: "12px",
                               color,
@@ -1196,6 +1607,7 @@ export default function CarDetailModal({
                           </span>
                         </div>
                         <div
+                          className="bar"
                           style={{
                             height: "5px",
                             borderRadius: "5px",
@@ -1220,6 +1632,7 @@ export default function CarDetailModal({
                 </div>
 
                 <div
+                  className="cdm-fact-box"
                   style={{
                     background: "rgba(255,255,255,0.02)",
                     border: "1px solid rgba(255,255,255,0.06)",
@@ -1237,59 +1650,62 @@ export default function CarDetailModal({
                   >
                     Quick Facts
                   </h3>
-                  {[
-                    { label: "Top Customer", value: stats.topCustomer },
-                    { label: "Location", value: car.location || "—" },
-                    {
-                      label: "Rating",
-                      value: car.rating > 0
-                        ? (
-                          <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" strokeWidth="2">
-                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                            </svg>
-                            {car.rating.toFixed(1)} / 5
-                          </span>
-                        )
-                        : "No ratings yet",
-                    },
-                    { label: "Listed Since", value: fmtDate(car.createdAt) },
-                    { label: "Last Updated", value: fmtDate(car.updatedAt) },
-                  ].map(({ label, value }) => (
-                    <div
-                      key={label}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "9px 0",
-                        borderBottom: "1px solid rgba(255,255,255,0.04)",
-                      }}
-                    >
-                      <span
+                  <div className="cdm-facts-grid">
+                    {[
+                      { label: "Top Customer", value: stats.topCustomer },
+                      { label: "Location", value: car.location || "—" },
+                      {
+                        label: "Rating",
+                        value: car.rating > 0
+                          ? (
+                            <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="#fbbf24" stroke="#fbbf24" strokeWidth="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                              </svg>
+                              {car.rating.toFixed(1)} / 5
+                            </span>
+                          )
+                          : "No ratings yet",
+                      },
+                      { label: "Listed Since", value: fmtDate(car.createdAt) },
+                      { label: "Last Updated", value: fmtDate(car.updatedAt) },
+                    ].map(({ label, value }) => (
+                      <div
+                        key={label}
+                        className="cdm-fact-item"
                         style={{
-                          color: "rgba(255,255,255,0.35)",
-                          fontSize: "12px",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          padding: "9px 0",
+                          borderBottom: "1px solid rgba(255,255,255,0.04)",
                         }}
                       >
-                        {label}
-                      </span>
-                      <span
-                        style={{
-                          color: "rgba(255,255,255,0.8)",
-                          fontSize: "12px",
-                          fontWeight: "600",
-                          maxWidth: "55%",
-                          textAlign: "right",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {value}
-                      </span>
-                    </div>
-                  ))}
+                        <span
+                          style={{
+                            color: "rgba(255,255,255,0.35)",
+                            fontSize: "12px",
+                          }}
+                        >
+                          {label}
+                        </span>
+                        <span
+                          style={{
+                            color: "rgba(255,255,255,0.8)",
+                            fontSize: "12px",
+                            fontWeight: "600",
+                            maxWidth: "55%",
+                            textAlign: "right",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          {value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -1299,6 +1715,7 @@ export default function CarDetailModal({
             <div style={{ animation: "cdm-fadeUp 0.3s ease" }}>
               {carBookings.length === 0 ? (
                 <div
+                  className="cdm-empty-state"
                   style={{
                     textAlign: "center",
                     padding: "60px 20px",
@@ -1336,6 +1753,7 @@ export default function CarDetailModal({
               ) : (
                 <>
                   <div
+                    className="cdm-booking-headers"
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 140px 120px 100px 90px",
@@ -1364,7 +1782,116 @@ export default function CarDetailModal({
                     )}
                   </div>
                   {carBookings.map((b) => (
-                    <BookingRow key={b.id} booking={b} />
+                    <div
+                      key={b.id}
+                      className="cdm-booking-row"
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 140px 120px 100px 90px",
+                        gap: "12px",
+                        alignItems: "center",
+                        padding: "12px 16px",
+                        borderRadius: "10px",
+                        background: "rgba(255,255,255,0.02)",
+                        border: "1px solid rgba(255,255,255,0.05)",
+                        borderLeft: `3px solid ${STATUS_STYLES[getEffKey(b)]?.color || "#a855f7"}`,
+                        transition: "all 0.2s ease",
+                        marginBottom: "6px",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "rgba(255,255,255,0.04)";
+                        e.currentTarget.style.transform = "translateX(3px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "rgba(255,255,255,0.02)";
+                        e.currentTarget.style.transform = "translateX(0)";
+                      }}
+                    >
+                      <div className="customer-section" style={{ minWidth: 0 }}>
+                        <div>
+                          <p
+                            className="customer-name"
+                            style={{
+                              margin: "0 0 1px",
+                              color: "#fff",
+                              fontSize: "13px",
+                              fontWeight: "700",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {b.userName || b.userEmail || "—"}
+                          </p>
+                          <p
+                            className="customer-id"
+                            style={{
+                              margin: 0,
+                              color: "rgba(255,255,255,0.3)",
+                              fontSize: "10px",
+                              fontFamily: "monospace",
+                            }}
+                          >
+                            #{b.bookingId}
+                          </p>
+                        </div>
+                        <StatusPill booking={b} className="status-pill" />
+                      </div>
+                      <div className="route-section">
+                        <div>
+                          <p
+                            className="route-text"
+                            style={{
+                              margin: 0,
+                              color: "rgba(255,255,255,0.6)",
+                              fontSize: "11px",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {b.pickup}→{b.dropoff}
+                          </p>
+                          <p
+                            className="route-sub"
+                            style={{
+                              margin: "2px 0 0",
+                              color: "rgba(255,255,255,0.25)",
+                              fontSize: "10px",
+                            }}
+                          >
+                            {b.days}d·{b.tripType || "One Way"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="date-section">
+                        <p
+                          className="date-text"
+                          style={{ margin: 0, color: "rgba(255,255,255,0.5)", fontSize: "11px" }}
+                        >
+                          {b.pickupDate || b.date || "—"}
+                        </p>
+                      </div>
+                      <div className="status-section">
+                        <StatusPill booking={b} />
+                      </div>
+                      <div className="amount-section">
+                        <p
+                          className="amount-text"
+                          style={{
+                            margin: 0,
+                            fontSize: "14px",
+                            fontWeight: "800",
+                            color: ["confirmed", "completed", "dealer_confirmed", "active"].includes(getEffKey(b))
+                              ? "#22c55e"
+                              : "#ef4444",
+                            textAlign: "right",
+                          }}
+                        >
+                          ${b.total?.toLocaleString() || "0"}
+                        </p>
+                      </div>
+                    </div>
                   ))}
                 </>
               )}
@@ -1374,6 +1901,7 @@ export default function CarDetailModal({
           {activeTab === "details" && (
             <div style={{ animation: "cdm-fadeUp 0.3s ease" }}>
               <div
+                className="cdm-specs-grid"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr",
@@ -1382,6 +1910,7 @@ export default function CarDetailModal({
                 }}
               >
                 <div
+                  className="cdm-specs-box"
                   style={{
                     background: "rgba(255,255,255,0.02)",
                     border: "1px solid rgba(255,255,255,0.06)",
@@ -1402,6 +1931,7 @@ export default function CarDetailModal({
                     Vehicle Specifications
                   </h3>
                   <div
+                    className="cdm-specs-inner"
                     style={{
                       display: "grid",
                       gridTemplateColumns: "1fr 1fr",
@@ -1420,6 +1950,7 @@ export default function CarDetailModal({
                     ].map(([label, value]) => (
                       <div
                         key={label}
+                        className="cdm-spec-item"
                         style={{
                           padding: "11px 8px",
                           borderBottom: "1px solid rgba(255,255,255,0.04)",
@@ -1429,6 +1960,7 @@ export default function CarDetailModal({
                         }}
                       >
                         <span
+                          className="label"
                           style={{
                             fontSize: "9px",
                             fontWeight: "700",
@@ -1440,6 +1972,7 @@ export default function CarDetailModal({
                           {label}
                         </span>
                         <span
+                          className="value"
                           style={{
                             fontSize: "13px",
                             fontWeight: "600",
@@ -1454,6 +1987,7 @@ export default function CarDetailModal({
                 </div>
 
                 <div
+                  className="cdm-specs-box"
                   style={{
                     background: "rgba(255,255,255,0.02)",
                     border: "1px solid rgba(255,255,255,0.06)",
@@ -1489,6 +2023,7 @@ export default function CarDetailModal({
                     return (
                       <div
                         key={label}
+                        className="cdm-doc-item"
                         style={{
                           display: "flex",
                           justifyContent: "space-between",
@@ -1498,6 +2033,7 @@ export default function CarDetailModal({
                         }}
                       >
                         <span
+                          className="label"
                           style={{
                             fontSize: "12px",
                             color: "rgba(255,255,255,0.4)",
@@ -1506,6 +2042,7 @@ export default function CarDetailModal({
                           {label}
                         </span>
                         <span
+                          className="value"
                           style={{
                             fontSize: "12px",
                             fontWeight: "600",
@@ -1524,6 +2061,7 @@ export default function CarDetailModal({
               </div>
 
               <div
+                className="cdm-facts-grid"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr 1fr 1fr",
@@ -1664,6 +2202,7 @@ export default function CarDetailModal({
 
               {car.description && (
                 <div
+                  className="cdm-description-box"
                   style={{
                     background: "rgba(255,255,255,0.02)",
                     border: "1px solid rgba(255,255,255,0.06)",

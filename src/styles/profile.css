@@ -889,7 +889,7 @@
 .prf_field_hint {
   margin: 6px 0 0;
   color: rgba(255,255,255,0.28);
-  font-size: 10.5px;
+  font-size: 10px !important;
   line-height: 1.4;
 }
 
@@ -908,6 +908,7 @@
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--r-lg);
   padding: 24px;
+  margin-top: 20px;
   transition:
     border-color var(--t-base) var(--ease-smooth),
     box-shadow   var(--t-base) var(--ease-smooth),
@@ -1924,11 +1925,249 @@ textarea.form_input {
   .glass_nav_btn { height: 40px; }
 }
 
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .prf-content { padding: 14px 12px 28px !important; }
   .prf-emergency-mini-grid { grid-template-columns: 1fr !important; }
   .prf-booking-filters { grid-template-columns: 1fr 1fr !important; gap: 6px !important; }
   .prf-avatar-wrap { width: 68px !important; height: 68px !important; }
   .prf-avatar-img, .prf-avatar-initials { width: 68px !important; height: 68px !important; font-size: 20px !important; }
   .back_btn_animate { width: 78px !important; height: 34px !important; }
+} */
+
+@media (max-width: 479px) {
+  .profile_page_wrapper {
+    padding: 90px 5px 20px;
+  }
+
+  .prf-nav-btn {
+    gap: 5px;
+  }
+
+  .prf-user-name {
+    font-size: 15px !important;
+  }
+
+  .prf-user-email {
+    font-size: 12px !important;
+  }
+
+  .prf-user-text {
+    gap: 0 !important;
+  }
+
+  .prf-sidebar-footer {
+    display: none !important;
+  }
+
+  .prf-personal-container,
+  .prf-tab-card form,
+  .prf-tab-card > div,
+  [class$="-container"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .prf-content {
+    padding: 16px 14px 28px !important;
+  }
+
+  .prf-personal-container {
+    padding: 0px !important;
+    gap: 0px;
+  }
+
+  .prf-section-sub {
+    font-size: 12px !important;
+    line-height: 1.2;
+  }
+
+  .prf_field_hint {
+    font-size: 10px !important;
+    margin-bottom: 20px;
+  }
+
+  .prf-tab-card, .prf-danger-card {
+    padding: 16px 12px;
+    margin-top: 0px;
+  }
+
+  .prf-tab-card p {
+    font-size: 12px !important;
+  }
+
+  .prf-danger-card p {
+    font-size: 12px !important;
+  }
+
+  .prf_field label {
+    font-size: 10px;
+  }
+
+  .auth_btn {
+    font-size: 13px !important;
+    padding: 10px 20px;
+  }
+
+  /* ── Personal Details: stack Contact/Alternate number and
+        Currency/Language instead of side-by-side, and rein in
+        the floating label so it doesn't blow out the field on
+        focus ── */
+  .prf-personal-container .prf-grid-2col-contact
+  .prf-personal-container .prf-pref-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .prf_field label {
+    font-size: 11px !important;
+  }
+
+  .prf_field input:focus ~ label,
+  .prf_field input:not(:placeholder-shown) ~ label,
+  .prf_field textarea:focus ~ label,
+  .prf_field textarea:not(:placeholder-shown) ~ label,
+  .prf_field.select-field label {
+    font-size: 10px !important;
+    top: -9px !important;
+    left: 8px !important;
+    padding: 2px 7px !important;
+  }
+
+  /* ── Booking History: keep all 4 stat cards in a single row ── */
+  .prf-booking-filters {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .prf-filter-chip {
+    padding: 8px 4px !important;
+    border-radius: 14px;
+  }
+
+  .prf-filter-chip .fc-num {
+    font-size: 14px !important;
+  }
+
+  .prf-filter-chip .fc-lbl {
+    font-size: 8px !important;
+    letter-spacing: 0.03em !important;
+  }
+
+  /* ── Contact Us: stack Name/Email fields ── */
+  .prf-grid-2col-contact {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .prf-password-container {
+    padding: 0 !important;
+  }
+
+  .profile_btn {
+    margin-top: 10px !important;
+    font-size: 13.5px;
+  }
+
+  .prf-2fa-header-row {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
+  .prf-2fa-badge {
+    /* margin-left: 54px !important; */
+    width: fit-content;
+  }
+
+  .prf-tab-card form {
+    padding: 0px !important;
+  }
+
+  .prf_field input {
+    padding: 10px 16px !important;
+    font-size: 12px !important;
+    border-radius: 10px !important;
+  }
+
+  /* ── Profile Image Upload: avatar stays left, Choose/Upload/Remove
+        buttons stack in a single column on the right instead of
+        wrapping horizontally ── */
+  .pp_row {
+    align-items: flex-start !important;
+    flex-wrap: nowrap !important;
+    gap: 14px !important;
+  }
+
+  .delete_btn, .btn {
+    font-size: 13px !important;
+    height: 40px !important;
+    padding: 12px 24px !important;
+  }
+
+  .pp_control_btn {
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+  
+  .pp_control_btn button {
+    font-size: 12px !important;
+  }
+
+  .pp_btn_row {
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .pp_btn_row button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .pp_text {
+    font-size: 9px !important;
+  }
+
+  .prf-content li {
+    line-height: 1.35;
+  }
+
+  .prf-tab-card span {
+    font-size: 12px !important;
+  }
+
+  .emergency_contact_modal, .emergency_contact_info {
+    padding: 20px !important;
+  }
+
+  .emergency_contact_modal button {
+    height: 30px !important;
+    width: 30px !important;
+  }
+
+  .emergency_contact_info form {
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .emergency_contact_info form  label {
+    font-size: 11px !important;
+  }
+
+  .emergency_contact_info form p {
+    font-size: 10px !important;
+  }
+
+  .emergency_contact_info p {
+    line-height: 1.35 !important;
+  }
+
+  .emergency_contact_info form input, select {
+    padding: 9px 16px !important;
+    font-size: 12px !important;
+  }
+
 }

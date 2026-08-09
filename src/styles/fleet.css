@@ -1,3 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&display=swap');
+
+/* ═══════════════════════════════════════════════════════
+   QUICKWHEELS FLEET — PREMIUM DESIGN SYSTEM
+   Dark purple aesthetic, matches booking.css / profile.css
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  --fl-purple:        #a855f7;
+  --fl-purple-mid:     #9333ea;
+  --fl-purple-deep:    #6d28d9;
+  --fl-purple-bright:  #c084fc;
+  --fl-violet:         #7c3aed;
+
+  --fl-brand-gradient:    linear-gradient(135deg, var(--fl-purple-deep) 0%, var(--fl-purple) 100%);
+  --fl-brand-gradient-3:  linear-gradient(135deg, var(--fl-purple-deep) 0%, var(--fl-purple-mid) 45%, var(--fl-purple-bright) 100%);
+  --fl-glass-gradient:    linear-gradient(135deg, rgba(147,51,234,0.14) 0%, rgba(168,85,247,0.04) 100%);
+
+  --fl-bg-base:     #05050b;
+  --fl-border:      rgba(255,255,255,0.08);
+  --fl-border-hi:   rgba(168,85,247,0.4);
+  --fl-text-sec:    rgba(255,255,255,0.65);
+  --fl-text-muted:  rgba(255,255,255,0.4);
+
+  --fl-shadow-glow: 0 0 24px rgba(147,51,234,0.35);
+  --fl-shadow-lg:   0 20px 48px rgba(0,0,0,0.5);
+
+  --fl-r-sm: 8px;
+  --fl-r-md: 12px;
+  --fl-r-lg: 20px;
+
+  --fl-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --fl-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --fl-ease-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* ---------- 0. ICON SYSTEM ---------- */
+.fl-icon {
+    display: inline-block;
+    vertical-align: -2px;
+    flex-shrink: 0;
+    color: currentColor;
+}
+
+.fl-icon-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fl-icon-row.block {
+    display: flex;
+}
+
+.fl-spin-slow {
+    animation: fl-spin 1.6s linear infinite;
+}
+
+@keyframes fl-spin {
+    to { transform: rotate(360deg); }
+}
+
 /* ---------- 1. FORCE BACKGROUND RESET ---------- */
 .fleet_section {
     padding: 0px 30px 30px 30px;
@@ -6,38 +68,44 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #0a0a0f !important;
+    background: var(--fl-bg-base) !important;
     background-image: none !important;
     position: relative;
     overflow-x: hidden;
     box-sizing: border-box;
+    font-family: 'Quicksand', sans-serif;
 }
 
-/* Enhanced Blue Light Effect - Top Glow */
+/* Ambient Purple Glow — Top, now drifts + breathes for a livelier feel */
 .fleet_section::before {
     content: '';
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: radial-gradient(ellipse at 50% 0%, rgba(4, 0, 255, 0.25), rgba(76, 227, 247, 0.1), transparent 60%);
+    top: -10%;
+    left: -10%;
+    width: 70vw;
+    height: 70vw;
+    max-width: 900px;
+    background: radial-gradient(ellipse at center, rgba(109, 40, 217, 0.32), rgba(168, 85, 247, 0.12), transparent 65%);
     pointer-events: none;
     z-index: 0;
-    animation: breathe 4s ease-in-out infinite;
+    filter: blur(20px);
+    animation: fl-flare-drift-a 16s ease-in-out infinite;
 }
 
-/* Secondary Ambient Glow */
+/* Secondary Ambient Glow — bottom right, drifts opposite direction */
 .fleet_section::after {
     content: '';
     position: fixed;
-    bottom: 0;
-    right: 0;
-    width: 60%;
-    height: 60%;
-    background: radial-gradient(circle at 70% 100%, rgba(76, 227, 247, 0.08), transparent 70%);
+    bottom: -12%;
+    right: -10%;
+    width: 55vw;
+    height: 55vw;
+    max-width: 700px;
+    background: radial-gradient(circle at 70% 100%, rgba(147, 51, 234, 0.22), rgba(192,132,252,0.05) 55%, transparent 75%);
     pointer-events: none;
     z-index: 0;
+    filter: blur(30px);
+    animation: fl-flare-drift-b 13s ease-in-out infinite;
 }
 
 /* Content above background */
@@ -46,17 +114,106 @@
     z-index: 1;
 }
 
-/* Breathe Animation for Blue Light */
-@keyframes breathe {
+/* ── Drifting starfield layer + extra corner flares, same language
+      as .prf_stars / .prf_ambient_a/b on the profile & booking pages ── */
+.fl_stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
 
-    0%,
-    100% {
-        opacity: 0.8;
-    }
+.fl_star_layer {
+    position: absolute;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background-repeat: repeat;
+}
 
-    50% {
-        opacity: 1;
+.fl_star_layer_a {
+    background-image:
+        radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.85) 100%, transparent),
+        radial-gradient(1px 1px at 90px 120px, rgba(255,255,255,0.65) 100%, transparent),
+        radial-gradient(1.5px 1.5px at 150px 60px, rgba(255,255,255,0.75) 100%, transparent),
+        radial-gradient(1px 1px at 200px 180px, rgba(255,255,255,0.55) 100%, transparent);
+    background-size: 220px 220px;
+    opacity: 0.4;
+    animation: fl-stars-drift 90s linear infinite;
+}
+
+.fl_star_layer_b {
+    background-image:
+        radial-gradient(1px 1px at 40px 80px, rgba(168,85,247,0.8) 100%, transparent),
+        radial-gradient(1px 1px at 130px 20px, rgba(255,255,255,0.55) 100%, transparent),
+        radial-gradient(1.5px 1.5px at 180px 140px, rgba(255,255,255,0.65) 100%, transparent);
+    background-size: 260px 260px;
+    opacity: 0.3;
+    animation: fl-stars-drift 140s linear infinite reverse;
+}
+
+.fl_star_layer_c {
+    background-image:
+        radial-gradient(1px 1px at 60px 10px, rgba(255,255,255,0.45) 100%, transparent),
+        radial-gradient(1px 1px at 160px 100px, rgba(168,85,247,0.55) 100%, transparent);
+    background-size: 300px 300px;
+    opacity: 0.2;
+    animation: fl-stars-drift 200s linear infinite;
+}
+
+@keyframes fl-stars-drift {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(-220px, -220px, 0); }
+}
+
+.fl_ambient_a,
+.fl_ambient_b {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(110px);
+}
+
+.fl_ambient_a {
+    top: 30%;
+    left: 60%;
+    width: 30vw;
+    height: 30vw;
+    max-width: 420px;
+    background: radial-gradient(circle, rgba(147,51,234,0.16) 0%, transparent 70%);
+    animation: fl-flare-drift-a 20s ease-in-out infinite reverse;
+}
+
+.fl_ambient_b {
+    top: 55%;
+    left: 5%;
+    width: 26vw;
+    height: 26vw;
+    max-width: 360px;
+    background: radial-gradient(circle, rgba(109,40,217,0.14) 0%, transparent 70%);
+    animation: fl-flare-drift-b 18s ease-in-out infinite reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fl_star_layer,
+    .fl_ambient_a,
+    .fl_ambient_b,
+    .fleet_section::before,
+    .fleet_section::after {
+        animation: none;
     }
+}
+
+@keyframes fl-flare-drift-a {
+    0%, 100% { opacity: 0.75; transform: translate(0, 0) scale(1); }
+    50%      { opacity: 1;    transform: translate(4%, 5%) scale(1.12); }
+}
+
+@keyframes fl-flare-drift-b {
+    0%, 100% { opacity: 0.7; transform: translate(0, 0) scale(1); }
+    50%      { opacity: 1;   transform: translate(-4%, -4%) scale(1.15); }
 }
 
 .fleet_sort_wrapper {
@@ -65,29 +222,40 @@
   gap: 12px;
   margin: 0px 0 35px;
   padding: 0 20px;
+  opacity: 0;
+  animation: fadeInUp 0.6s var(--fl-ease-out) 0.15s forwards;
 }
 
 .fleet_sort_select {
   font-family: 'Quicksand', sans-serif;
   font-size: 0.9rem;
   font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.05);
+  height: 40px;
+  padding: 0 18px;
+  box-sizing: border-box;
+  border-radius: var(--fl-r-sm);
+  border: 1px solid var(--fl-border);
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   color: #fff;
   cursor: pointer;
   outline: none;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s var(--fl-ease-smooth), background 0.3s var(--fl-ease-smooth), box-shadow 0.3s var(--fl-ease-smooth);
 }
 
 .fleet_sort_select:hover {
-  border-color: #4ce3f7;
-  background: rgba(76,227,247,0.05);
+  border-color: var(--fl-purple);
+  background: rgba(168,85,247,0.08);
+}
+
+.fleet_sort_select:focus {
+  border-color: var(--fl-purple);
+  box-shadow: 0 0 0 4px rgba(147,51,234,0.16);
 }
 
 .fleet_sort_select option {
-  background: #1a1a1a;
+  background: #14101f;
   color: #fff;
 }
 
@@ -95,8 +263,9 @@
 /* ---------- 2. TITLE SECTION ---------- */
 .fleet_title {
     font-size: 2.5rem;
+    font-weight: 800;
     margin-bottom: 50px;
-    background: linear-gradient(135deg, #ffffff 30%, #4ce3f7, #0400ff);
+    background: linear-gradient(135deg, #ffffff 30%, var(--fl-purple-bright), var(--fl-purple-deep));
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -104,6 +273,16 @@
     letter-spacing: -1px;
     animation: fadeInDown 0.8s ease-out, gradientShift 4s ease infinite;
     position: relative;
+}
+
+.fleet_title.fl-icon-row {
+    justify-content: center;
+    gap: 12px;
+}
+
+.fleet_title .fl-icon {
+    -webkit-text-fill-color: initial;
+    color: var(--fl-purple-bright);
 }
 
 @keyframes gradientShift {
@@ -126,8 +305,9 @@
     transform: translateX(-50%);
     width: 0;
     height: 3px;
-    background: linear-gradient(90deg, #0400ff, #4ce3f7);
+    background: linear-gradient(90deg, var(--fl-purple-deep), var(--fl-purple-bright));
     border-radius: 3px;
+    box-shadow: 0 0 12px rgba(168,85,247,0.6);
     animation: widthExpand 1s ease-out 0.5s forwards;
 }
 
@@ -155,7 +335,7 @@
 }
 
 .fleet_category_btn {
-    font-family: quicksand, sans-serif;
+    font-family: 'Quicksand', sans-serif;
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.95rem;
     font-weight: 600;
@@ -165,9 +345,10 @@
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
     cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: all 0.5s var(--fl-ease-smooth);
     letter-spacing: 0.5px;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     position: relative;
     overflow: hidden;
 }
@@ -190,20 +371,40 @@
 
 .fleet_category_btn:hover {
     color: #fff;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(168, 85, 247, 0.1);
     transform: translateY(-3px);
-    border-color: rgba(76, 227, 247, 0.3);
+    border-color: rgba(168, 85, 247, 0.35);
+    box-shadow: 0 8px 20px -8px rgba(147,51,234,0.4);
 }
 
 .fleet_category_btn.active {
-    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    background: linear-gradient(135deg, var(--fl-purple-deep) 0%, var(--fl-purple-mid) 55%, var(--fl-purple-bright) 100%);
+    background-size: 180% 180%;
     color: #fff;
+    border-color: transparent;
+    box-shadow: 0 6px 20px rgba(147,51,234,0.45), 0 0 0 1px rgba(168,85,247,0.25);
+    animation: fl-pill-glow 2.4s ease-in-out infinite;
+    transform: translateY(-1px);
+}
+
+.fleet_category_btn:active {
+    transform: translateY(0) scale(0.96);
+}
+
+.fleet_category_btn.active:hover {
+    transform: translateY(-3px);
+}
+
+@keyframes fl-pill-glow {
+    0%, 100% { box-shadow: 0 6px 20px rgba(147,51,234,0.45), 0 0 0 1px rgba(168,85,247,0.25); }
+    50%      { box-shadow: 0 6px 26px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.4); }
 }
 
 /* ---------- 4. CARDS GRID ---------- */
 .fleet_cards_wrapper {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+    align-items: start;
     gap: 20px;
     width: 100%;
     max-width: 1600px;
@@ -217,18 +418,19 @@
     display: flex;
     flex-direction: column;
     padding: 18px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.04);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    border-radius: var(--fl-r-lg);
+    border: 1px solid var(--fl-border);
+    transition: all 0.4s var(--fl-ease-smooth);
     will-change: transform;
     position: relative;
     overflow: hidden;
+    max-height: 560px;
 }
 
-/* Enhanced Blue Light Effect on Card Top */
+/* Purple Light Sweep on Card Top */
 .fleet_card::before {
     content: '';
     position: absolute;
@@ -236,7 +438,7 @@
     left: -100%;
     right: 100%;
     height: 2px;
-    background: linear-gradient(90deg, transparent, #4ce3f7, #0400ff, transparent);
+    background: linear-gradient(90deg, transparent, var(--fl-purple-bright), var(--fl-purple-deep), transparent);
     transition: all 0.5s ease;
 }
 
@@ -250,11 +452,11 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 0%, rgba(76, 227, 247, 0.1), transparent);
+    background: radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.14), transparent 70%);
     opacity: 0;
     transition: opacity 0.4s ease;
     pointer-events: none;
-    border-radius: 20px;
+    border-radius: var(--fl-r-lg);
 }
 
 .fleet_card:hover::after {
@@ -263,23 +465,82 @@
 
 
 .fleet_card:hover {
-    transform: translateY(-10px);
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(76, 227, 247, 0.4);
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.5), 0 0 20px rgba(76, 227, 247, 0.1);
+    transform: translateY(-4px) scale(1.008);
+    background: rgba(168, 85, 247, 0.06);
+    border-color: var(--fl-border-hi);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(147, 51, 234, 0.18), inset 0 0 0 1px rgba(168,85,247,0.12);
+}
+
+.fleet_card:active {
+    transform: translateY(-2px) scale(0.997);
+    transition-duration: 0.15s;
+}
+
+/* Focus-visible ring for keyboard users */
+.fleet_card:focus-within {
+    border-color: var(--fl-purple);
+    box-shadow: 0 0 0 3px rgba(147,51,234,0.28);
 }
 
 /* Card Image */
-.fleet_card_image {
+.fleet_card_image_wrap {
+    width: 100%;
+    height: 150px;
+    flex-shrink: 0;
+    margin-bottom: 16px;
+    border-radius: var(--fl-r-md);
+    overflow: hidden;
+    position: relative;
+}
+
+.fleet_card_image_wrap img {
     width: 100%;
     height: 150px;
     object-fit: contain;
-    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.4));
 }
 
-.fleet_card:hover .fleet_card_image {
-    transform: scale(1.05);
+/* Info column fills remaining card height so the price/CTA block
+   can be pinned to the bottom via margin-top:auto. Cards no longer
+   stretch to match their tallest row-mate (see align-items:start
+   on .fleet_cards_wrapper) — instead, .fleet_card has a max-height
+   and .fl-card-top scrolls internally, so a car with lots of
+   optional badges/plate/features never inflates the whole card. */
+.fleet_card_info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
+.fl-card-top {
+    display: flex;
+    flex-direction: column;
+    max-height: 252px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-anchor: none;
+    scrollbar-gutter: stable;
+}
+
+.fl-card-top > * {
+    flex-shrink: 0;
+}
+
+.fl-card-bottom {
+    margin-top: auto;
+    padding-top: 13px;
+    display: flex;
+    flex-direction: column;
+}
+
+.fl-card-actions {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.fl-card-action-item {
+    min-width: 0;
 }
 
 /* Card Title */
@@ -288,8 +549,8 @@
     font-weight: 700;
     color: #fff;
     text-align: center;
-    margin: 15px 0 10px 0;
-    overflow: hidden;
+    margin: 0 0 12px 0;
+    flex-shrink: 0;
 }
 
 /* Specs Grid */
@@ -297,7 +558,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    margin: 15px 0;
+    margin-bottom: 12px;
     align-items: start;
     /* 👈 FIX */
 }
@@ -307,33 +568,42 @@
     grid-template-columns: 20px 1fr;
     align-items: center;
     gap: 10px;
-    background: rgba(255, 255, 255, 0.04);
-    padding: 8px 10px;
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 6px 10px;
+    border-radius: var(--fl-r-sm);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    min-height: 36px;
-    transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+    height: 46px;
+    overflow: hidden;
+    transition: all 0.4s var(--fl-ease-smooth);
     cursor: pointer;
 }
 
 .fleet_card:hover .fleet_spec_item {
-    background: rgba(76, 227, 247, 0.08);
-    border-color: rgba(76, 227, 247, 0.2);
+    background: rgba(168, 85, 247, 0.08);
+    border-color: rgba(168, 85, 247, 0.22);
+}
+
+.fleet_spec_item:hover {
+    background: rgba(168, 85, 247, 0.16) !important;
+    border-color: rgba(168, 85, 247, 0.4) !important;
+    transform: translateY(-1px);
 }
 
 .fleet_spec_icon {
     width: 20px;
     height: 20px;
-    opacity: 0.8;
-    transition: transform 0.5s ease;
+    opacity: 0.85;
+    transition: transform 0.5s ease, filter 0.5s ease;
 }
 
 .fleet_spec_item:hover .fleet_spec_icon {
     transform: scale(1.3);
+    filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.7));
 }
 
 .fleet_spec_text {
     font-size: 0.8rem;
+    line-height: 1.2;
     color: rgba(255, 255, 255, 0.7);
 }
 
@@ -341,7 +611,7 @@
     font-size: 1.3rem;
     font-weight: 800;
     margin: 20px auto;
-    background: linear-gradient(30deg, #0400ff, #4ce3f7);
+    background: linear-gradient(135deg, var(--fl-purple-bright), var(--fl-purple-deep));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -356,12 +626,65 @@
 
 /* ---------- 6. BOOK NOW BUTTON ---------- */
 .fleet_book_btn {
-    /* height: 40px; */
     font-size: 1rem;
     margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.fleet_book_btn.btn {
+    gap: 8px;
+    padding: 11px 26px;
+    border-radius: var(--fl-r-md);
+    border: none;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: #fff;
+    background: linear-gradient(135deg, var(--fl-purple-deep) 0%, var(--fl-purple-mid) 45%, var(--fl-purple-bright) 100%);
+    background-size: 180% 180%;
+    background-position: 0% 50%;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    box-shadow: 0 6px 20px rgba(147,51,234,0.35);
+    transition:
+        transform 0.25s var(--fl-ease-out),
+        box-shadow 0.25s var(--fl-ease-smooth),
+        background-position 0.4s var(--fl-ease-smooth);
+}
+
+.fleet_book_btn.btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 55%;
+    height: 100%;
+    z-index: 1;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+    pointer-events: none;
+}
+
+.fleet_book_btn.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 32px rgba(147,51,234,0.5), 0 0 0 1px rgba(168,85,247,0.2);
+    background-position: 100% 50%;
+}
+
+.fleet_book_btn.btn:hover::before {
+    animation: fl-shimmer 0.7s ease forwards;
+}
+
+.fleet_book_btn.btn:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 4px 14px rgba(147,51,234,0.3);
+}
+
+@keyframes fl-shimmer {
+    0%   { left: -100%; }
+    100% { left: 160%; }
 }
 
 /* ---------- 7. ENHANCED ANIMATIONS ---------- */
@@ -389,7 +712,6 @@
     }
 }
 
-/* Stagger Animation for Cards */
 /* Stagger Animation for Cards */
 .fleet_card {
     animation: cardReveal 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) backwards;
@@ -450,7 +772,904 @@
     }
 }
 
-/* ---------- 8. UTILITY CLASSES ---------- */
+/* ═══════════════════════════════════════════════════════
+   10. CAR CARD — status badges, plate chip, feature tags
+   ═══════════════════════════════════════════════════════ */
+
+.fl-badge-selected {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--fl-brand-gradient-3);
+    background-size: 180% 180%;
+    color: #fff;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: 0 4px 16px rgba(147,51,234,0.4);
+    animation: fl-badge-in 0.4s var(--fl-ease-spring), fl-pill-glow 2.4s ease-in-out infinite;
+    letter-spacing: 0.02em;
+}
+
+.fl-badge-dealer-tag {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(10,6,20,0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--fl-purple-bright);
+    padding: 3px 10px;
+    border-radius: 16px;
+    font-size: 10px;
+    font-weight: 700;
+    z-index: 2;
+    border: 1px solid rgba(168,85,247,0.35);
+    animation: fl-badge-in 0.4s var(--fl-ease-spring);
+    transition: border-color 0.3s var(--fl-ease-smooth), background 0.3s var(--fl-ease-smooth);
+}
+
+.fleet_card:hover .fl-badge-dealer-tag {
+    border-color: rgba(168,85,247,0.55);
+    background: rgba(10,6,20,0.8);
+}
+
+.fl-badge-unavailable {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(239,68,68,0.92);
+    color: #fff;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    z-index: 2;
+    box-shadow: 0 4px 14px rgba(239,68,68,0.35);
+    animation: fl-badge-in 0.4s var(--fl-ease-spring);
+}
+
+@keyframes fl-badge-in {
+    from { opacity: 0; transform: translateY(-6px) scale(0.9); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.fl-safety-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 4px auto 8px;
+    padding: 4px 8px;
+    background: rgba(251,191,36,0.08);
+    border: 1px solid rgba(251,191,36,0.2);
+    border-radius: 8px;
+    width: fit-content;
+    transition: border-color 0.3s var(--fl-ease-smooth), background 0.3s var(--fl-ease-smooth);
+}
+
+.fleet_card:hover .fl-safety-row {
+    border-color: rgba(251,191,36,0.35);
+    background: rgba(251,191,36,0.12);
+}
+
+.fl-safety-star {
+    font-size: 14px;
+    transition: transform 0.3s var(--fl-ease-spring);
+}
+
+.fleet_card:hover .fl-safety-star.filled {
+    transform: scale(1.12);
+}
+
+.fl-safety-count {
+    margin-left: 4px;
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.fl-plate-chip {
+    display: inline-block;
+    padding: 3px 8px;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    transition: border-color 0.3s var(--fl-ease-smooth), color 0.3s var(--fl-ease-smooth);
+}
+
+.fleet_card:hover .fl-plate-chip {
+    border-color: rgba(168,85,247,0.25);
+    color: rgba(255,255,255,0.7);
+}
+
+.fl-feature-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 8px;
+    margin-top: 4px;
+}
+
+.fl-feature-badge {
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    transition: transform 0.25s var(--fl-ease-spring), box-shadow 0.25s var(--fl-ease-smooth);
+    cursor: default;
+}
+
+.fl-feature-badge:hover {
+    transform: translateY(-2px);
+}
+
+.fl-feature-badge.kit {
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.25);
+    color: var(--green, #22c55e);
+}
+.fl-feature-badge.kit:hover { box-shadow: 0 4px 12px rgba(34,197,94,0.25); }
+
+.fl-feature-badge.gps {
+    background: rgba(168,85,247,0.12);
+    border: 1px solid rgba(168,85,247,0.3);
+    color: var(--fl-purple-bright);
+}
+.fl-feature-badge.gps:hover { box-shadow: 0 4px 12px rgba(168,85,247,0.3); }
+
+.fl-feature-badge.service {
+    background: rgba(168,85,247,0.1);
+    border: 1px solid rgba(168,85,247,0.25);
+    color: var(--fl-purple);
+}
+.fl-feature-badge.service:hover { box-shadow: 0 4px 12px rgba(168,85,247,0.25); }
+
+.fl-feature-badge.puc {
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.2);
+    color: var(--green, #22c55e);
+}
+.fl-feature-badge.puc:hover { box-shadow: 0 4px 12px rgba(34,197,94,0.2); }
+
+/* ── Action buttons inside CarCard ── */
+
+.fl-btn-availability.btn {
+    background: rgba(168,85,247,0.08) !important;
+    border: 1px solid rgba(168,85,247,0.28) !important;
+    color: rgba(255,255,255,0.85);
+    box-shadow: none !important;
+}
+.fl-btn-availability.btn:hover {
+    background: rgba(168,85,247,0.16) !important;
+    border-color: rgba(168,85,247,0.5) !important;
+    box-shadow: 0 6px 18px rgba(147,51,234,0.25) !important;
+}
+
+.fl-btn-continue.btn {
+    background: var(--fl-brand-gradient-3) !important;
+    background-size: 180% 180% !important;
+    border: none !important;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(147,51,234,0.35) !important;
+}
+
+.fl-btn-disabled.btn {
+    opacity: 0.55;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+.fl-btn-disabled.btn:hover {
+    transform: none !important;
+    background-position: 0% 50% !important;
+}
+.fl-btn-disabled.conflict {
+    background: rgba(245,158,11,0.15) !important;
+    border: 1px solid rgba(245,158,11,0.4) !important;
+    color: #f59e0b !important;
+}
+.fl-btn-disabled.unavailable {
+    background: rgba(239,68,68,0.15) !important;
+    border: 1px solid rgba(239,68,68,0.4) !important;
+    color: #ef4444 !important;
+}
+
+.fl-unavailable-note {
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 6px;
+    text-align: center;
+}
+
+/* ═══════════════════════════════════════════════════════
+   10b. AVAILABILITY CALENDAR MODAL SHELL
+   The top padding reserves room for the site header on desktop/
+   laptop. On phones the header takes up much less vertical space,
+   so the same 130px pushed the calendar too far down — this scales
+   it back per breakpoint instead of using a fixed inline value.
+   ═══════════════════════════════════════════════════════ */
+
+.fl-avail-modal-overlay {
+    padding: 130px 16px 24px;
+}
+
+.fl-avail-modal-card {
+    max-height: calc(100vh - 154px);
+}
+
+@media (max-width: 767px) {
+    .fl-avail-modal-overlay {
+        padding: 100px 16px 24px;
+    }
+    .fl-avail-modal-card {
+        max-height: calc(100vh - 124px);
+    }
+}
+
+@media (max-width: 479px) {
+    .fl-avail-modal-overlay {
+        padding: 80px 10px 16px;
+    }
+    .fl-avail-modal-card {
+        max-height: calc(100vh - 96px);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════
+   10b. AVAILABILITY MODAL — two-column layout so the whole
+        thing fits on one screen without scrolling: car
+        details + action buttons on the left, calendar only
+        on the right. Uses grid-area rather than DOM order
+        since the footer comes after the calendar block in
+        the markup but needs to render bottom-left.
+   ═══════════════════════════════════════════════════════ */
+
+.fl-avail-body {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    grid-template-rows: auto 1fr auto;
+    max-height: inherit;
+}
+
+.fl-avail-header-area {
+    grid-column: 1;
+    grid-row: 1;
+    overflow-y: auto;
+}
+
+.fl-avail-footer-area {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+.fl-avail-calendar-area {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    border-left: 1px solid rgba(255,255,255,0.06);
+    overflow-y: auto;
+}
+
+@media (max-width: 700px) {
+    .fl-avail-body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        overflow-y: auto;
+    }
+
+    .fl-avail-header-area,
+    .fl-avail-footer-area,
+    .fl-avail-calendar-area {
+        grid-column: 1;
+        overflow-y: visible;
+    }
+
+    .fl-avail-header-area { grid-row: 1; }
+    .fl-avail-calendar-area {
+        grid-row: 2;
+        border-left: none;
+        border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .fl-avail-footer-area { grid-row: 3; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   11. MODAL SHELL — ValidationModal & similar dialogs
+   ═══════════════════════════════════════════════════════ */
+
+.fl-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,3,10,0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.25s var(--fl-ease-out);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.fl-modal-card {
+    position: relative;
+    background: linear-gradient(160deg, rgba(168,85,247,0.07), rgba(10,8,18,0.98) 45%);
+    background-color: #0c0a14;
+    border: 1px solid rgba(168,85,247,0.28);
+    border-radius: var(--fl-r-lg);
+    padding: 34px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    font-family: 'Quicksand', sans-serif;
+    box-shadow: var(--fl-shadow-lg), 0 0 40px -10px rgba(147,51,234,0.35);
+    animation: fl-modal-in 0.35s var(--fl-ease-spring);
+    overflow: hidden;
+}
+
+.fl-modal-card::before {
+    content: "";
+    position: absolute;
+    top: -40%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 260px;
+    height: 260px;
+    background: radial-gradient(circle, rgba(147,51,234,0.3) 0%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+@keyframes fl-modal-in {
+    from { opacity: 0; transform: translateY(16px) scale(0.96); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.fl-modal-icon {
+    font-size: 46px;
+    margin-bottom: 14px;
+    filter: drop-shadow(0 4px 12px rgba(147,51,234,0.35));
+}
+
+.fl-modal-title {
+    color: #fff;
+    margin: 0 0 12px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+}
+
+.fl-modal-text {
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 26px;
+    line-height: 1.6;
+    font-size: 13.5px;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.fl-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.fl-modal-btn-primary,
+.fl-modal-btn-secondary {
+    border-radius: var(--fl-r-md);
+    padding: 12px 26px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    transition: transform 0.25s var(--fl-ease-out), box-shadow 0.25s var(--fl-ease-smooth), background 0.25s var(--fl-ease-smooth), border-color 0.25s var(--fl-ease-smooth);
+}
+
+.fl-modal-btn-primary {
+    background: var(--fl-brand-gradient-3);
+    background-size: 180% 180%;
+    border: none;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(147,51,234,0.35);
+}
+.fl-modal-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(147,51,234,0.5);
+    background-position: 100% 50%;
+}
+.fl-modal-btn-primary:active { transform: translateY(0) scale(0.97); }
+
+.fl-modal-btn-secondary {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff;
+}
+.fl-modal-btn-secondary:hover {
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.32);
+    transform: translateY(-2px);
+}
+.fl-modal-btn-secondary:active { transform: translateY(0) scale(0.97); }
+
+/* Warning-flavoured variant (amber ring instead of purple) */
+.fl-modal-card.warn {
+    border-color: rgba(245,158,11,0.35);
+}
+.fl-modal-card.warn::before {
+    background: radial-gradient(circle, rgba(245,158,11,0.28) 0%, transparent 70%);
+}
+.fl-modal-title.warn { color: #f59e0b; }
+
+/* ═══════════════════════════════════════════════════════
+   11b. PARTNER SHOWROOMS — section header
+   ═══════════════════════════════════════════════════════ */
+
+.fl-showroom-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.fl-showroom-title {
+    margin: 0;
+    color: #c084fc;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.fl-showroom-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fl-showroom-location {
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.fl-showroom-badge {
+    background: rgba(192,132,252,0.1);
+    border: 1px solid rgba(192,132,252,0.22);
+    border-radius: 20px;
+    padding: 2px 10px;
+    color: #c084fc;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════
+   12. DEALER SHOWROOM CARD
+   ═══════════════════════════════════════════════════════ */
+
+.fl-dealer-card {
+    position: relative;
+    background: var(--fl-glass-gradient);
+    border: 1px solid rgba(168,85,247,0.22);
+    border-radius: var(--fl-r-lg);
+    padding: 22px;
+    cursor: pointer;
+    overflow: hidden;
+    font-family: 'Quicksand', sans-serif;
+    transition: transform 0.3s var(--fl-ease-out), box-shadow 0.3s var(--fl-ease-smooth), border-color 0.3s var(--fl-ease-smooth), background 0.3s var(--fl-ease-smooth);
+    animation: fadeInUp 0.5s var(--fl-ease-out) backwards;
+}
+
+.fl-dealer-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 18px 44px rgba(147,51,234,0.22);
+    border-color: rgba(168,85,247,0.5);
+    background: linear-gradient(135deg, rgba(147,51,234,0.14) 0%, rgba(168,85,247,0.05) 100%);
+}
+
+.fl-dealer-card:active {
+    transform: translateY(-2px) scale(0.995);
+}
+
+.fl-dealer-glow {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168,85,247,0.16), transparent 70%);
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.fl-dealer-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.fl-dealer-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    flex-shrink: 0;
+    background: var(--fl-brand-gradient-3);
+    background-size: 180% 180%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #fff;
+    font-weight: 900;
+    box-shadow: 0 4px 16px rgba(147,51,234,0.3);
+    transition: transform 0.3s var(--fl-ease-spring);
+}
+
+.fl-dealer-card:hover .fl-dealer-avatar {
+    transform: scale(1.08) rotate(-3deg);
+}
+
+.fl-dealer-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+}
+
+.fl-dealer-name {
+    margin: 0;
+    color: #f1f5f9;
+    font-weight: 800;
+    font-size: 15px;
+}
+
+.fl-dealer-verified {
+    background: rgba(34,197,94,0.15);
+    border: 1px solid rgba(34,197,94,0.3);
+    border-radius: 20px;
+    padding: 2px 8px;
+    color: #22c55e;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.fl-dealer-address,
+.fl-dealer-phone {
+    margin: 0 0 3px;
+    color: rgba(241,245,249,0.45);
+    font-size: 12px;
+}
+
+.fl-dealer-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.fl-dealer-count {
+    background: rgba(168,85,247,0.12);
+    border: 1px solid rgba(168,85,247,0.28);
+    border-radius: 20px;
+    padding: 3px 12px;
+    color: var(--fl-purple-bright);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.fl-dealer-rating {
+    color: #fbbf24;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.fl-dealer-desc {
+    margin: 8px 0 0;
+    color: rgba(241,245,249,0.32);
+    font-size: 12px;
+    line-height: 1.5;
+    font-style: italic;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+/* ═══════════════════════════════════════════════════════
+   13. INFO BARS / EMPTY STATES / SECTION HEADERS
+   ═══════════════════════════════════════════════════════ */
+
+.fl-section-heading-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.fl-section-heading {
+    margin: 0;
+    color: var(--fl-purple-bright);
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Quicksand', sans-serif;
+}
+
+.fl-section-heading .sub {
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+    font-weight: 400;
+    margin-left: 8px;
+}
+
+.fl-count-pill {
+    background: rgba(168,85,247,0.12);
+    border: 1px solid rgba(168,85,247,0.28);
+    border-radius: 20px;
+    padding: 2px 10px;
+    color: var(--fl-purple-bright);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.fl-dealer-info-bar {
+    background: var(--fl-glass-gradient);
+    border: 1px solid rgba(168,85,247,0.22);
+    border-radius: var(--fl-r-lg);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.4s var(--fl-ease-out);
+    transition: border-color 0.3s var(--fl-ease-smooth);
+}
+.fl-dealer-info-bar:hover { border-color: rgba(168,85,247,0.4); }
+
+.fl-empty-state,
+.fl-no-dealers-panel {
+    text-align: center;
+    border-radius: var(--fl-r-lg);
+    animation: fadeInUp 0.4s var(--fl-ease-out);
+}
+
+.fl-empty-state {
+    padding: 60px 20px;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(168,85,247,0.18);
+}
+
+.fl-no-dealers-panel {
+    padding: 40px 20px;
+    background: rgba(245,158,11,0.05);
+    border: 1px solid rgba(245,158,11,0.18);
+    margin-bottom: 30px;
+}
+
+.fl-empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.9;
+}
+
+.fl-empty-text {
+    color: rgba(255,255,255,0.4);
+    font-size: 15px;
+}
+
+.fl-inline-action-btn {
+    margin-top: 12px;
+    padding: 9px 22px;
+    background: rgba(168,85,247,0.1);
+    border: 1px solid rgba(168,85,247,0.32);
+    border-radius: 10px;
+    color: var(--fl-purple-bright);
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    transition: background 0.25s var(--fl-ease-smooth), border-color 0.25s var(--fl-ease-smooth), transform 0.25s var(--fl-ease-out);
+}
+.fl-inline-action-btn:hover {
+    background: rgba(168,85,247,0.2);
+    border-color: rgba(168,85,247,0.55);
+    transform: translateY(-2px);
+}
+.fl-inline-action-btn:active { transform: translateY(0) scale(0.97); }
+
+/* ═══════════════════════════════════════════════════════
+   14. TOP-OF-PAGE STATUS BARS — back button, car-selected
+       notice, booking-details summary
+   ═══════════════════════════════════════════════════════ */
+
+.fl-back-btn {
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: var(--fl-r-md);
+    color: #f1f5f9;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    transition: background 0.25s var(--fl-ease-smooth), border-color 0.25s var(--fl-ease-smooth), transform 0.25s var(--fl-ease-out), color 0.25s var(--fl-ease-smooth);
+}
+.fl-back-btn:hover {
+    background: rgba(168,85,247,0.1);
+    border-color: rgba(168,85,247,0.4);
+    color: var(--fl-purple-bright);
+    transform: translateX(-3px);
+}
+.fl-back-btn:active { transform: translateX(-1px) scale(0.98); }
+
+.fl-notice-bar {
+    background: var(--fl-glass-gradient);
+    border: 1px solid rgba(168,85,247,0.32);
+    border-radius: var(--fl-r-md);
+    padding: 12px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    animation: fadeInUp 0.4s var(--fl-ease-out);
+}
+
+.fl-notice-bar .headline {
+    color: var(--fl-purple-bright);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.fl-notice-bar .subtext {
+    color: rgba(255,255,255,0.5);
+    font-size: 13px;
+}
+
+/* ── Sticky top row: booking summary + back-to-fleet, pinned while
+      scrolling so they never disappear off the top of the viewport ── */
+.fl-top-row {
+    position: sticky;
+    top: 12px;
+    z-index: 40;
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.fl-top-row:empty { display: none; }
+
+.fl-summary-bar {
+    background: rgba(20,14,32,0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(168,85,247,0.28);
+    border-radius: var(--fl-r-md);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 260px;
+    box-shadow: var(--fl-shadow-lg);
+    transition: border-color 0.3s var(--fl-ease-smooth), box-shadow 0.3s var(--fl-ease-smooth);
+    animation: fadeInUp 0.4s var(--fl-ease-out);
+}
+.fl-summary-bar:hover {
+    border-color: rgba(168,85,247,0.45);
+    box-shadow: 0 8px 24px -12px rgba(147,51,234,0.35);
+}
+
+.fl-summary-bar .label {
+    color: var(--fl-purple-bright);
+    font-weight: 700;
+}
+
+.fl-summary-bar .detail {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.9rem;
+}
+
+.fl-summary-edit-btn {
+    background: transparent;
+    border: 1px solid rgba(168,85,247,0.4);
+    border-radius: 8px;
+    color: var(--fl-purple-bright);
+    padding: 4px 14px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    margin-left: auto;
+    transition: background 0.25s var(--fl-ease-smooth), border-color 0.25s var(--fl-ease-smooth), transform 0.25s var(--fl-ease-out);
+}
+.fl-summary-edit-btn:hover {
+    background: rgba(168,85,247,0.16);
+    border-color: rgba(168,85,247,0.65);
+    transform: translateY(-1px);
+}
+.fl-summary-edit-btn:active { transform: translateY(0) scale(0.96); }
+
+/* Back-to-fleet button — sits on the far right of the sticky row and
+   stays pinned there while the page scrolls */
+.fl-back-to-fleet-btn {
+    flex-shrink: 0;
+    align-self: flex-start;
+    background: rgba(20,14,32,0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(168,85,247,0.28);
+    border-radius: var(--fl-r-md);
+    padding: 12px 20px;
+    color: #f1f5f9;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    box-shadow: var(--fl-shadow-lg);
+    transition: border-color 0.25s var(--fl-ease-smooth), background 0.25s var(--fl-ease-smooth), transform 0.25s var(--fl-ease-out);
+}
+.fl-back-to-fleet-btn:hover {
+    border-color: rgba(168,85,247,0.55);
+    background: rgba(168,85,247,0.12);
+    transform: translateY(-2px);
+}
+.fl-back-to-fleet-btn:active { transform: translateY(0) scale(0.97); }
+
+/* ── Combined filter row: category pills left, sort dropdown right ── */
+.fl-filter-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.fl-filter-row .fleet_categories {
+    flex: 1;
+    min-width: 280px;
+    margin-bottom: 0;
+    justify-content: flex-start;
+    row-gap: 10px;
+}
+
+.fl-filter-row .fleet_sort_wrapper {
+    flex-shrink: 0;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+/* ---------- 8. SCROLLBAR ---------- */
+.fleet_section * { scrollbar-width: thin; scrollbar-color: rgba(168,85,247,0.25) transparent; }
+.fleet_section *::-webkit-scrollbar         { width: 4px; height: 4px; }
+.fleet_section *::-webkit-scrollbar-track   { background: transparent; }
+.fleet_section *::-webkit-scrollbar-thumb   { background: rgba(168,85,247,0.25); border-radius: 4px; }
+.fleet_section *::-webkit-scrollbar-thumb:hover { background: rgba(168,85,247,0.45); }
+
+/* ---------- 9. UTILITY CLASSES ---------- */
 .text-center {
     text-align: center;
 }
@@ -463,60 +1682,521 @@
     margin-bottom: 8px;
 }
 
-@media (max-width: 767px) {
-    /* .car_cards_wrapper {
-    grid-template-columns: 1fr;
-  }
-  .cars_types {
-    grid-template-columns: repeat(2, 1fr);
-  } */
 
+/* ═══════════════════════════════════════════════════════
+   10. RESPONSIVE — tiered from large desktop down to
+       small phones. Each breakpoint only overrides what
+       actually needs to change at that width; everything
+       else keeps cascading down from the tier above it.
+   ═══════════════════════════════════════════════════════ */
+
+/* ---------- Large laptop / small desktop ---------- */
+@media (max-width: 1300px) {
+    .fleet_cards_wrapper {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* ---------- Tablet landscape / small laptop ---------- */
+@media (max-width: 1024px) {
     .fleet_section {
-        padding: 0px 20px 20px 20px;
+        padding: 0px 22px 22px 22px;
+    }
+
+    .fleet_cards_wrapper {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
     }
 
     .fleet_title {
-        font-size: 2rem;
+        font-size: 2.1rem;
+        margin-bottom: 36px;
     }
 
-    .fleet_categories {
+    .fl-top-row {
+        position: static;
+    }
+}
+
+/* ---------- Tablet portrait ---------- */
+@media (max-width: 900px) {
+    .fleet_cards_wrapper {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .fl-dealer-header {
+        gap: 12px;
+    }
+}
+
+/* ---------- Small tablet / large phone ---------- */
+@media (max-width: 767px) {
+    .fleet_section {
+        padding: 0px 16px 20px 16px;
+    }
+
+    .fleet_title {
+        font-size: 1.8rem;
+        margin-bottom: 28px;
+        letter-spacing: -0.5px;
+    }
+
+    .fleet_title::after {
+        bottom: -10px;
+    }
+
+    /* ── Filter row: pills scroll horizontally instead of wrapping
+          into a cramped multi-row block; sort control drops to its
+          own full-width row underneath ── */
+    .fl-filter-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        margin-bottom: 22px;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    .fleet_categories,
+    .fl-filter-row .fleet_categories {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        justify-content: flex-start;
         gap: 8px;
+        padding: 0 2px 6px;
+        margin-bottom: 0;
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x proximity;
+        box-sizing: border-box;
+    }
+
+    .fleet_categories .fleet_category_btn {
+        flex-shrink: 0;
+        scroll-snap-align: start;
     }
 
     .fleet_category_btn {
-        padding: 0 15px;
         height: 36px;
-        font-size: 14px;
+        padding: 0 18px;
+        font-size: 0.85rem;
+    }
+
+    .fl-filter-row .fleet_sort_wrapper {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .fleet_sort_select {
+        flex: 1;
     }
 
     .fleet_cards_wrapper {
         grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        gap: 12px;
     }
 
     .fleet_card {
-        padding: 8px;
+        padding: 12px;
+        max-height: 470px;
     }
 
-    .fleet_card_image {
+    .fleet_card_image_wrap,
+    .fleet_card_image_wrap img {
         height: 120px;
     }
 
+    .fl-card-top {
+        max-height: 200px;
+    }
+
     .fleet_card_model {
-        font-size: 1rem;
+        font-size: 1.1rem;
+        margin-bottom: 8px;
     }
 
     .fleet_card_specs {
-        grid-template-columns: 1.1fr;
+        gap: 6px;
+        margin: 10px 0;
+    }
+
+    .fleet_spec_item {
+        height: 40px;
+        padding: 5px 8px;
+        gap: 6px;
+        grid-template-columns: 16px 1fr;
+    }
+
+    .fleet_spec_icon {
+        width: 15px;
+        height: 15px;
+    }
+
+    .fleet_spec_text {
+        font-size: 0.68rem;
     }
 
     .fleet_card_cost {
-        font-size: 1rem;
+        font-size: 1.05rem;
+        margin: 12px auto;
     }
 
-    .fleet_book_btn {
-        width: 120px;
+    .fleet_book_btn.btn {
+        padding: 9px 18px;
+        font-size: 0.82rem;
+    }
+
+    /* ── Sticky status row: no longer sticky on small screens (avoids
+          it fighting the site header for space); summary + back button
+          stack full width ── */
+    .fl-top-row {
+        position: static;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+
+    .fl-summary-bar {
+        min-width: 0;
+        padding: 12px 16px;
+        gap: 8px;
+    }
+
+    .fl-summary-bar .detail {
+        font-size: 0.8rem;
+    }
+
+    .fl-back-to-fleet-btn {
+        align-self: stretch;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .fl-notice-bar {
+        padding: 10px 16px;
+        gap: 6px;
+    }
+
+    .fl-dealer-info-bar {
+        padding: 14px 16px;
+        gap: 12px;
+    }
+
+    /* ── Partner Showrooms header: title on its own line, then
+          location + "available" badge paired on the row below,
+          instead of all three fighting for space on one line ── */
+    .fl-showroom-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .fl-showroom-meta {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .fl-showroom-location {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .fl-dealer-card {
+        padding: 16px;
+    }
+
+    .fl-dealer-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 17px;
+    }
+
+    .fl-empty-state {
+        padding: 40px 16px;
+    }
+
+    .fl-no-dealers-panel {
+        padding: 28px 16px;
+    }
+}
+
+/* ---------- Phone ---------- */
+@media (max-width: 479px) {
+    .fleet_section {
+        padding: 80px 8px 20px;
+    }
+
+    .fleet_title {
+        font-size: 24px;
+        margin: 0 auto 30px;
+    }
+
+    .fleet_title::after {
+        display: none;
+    }
+
+    .fl-notice-bar {
+        padding: 10px 16px;
+        gap: 6px;
+    }
+
+    .headline.fl-icon-row {
+        font-size: 13.5px;
+    }
+
+    span.subtext {
+        font-size: 12px !important;
+    }
+
+    /* ── Category pills: keep the horizontal scroll from the tablet
+          tier, just tighten sizing further ── */
+    .fleet_category_btn {
+        height: 34px;
+        padding: 0 14px;
+        font-size: 0.8rem;
+    }
+
+    .fleet_sort_wrapper {
+        gap: 8px;
+    }
+
+    .fleet_sort_select {
+        font-size: 0.78rem;
+        height: 34px;
+        padding: 0 12px;
+    }
+
+    .fleet_sort_wrapper label {
+        font-size: 0.78rem !important;
+        white-space: nowrap;
+    }
+
+    /* ── One car per row — full width so every spec, badge, and price
+          is comfortably readable rather than squeezed into a half-width
+          card ── */
+    .fleet_cards_wrapper {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .fleet_card {
+        padding: 14px;
+        max-height: none;
+    }
+
+    .fleet_card_image_wrap,
+    .fleet_card_image_wrap img {
+        height: 160px;
+    }
+
+    .fl-card-top {
+        max-height: none;
+        overflow: visible;
+    }
+
+    .fleet_card_model {
+        font-size: 1.25rem;
+        margin: 0 0 8px 0;
+    }
+
+    .fl-safety-row {
+        margin: 0 auto 6px;
+    }
+
+    .fl-plate-chip {
+        margin-bottom: 4px;
+    }
+
+    .fleet_card_specs {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin: 10px 0;
+    }
+
+    .fl-feature-row {
+        margin-top: 3px;
+        margin-bottom: 6px;
+    }
+
+    .fleet_spec_item {
+        height: 42px;
+    }
+
+    .fleet_spec_text {
+        font-size: 0.75rem;
+    }
+
+    .fleet_card_cost {
+        font-size: 1.15rem;
+        margin: 12px auto;
+    }
+
+    .fl-card-bottom {
+        padding-top: 10px;
+    }
+
+    /* View Availability + Book Now side by side — padding/font trimmed
+       just enough so both labels fit on one row without wrapping */
+    .fl-card-actions {
+        flex-direction: row;
+        gap: 8px;
+    }
+
+    .fl-card-actions > * {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .fleet_book_btn.btn {
+        padding: 10px 8px;
+        font-size: 0.72rem;
+        gap: 4px;
+        white-space: nowrap;
+    }
+
+    .fl-btn-disabled.btn {
+        width: 100%;
+    }
+
+    .fl-unavailable-note {
+        font-size: 9px;
+        margin-top: 4px;
+    }
+
+    /* Image carousel arrow buttons (rendered inline by ImageCarousel,
+       so targeted structurally rather than by class) — a touch smaller
+       so they don't dominate a full-width mobile image */
+    .fleet_card_image_wrap button {
+        width: 28px !important;
+        height: 28px !important;
+    }
+
+    .fl-top-row {
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .fl-summary-bar {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .fl-summary-bar .label {
+        font-size: 0.85rem;
+    }
+
+    .fl-summary-bar .detail {
+        font-size: 0.75rem;
+    }
+
+    .fl-summary-edit-btn {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+        margin-top: 4px;
+    }
+
+    .fl-back-to-fleet-btn {
+        padding: 10px 16px;
+        font-size: 0.8rem;
+    }
+
+    .fl-dealer-info-bar {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .fl-dealer-info-bar .fl-dealer-avatar {
+        width: 40px;
+        height: 40px;
         font-size: 15px;
-        margin: 0px auto 15px auto;
+        flex-shrink: 0;
+    }
+
+    .fl-dealer-name {
+        font-size: 14px;
+    }
+
+    .fl-dealer-address {
+        font-size: 11px;
+    }
+
+    .fl-showroom-title {
+        font-size: 16px;
+    }
+
+    .fl-showroom-location {
+        font-size: 11px;
+        max-width: 65%;
+    }
+
+    .fl-showroom-badge {
+        font-size: 10.5px;
+        padding: 2px 9px;
+    }
+
+    .fl-dealer-card {
+        padding: 14px;
+    }
+
+    .fl-dealer-header {
+        gap: 10px;
+    }
+
+    .fl-dealer-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 15px;
+        border-radius: 12px;
+    }
+
+    .fl-dealer-name {
+        font-size: 14px;
+    }
+
+    .fl-dealer-desc {
+        font-size: 11px;
+    }
+
+    .fl-section-heading-row {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .fl-section-heading {
+        font-size: 13.5px;
+    }
+
+    .fl-empty-state {
+        padding: 32px 14px;
+    }
+
+    .fl-empty-icon {
+        font-size: 38px;
+    }
+
+    .fl-empty-text {
+        font-size: 13px;
+    }
+
+    .fl-no-dealers-panel {
+        padding: 22px 14px;
+    }
+
+    .fl-modal-card {
+        width: 92%;
+        padding: 24px 18px !important;
+    }
+
+    .fl-modal-actions {
+        flex-direction: column;
     }
 }

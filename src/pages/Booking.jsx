@@ -259,6 +259,77 @@ const locationData = {
   },
 };
 
+// ── Icons (replace emoji glyphs with proper SVG) ─────────
+function PinIcon(props) {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
+function ChevronIcon({ active }) {
+  return (
+    <svg
+      width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      className="arrow_icon"
+      style={{ transform: active ? "rotate(180deg)" : "none", color: active ? "var(--purple)" : undefined }}
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
+function BanIcon(props) {
+  return (
+    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#ffa500" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="12" cy="12" r="10" />
+      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+    </svg>
+  );
+}
+
+function PlateIcon(props) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="2" y="6" width="20" height="12" rx="2" />
+      <line x1="6" y1="10" x2="10" y2="10" />
+      <line x1="14" y1="10" x2="18" y2="10" />
+      <line x1="6" y1="14" x2="18" y2="14" />
+    </svg>
+  );
+}
+
+function StarIcon(props) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}>
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+function KitIcon(props) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <rect x="3" y="7" width="18" height="13" rx="2" />
+      <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+      <line x1="12" y1="11" x2="12" y2="16" />
+      <line x1="9.5" y1="13.5" x2="14.5" y2="13.5" />
+    </svg>
+  );
+}
+
+function GpsIcon(props) {
+  return (
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+      <circle cx="12" cy="12" r="2" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+      <path d="M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" />
+    </svg>
+  );
+}
+
 // ── Cross Border Warning Modal ───────────────────────────
 function CrossBorderWarningModal({ pickupCountry, onClose, onConfirm }) {
   return (
@@ -290,10 +361,18 @@ function CrossBorderWarningModal({ pickupCountry, onClose, onConfirm }) {
           textAlign: "center",
           fontFamily: "Quicksand, sans-serif",
           boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+          animation: "modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={{ fontSize: "64px", marginBottom: "16px" }}>🚫</div>
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: "16px",
+          animation: "iconGlowPulse 1.8s ease-in-out infinite",
+        }}>
+          <BanIcon />
+        </div>
         <h2
           style={{ color: "#ffa500", marginBottom: "12px", fontSize: "1.5rem" }}
         >
@@ -321,8 +400,8 @@ function CrossBorderWarningModal({ pickupCountry, onClose, onConfirm }) {
             border: "1px solid rgba(255,165,0,0.2)",
           }}
         >
-          <p style={{ margin: 0, color: "#ffa500", fontSize: "14px" }}>
-            📍 Pickup Country: <strong>{pickupCountry}</strong>
+          <p style={{ margin: 0, color: "#ffa500", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}>
+            <PinIcon /> Pickup Country: <strong>{pickupCountry}</strong>
           </p>
           <p
             style={{
@@ -347,6 +426,15 @@ function CrossBorderWarningModal({ pickupCountry, onClose, onConfirm }) {
               cursor: "pointer",
               fontFamily: "Quicksand, sans-serif",
               fontSize: "14px",
+              transition: "transform 0.2s cubic-bezier(0.16,1,0.3,1), box-shadow 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 8px 24px rgba(76,227,247,0.35)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "none";
             }}
           >
             OK, I Understand
@@ -363,6 +451,15 @@ function CrossBorderWarningModal({ pickupCountry, onClose, onConfirm }) {
               cursor: "pointer",
               fontFamily: "Quicksand, sans-serif",
               fontSize: "14px",
+              transition: "all 0.2s cubic-bezier(0.16,1,0.3,1)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
             }}
           >
             Cancel
@@ -610,6 +707,18 @@ function Booking() {
     }
   }
 
+  // Opens the native date picker on click anywhere in the field, not just
+  // the small calendar icon. showPicker() is supported in Chrome/Edge 99+;
+  // browsers without it (older Firefox/Safari) silently fall back to the
+  // default behavior (click the icon), so this is a safe enhancement.
+  function openDatePicker(e) {
+    try {
+      e.target.showPicker?.();
+    } catch {
+      // ignore — falls back to native icon-click behavior
+    }
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     const {
@@ -728,7 +837,7 @@ function Booking() {
           }}
         >
           <span>{value || placeholder}</span>
-          <span className="arrow_icon">▼</span>
+          <ChevronIcon active={isOpen} />
         </div>
         {isOpen && !isDisabled && (
           <div className="custom_location_list">
@@ -758,7 +867,7 @@ function Booking() {
       <section className="booking_section">
         <div className="booking_wrapper">
           <div className="booking_left">
-            <h1>Book Your Ride Now!</h1>
+            <h1 className="qw_shine_heading">Book Your Ride Now!</h1>
             <p>
               Fill out the form below to reserve your vehicle.{" "}
               <strong>Quick Wheels</strong> offers a variety of vehicles to suit
@@ -770,25 +879,8 @@ function Booking() {
           <div className="input_field">
             <form onSubmit={handleSubmit}>
               {selectedCar && (
-                <div
-                  className="selected_car_preview"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(76,227,247,0.08), rgba(4,0,255,0.04))",
-                    border: "1px solid rgba(76,227,247,0.2)",
-                    borderRadius: "14px",
-                    padding: "16px 20px",
-                    marginBottom: "20px",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      marginBottom: "10px",
-                    }}
-                  >
+                <div className="selected_car_preview">
+                  <div className="car_preview_header">
                     <p style={{ margin: 0 }}>
                       Selected Car:{" "}
                       <strong style={{ color: "#4ce3f7" }}>
@@ -804,74 +896,25 @@ function Booking() {
                   </div>
 
                   {/* Phase 2: Car Details */}
-                  <div
-                    style={{
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "6px",
-                      marginTop: "8px",
-                      padding: "8px 0",
-                      borderTop: "1px solid rgba(255,255,255,0.06)",
-                    }}
-                  >
+                  <div className="car_chip_row">
                     {selectedCar.numberPlate && (
-                      <span
-                        style={{
-                          padding: "2px 8px",
-                          background: "rgba(255,255,255,0.05)",
-                          border: "1px solid rgba(255,255,255,0.1)",
-                          borderRadius: "6px",
-                          fontSize: "11px",
-                          color: "rgba(255,255,255,0.6)",
-                          fontFamily: "monospace",
-                        }}
-                      >
-                        🚘 {selectedCar.numberPlate}
+                      <span className="car_chip plate">
+                        <PlateIcon /> {selectedCar.numberPlate}
                       </span>
                     )}
                     {selectedCar.safetyRating > 0 && (
-                      <span
-                        style={{
-                          padding: "2px 8px",
-                          background: "rgba(251,191,36,0.1)",
-                          border: "1px solid rgba(251,191,36,0.2)",
-                          borderRadius: "6px",
-                          fontSize: "11px",
-                          color: "#fbbf24",
-                          fontWeight: "600",
-                        }}
-                      >
-                        ⭐ {selectedCar.safetyRating}/5 Safety
+                      <span className="car_chip safety">
+                        <StarIcon /> {selectedCar.safetyRating}/5 Safety
                       </span>
                     )}
                     {selectedCar.emergencyKit && (
-                      <span
-                        style={{
-                          padding: "2px 8px",
-                          background: "rgba(34,197,94,0.1)",
-                          border: "1px solid rgba(34,197,94,0.2)",
-                          borderRadius: "6px",
-                          fontSize: "11px",
-                          color: "#22c55e",
-                          fontWeight: "600",
-                        }}
-                      >
-                        🩹 Emergency Kit
+                      <span className="car_chip kit">
+                        <KitIcon /> Emergency Kit
                       </span>
                     )}
                     {selectedCar.gpsAvailable && (
-                      <span
-                        style={{
-                          padding: "2px 8px",
-                          background: "rgba(76,227,247,0.1)",
-                          border: "1px solid rgba(76,227,247,0.2)",
-                          borderRadius: "6px",
-                          fontSize: "11px",
-                          color: "#4ce3f7",
-                          fontWeight: "600",
-                        }}
-                      >
-                        🛰️ GPS
+                      <span className="car_chip gps">
+                        <GpsIcon /> GPS
                       </span>
                     )}
                   </div>
@@ -880,8 +923,9 @@ function Booking() {
 
               {/* Pickup Location Section */}
               <fieldset className="pickdrop">
-                <legend style={{ color: "#4ce3f7", marginBottom: "10px" }}>
-                  📍 Pickup Location
+                <legend style={{ marginBottom: "10px" }}>
+                  <span className="legend_icon"><PinIcon /></span>
+                  Pickup Location
                 </legend>
 
                 <div className="location_group">
@@ -938,13 +982,13 @@ function Booking() {
               {/* Dropoff Location Section */}
               {/* Dropoff Location Section */}
               <fieldset className="pickdrop">
-                <legend style={{ color: "#4ce3f7", marginBottom: "10px" }}>
-                  📍 Dropoff Location
+                <legend style={{ marginBottom: "10px" }}>
+                  <span className="legend_icon"><PinIcon /></span>
+                  Dropoff Location
                   {formData.country && (
                     <span
                       style={{
                         fontSize: "12px",
-                        color: "#4ce3f7",
                         marginLeft: "10px",
                         fontWeight: "normal",
                       }}
@@ -1044,6 +1088,7 @@ function Booking() {
                     name="pickupDate"
                     value={formData.pickupDate}
                     onChange={handleChange}
+                    onClick={openDatePicker}
                     min={todayStr}
                     max={maxDateStr}
                     required
@@ -1059,6 +1104,7 @@ function Booking() {
                     name="dropoffDate"
                     value={formData.dropoffDate}
                     onChange={handleChange}
+                    onClick={openDatePicker}
                     min={formData.pickupDate || todayStr}
                     max={maxDateStr}
                     required
@@ -1069,13 +1115,7 @@ function Booking() {
                 </div>
               </fieldset>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
+              <div className="form_buttons_container">
                 <div
                   style={{
                     display: "flex",

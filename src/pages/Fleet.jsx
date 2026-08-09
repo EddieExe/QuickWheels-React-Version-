@@ -12,7 +12,196 @@ import { useAuth } from "../context/AuthContext";
 import { useCurrency } from "../context/CurrencyContext";
 import { db } from "../firebase";
 import cars from "../data/cars";
+import ImageCarousel from "../components/dealer/ImageCarousel";
 import "../styles/fleet.css";
+
+/* ═══════════════════════════════════════════════════════════
+   ICON LIBRARY — replaces raw emoji with themed, colorable SVGs.
+   Every icon accepts `size` and `className`; stroke/fill use
+   currentColor by default so parent text-color controls tint.
+═══════════════════════════════════════════════════════════ */
+const IconBase = ({ children, size = 14, className = "", viewBox = "0 0 24 24", style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox={viewBox}
+    className={`fl-icon ${className}`}
+    style={style}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {children}
+  </svg>
+);
+
+const IconCheckCircle = (p) => (
+  <IconBase {...p}>
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+    <path d="M8.5 12.3 11 14.8l4.7-5.6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </IconBase>
+);
+
+const IconCheck = (p) => (
+  <IconBase {...p}>
+    <path d="M5 12.5 9.5 17 19 6.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+  </IconBase>
+);
+
+const IconMapPin = (p) => (
+  <IconBase {...p}>
+    <path d="M12 21s-7-6.1-7-11.5A7 7 0 0 1 19 9.5C19 14.9 12 21 12 21Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    <circle cx="12" cy="9.5" r="2.4" stroke="currentColor" strokeWidth="2" />
+  </IconBase>
+);
+
+const IconCalendar = (p) => (
+  <IconBase {...p}>
+    <rect x="3.5" y="5" width="17" height="16" rx="2.5" stroke="currentColor" strokeWidth="2" />
+    <path d="M3.5 9.5h17M8 3v4M16 3v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+  </IconBase>
+);
+
+const IconCalendarDays = (p) => (
+  <IconBase {...p}>
+    <rect x="3.5" y="5" width="17" height="16" rx="2.5" stroke="currentColor" strokeWidth="2" />
+    <path d="M3.5 9.5h17M8 3v4M16 3v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="8.5" cy="14" r="1.1" fill="currentColor" />
+    <circle cx="12.5" cy="14" r="1.1" fill="currentColor" />
+    <circle cx="16.5" cy="14" r="1.1" fill="currentColor" />
+  </IconBase>
+);
+
+const IconBan = (p) => (
+  <IconBase {...p}>
+    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+    <path d="M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+  </IconBase>
+);
+
+const IconCar = (p) => (
+  <IconBase {...p}>
+    <path d="M4.5 16v-3.6a2 2 0 0 1 .35-1.13l1.7-2.53A2.5 2.5 0 0 1 8.63 7.7h6.74a2.5 2.5 0 0 1 2.08 1.04l1.7 2.53c.23.34.35.74.35 1.13V16" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    <rect x="2.7" y="13" width="18.6" height="5.5" rx="1.6" stroke="currentColor" strokeWidth="2" />
+    <circle cx="7" cy="18.6" r="1.6" fill="currentColor" />
+    <circle cx="17" cy="18.6" r="1.6" fill="currentColor" />
+  </IconBase>
+);
+
+const IconAlertTriangle = (p) => (
+  <IconBase {...p}>
+    <path d="M12 4 21.5 20H2.5L12 4Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    <path d="M12 10v4.2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="12" cy="17.3" r="1" fill="currentColor" />
+  </IconBase>
+);
+
+const IconBuilding = (p) => (
+  <IconBase {...p}>
+    <rect x="4.5" y="3.5" width="11" height="17" rx="1.4" stroke="currentColor" strokeWidth="2" />
+    <path d="M15.5 9.5h3.7a1.3 1.3 0 0 1 1.3 1.3V20.5h-5" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    <path d="M8 7.5h1.2M11.8 7.5H13M8 11h1.2M11.8 11H13M8 14.5h1.2M11.8 14.5H13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <path d="M8.5 20.5v-3a1.5 1.5 0 0 1 1.5-1.5h1a1.5 1.5 0 0 1 1.5 1.5v3" stroke="currentColor" strokeWidth="1.8" />
+  </IconBase>
+);
+
+const IconPhone = (p) => (
+  <IconBase {...p}>
+    <path d="M6.6 3.5h2.2c.5 0 .9.32 1.04.8l.9 3a1.1 1.1 0 0 1-.28 1.1L9 9.9a11.6 11.6 0 0 0 5.1 5.1l1.5-1.46c.3-.29.72-.4 1.1-.28l3 .9c.48.14.8.58.8 1.04v2.2c0 .66-.56 1.18-1.21 1.1C11.7 17.9 6.1 12.3 5.5 4.71 5.42 4.06 5.94 3.5 6.6 3.5Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+  </IconBase>
+);
+
+const IconStar = ({ filled = true, ...p }) => (
+  <IconBase {...p}>
+    <path
+      d="M12 3.5l2.47 5.24 5.78.62-4.3 3.98 1.17 5.71L12 16.1l-5.12 2.95 1.17-5.71-4.3-3.98 5.78-.62L12 3.5Z"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+      fill={filled ? "currentColor" : "none"}
+    />
+  </IconBase>
+);
+
+const IconClose = (p) => (
+  <IconBase {...p}>
+    <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+  </IconBase>
+);
+
+const IconRefresh = (p) => (
+  <IconBase {...p}>
+    <path d="M4 12a8 8 0 0 1 13.66-5.66L20 8.7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <path d="M20 4v4.7h-4.7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M20 12a8 8 0 0 1-13.66 5.66L4 15.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <path d="M4 20v-4.7h4.7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+  </IconBase>
+);
+
+const IconHourglass = (p) => (
+  <IconBase {...p}>
+    <path d="M6 3.5h12M6 20.5h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    <path d="M7 3.5v3.1c0 1.6.86 3.08 2.26 3.9L12 12l2.74 1.5A4.5 4.5 0 0 1 17 17.4v3.1M17 3.5v3.1c0 1.6-.86 3.08-2.26 3.9L12 12l-2.74 1.5A4.5 4.5 0 0 0 7 17.4v3.1" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+  </IconBase>
+);
+
+const IconTag = (p) => (
+  <IconBase {...p}>
+    <path d="M11.6 3.5H6A2.5 2.5 0 0 0 3.5 6v5.6c0 .66.26 1.3.73 1.77l7.9 7.9a2.5 2.5 0 0 0 3.54 0l5.6-5.6a2.5 2.5 0 0 0 0-3.54l-7.9-7.9a2.5 2.5 0 0 0-1.77-.73Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+    <circle cx="8.2" cy="8.2" r="1.3" fill="currentColor" />
+  </IconBase>
+);
+
+const IconBandage = (p) => (
+  <IconBase {...p}>
+    <rect x="3.5" y="9.2" width="17" height="5.6" rx="2.8" transform="rotate(-45 12 12)" stroke="currentColor" strokeWidth="2" />
+    <circle cx="9" cy="9" r="1.2" fill="currentColor" />
+    <circle cx="15" cy="15" r="1.2" fill="currentColor" />
+    <path d="M10.4 13.6l3.2-3.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+  </IconBase>
+);
+
+const IconSatellite = (p) => (
+  <IconBase {...p}>
+    <rect x="8.3" y="8.3" width="7.4" height="7.4" rx="1.4" transform="rotate(45 12 12)" stroke="currentColor" strokeWidth="1.8" />
+    <path d="M14.5 9.5l4.2-4.2M18 9l2.2-2.2M15 6l2.2-2.2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    <path d="M4 20c0-4.4 3.6-8 8-8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="1 3" />
+  </IconBase>
+);
+
+const IconWrench = (p) => (
+  <IconBase {...p}>
+    <path d="M14.7 6.3a4 4 0 0 0-5.4 4.9L3.8 16.7a1.8 1.8 0 0 0 2.5 2.5l5.5-5.5a4 4 0 0 0 4.9-5.4l-2.4 2.4-2-.5-.5-2 2.4-2.4Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+  </IconBase>
+);
+
+const IconClipboardCheck = (p) => (
+  <IconBase {...p}>
+    <rect x="5.5" y="4.5" width="13" height="16" rx="1.8" stroke="currentColor" strokeWidth="1.8" />
+    <path d="M9 4.2h6a.7.7 0 0 1 .7.7v1.1a.7.7 0 0 1-.7.7H9a.7.7 0 0 1-.7-.7V4.9a.7.7 0 0 1 .7-.7Z" stroke="currentColor" strokeWidth="1.8" />
+    <path d="M9 13l2 2 4-4.3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </IconBase>
+);
+
+const IconPointer = (p) => (
+  <IconBase {...p}>
+    <path d="M9.5 13V6.2a1.3 1.3 0 1 1 2.6 0V11" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    <path d="M12.1 11V5a1.3 1.3 0 1 1 2.6 0v6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    <path d="M14.7 11V6.6a1.3 1.3 0 1 1 2.6 0V13" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    <path d="M9.5 12.6l-1.7-1.7a1.35 1.35 0 0 0-2 1.85l3.4 4.2c.8 1 2 1.55 3.25 1.55h1.9a4.6 4.6 0 0 0 4.6-4.6V10" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round" />
+  </IconBase>
+);
+
+const IconArrowLeft = (p) => (
+  <IconBase {...p}>
+    <path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+  </IconBase>
+);
+
+const IconChevronDown = (p) => (
+  <IconBase {...p}>
+    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+  </IconBase>
+);
 
 const categories = [
   "All",
@@ -355,7 +544,7 @@ function AvailabilityCalendarModal({
           ...base,
           background: "rgba(34,197,94,0.1)",
           border: day.isToday
-            ? "2px solid rgba(76,227,247,0.5)"
+            ? "2px solid rgba(192,132,252,0.5)"
             : "1px solid rgba(34,197,94,0.35)",
           color: "#22c55e",
           cursor: isDateChangeMode ? "pointer" : "default",
@@ -364,33 +553,33 @@ function AvailabilityCalendarModal({
       case "newPickup":
         return {
           ...base,
-          background: "linear-gradient(135deg,#0400ff,#4ce3f7)",
-          border: "2px solid #4ce3f7",
+          background: "linear-gradient(135deg,#6d28d9,#c084fc)",
+          border: "2px solid #c084fc",
           color: "#fff",
           cursor: "default",
           fontWeight: "800",
           fontSize: "0.88rem",
-          boxShadow: "0 0 16px rgba(76,227,247,0.4)",
+          boxShadow: "0 0 16px rgba(192,132,252,0.4)",
           borderRadius: "8px 4px 4px 8px",
         };
       case "newDropoff":
         return {
           ...base,
-          background: "linear-gradient(135deg,#4ce3f7,#0400ff)",
-          border: "2px solid #4ce3f7",
+          background: "linear-gradient(135deg,#c084fc,#6d28d9)",
+          border: "2px solid #c084fc",
           color: "#fff",
           cursor: "default",
           fontWeight: "800",
           fontSize: "0.88rem",
-          boxShadow: "0 0 16px rgba(76,227,247,0.4)",
+          boxShadow: "0 0 16px rgba(192,132,252,0.4)",
           borderRadius: "4px 8px 8px 4px",
         };
       case "newRange":
         return {
           ...base,
-          background: "rgba(76,227,247,0.18)",
-          border: "1px solid rgba(76,227,247,0.4)",
-          color: "#4ce3f7",
+          background: "rgba(192,132,252,0.18)",
+          border: "1px solid rgba(192,132,252,0.4)",
+          color: "#c084fc",
           cursor: "default",
           fontWeight: "700",
           borderRadius: "4px",
@@ -398,9 +587,9 @@ function AvailabilityCalendarModal({
       case "hoverRange":
         return {
           ...base,
-          background: "rgba(76,227,247,0.12)",
-          border: "1px dashed rgba(76,227,247,0.45)",
-          color: "rgba(76,227,247,0.8)",
+          background: "rgba(192,132,252,0.12)",
+          border: "1px dashed rgba(192,132,252,0.45)",
+          color: "rgba(192,132,252,0.8)",
           cursor: "pointer",
           fontWeight: "500",
           borderRadius: "4px",
@@ -408,8 +597,8 @@ function AvailabilityCalendarModal({
       case "dropoffOption":
         return {
           ...base,
-          background: "rgba(76,227,247,0.05)",
-          border: "1px solid rgba(76,227,247,0.2)",
+          background: "rgba(192,132,252,0.05)",
+          border: "1px solid rgba(192,132,252,0.2)",
           color: "rgba(255,255,255,0.6)",
           cursor: "pointer",
         };
@@ -433,9 +622,9 @@ function AvailabilityCalendarModal({
       outside: selectionStep === "picking_dropoff" ? "Can't drop off here" : "",
       available: isDateChangeMode
         ? "Click to select as pickup"
-        : "Available ✅",
-      newPickup: "📍 New pickup date",
-      newDropoff: "📍 New drop-off date",
+        : "Available",
+      newPickup: "New pickup date",
+      newDropoff: "New drop-off date",
       newRange: "Your new booking range",
       hoverRange: "Will be included in your booking",
       dropoffOption: "Click to set as drop-off",
@@ -535,6 +724,7 @@ function AvailabilityCalendarModal({
 
   return (
     <div
+      className="fl-avail-modal-overlay"
       style={{
         position: "fixed",
         top: 0,
@@ -544,35 +734,36 @@ function AvailabilityCalendarModal({
         backgroundColor: "rgba(0,0,0,0.9)",
         zIndex: 2000,
         display: "flex",
-        alignItems: "center",
+        alignItems: "flex-start",
         justifyContent: "center",
-        padding: "16px",
         backdropFilter: "blur(6px)",
       }}
       onClick={onClose}
     >
       <div
+        className="fl-avail-modal-card"
         style={{
           background: "linear-gradient(135deg,#12122a 0%,#0a0a1a 100%)",
-          border: "1px solid rgba(76,227,247,0.25)",
+          border: "1px solid rgba(192,132,252,0.25)",
           borderRadius: "24px",
-          maxWidth: "580px",
+          maxWidth: "800px",
           width: "100%",
-          maxHeight: "95vh",
-          overflowY: "auto",
+          overflow: "hidden",
           fontFamily: "Quicksand,sans-serif",
           boxShadow: "0 30px 80px rgba(0,0,0,0.7)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="fl-avail-body">
         {/* Header */}
         <div
+          className="fl-avail-header-area"
           style={{
             padding: "20px 22px 14px",
             borderBottom: "1px solid rgba(255,255,255,0.06)",
             background:
-              "linear-gradient(135deg,rgba(4,0,255,0.06),rgba(76,227,247,0.03))",
-            borderRadius: "24px 24px 0 0",
+              "linear-gradient(135deg,rgba(109,40,217,0.06),rgba(192,132,252,0.03))",
+            borderRadius: "24px 0 0 0",
           }}
         >
           <div
@@ -583,8 +774,8 @@ function AvailabilityCalendarModal({
             }}
           >
             <div>
-              <h2 style={{ margin: 0, color: "#4ce3f7", fontSize: "1.25rem" }}>
-                📅 {car.model}
+              <h2 style={{ margin: 0, color: "#c084fc", fontSize: "1.25rem", display: "flex", alignItems: "center", gap: "8px" }}>
+                <IconCalendar size={18} /> {car.model}
               </h2>
               <p
                 style={{
@@ -599,11 +790,14 @@ function AvailabilityCalendarModal({
                 <p
                   style={{
                     margin: "3px 0 0",
-                    color: "rgba(76,227,247,0.6)",
+                    color: "rgba(192,132,252,0.6)",
                     fontSize: "0.75rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
                   }}
                 >
-                  📍 {userPickupLocation}
+                  <IconMapPin size={12} /> {userPickupLocation}
                 </p>
               )}
             </div>
@@ -617,11 +811,13 @@ function AvailabilityCalendarModal({
                 height: "30px",
                 cursor: "pointer",
                 color: "#fff",
-                fontSize: "14px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 flexShrink: 0,
               }}
             >
-              ✕
+              <IconClose size={13} />
             </button>
           </div>
 
@@ -633,8 +829,8 @@ function AvailabilityCalendarModal({
                 background:
                   selectionStep === "ready"
                     ? "rgba(34,197,94,0.08)"
-                    : "rgba(76,227,247,0.06)",
-                border: `1px solid ${selectionStep === "ready" ? "rgba(34,197,94,0.3)" : "rgba(76,227,247,0.2)"}`,
+                    : "rgba(192,132,252,0.06)",
+                border: `1px solid ${selectionStep === "ready" ? "rgba(34,197,94,0.3)" : "rgba(192,132,252,0.2)"}`,
                 borderRadius: "12px",
               }}
             >
@@ -682,7 +878,7 @@ function AvailabilityCalendarModal({
                             background: done
                               ? "#22c55e"
                               : current
-                                ? "#4ce3f7"
+                                ? "#c084fc"
                                 : "rgba(255,255,255,0.1)",
                             color:
                               done || current
@@ -690,7 +886,7 @@ function AvailabilityCalendarModal({
                                 : "rgba(255,255,255,0.3)",
                           }}
                         >
-                          {done ? "✓" : stepNum}
+                          {done ? <IconCheck size={11} /> : stepNum}
                         </div>
                         <span
                           style={{
@@ -722,9 +918,12 @@ function AvailabilityCalendarModal({
                     margin: 0,
                     color: "rgba(255,255,255,0.6)",
                     fontSize: "12px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
                   }}
                 >
-                  👆 Tap an{" "}
+                  <IconPointer size={13} /> Tap an{" "}
                   <strong style={{ color: "#22c55e" }}>
                     available (green)
                   </strong>{" "}
@@ -740,7 +939,7 @@ function AvailabilityCalendarModal({
                   }}
                 >
                   Pickup:{" "}
-                  <strong style={{ color: "#4ce3f7" }}>
+                  <strong style={{ color: "#c084fc" }}>
                     {fmtDate(newPickupDate)}
                   </strong>{" "}
                   — now hover & tap to set drop-off
@@ -754,9 +953,12 @@ function AvailabilityCalendarModal({
                       color: "#22c55e",
                       fontWeight: "700",
                       fontSize: "13px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
                     }}
                   >
-                    ✅ {fmtDateShort(newPickupDate)} →{" "}
+                    <IconCheckCircle size={13} /> {fmtDateShort(newPickupDate)} →{" "}
                     {fmtDateShort(newDropoffDate)} · {newDaysCount} day
                     {newDaysCount > 1 ? "s" : ""}
                   </p>
@@ -766,9 +968,12 @@ function AvailabilityCalendarModal({
                         margin: "4px 0 0",
                         color: "#ff4d4d",
                         fontSize: "11px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "5px",
                       }}
                     >
-                      ⚠️ Conflict detected in selected range
+                      <IconAlertTriangle size={12} /> Conflict detected in selected range
                     </p>
                   )}
                 </div>
@@ -790,9 +995,9 @@ function AvailabilityCalendarModal({
               }}
             >
               <span
-                style={{ color: "rgba(255,255,255,0.75)", fontWeight: "700" }}
+                style={{ color: "rgba(255,255,255,0.75)", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "6px" }}
               >
-                {originalBlocked ? "🚫" : "✅"} {bookingWindow.pickupDate} →{" "}
+                {originalBlocked ? <IconBan size={13} /> : <IconCheckCircle size={13} />} {bookingWindow.pickupDate} →{" "}
                 {bookingWindow.dropoffDate}
               </span>
               <span
@@ -818,24 +1023,133 @@ function AvailabilityCalendarModal({
                 borderRadius: "10px",
                 fontSize: "12px",
                 color: "rgba(255,255,255,0.5)",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
               }}
             >
-              ℹ️ No trip dates set. Go to booking form first.
+              <IconAlertTriangle size={13} /> No trip dates set. Go to booking form first.
             </div>
           )}
+
+          {/* Car photo */}
+          <div
+            style={{
+              marginTop: "18px",
+              width: "100%",
+              height: "130px",
+              borderRadius: "14px",
+              overflow: "hidden",
+              background: "rgba(255,255,255,0.03)",
+              border: "1px solid rgba(255,255,255,0.06)",
+            }}
+          >
+            <img
+              src={(car.images && car.images[0]) || car.image}
+              alt={car.model}
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            />
+          </div>
+
+          {/* Quick specs */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "8px",
+              marginTop: "14px",
+            }}
+          >
+            {[
+              { icon: "/Images/people.png", text: `${car.seats} Seats` },
+              { icon: "/Images/travel-luggage.png", text: car.bags },
+              { icon: "/Images/transmission.png", text: car.transmission },
+              { icon: "/Images/fuel.png", text: car.range },
+            ].map((s, i) => (
+              <div
+                key={i}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  padding: "7px 10px",
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  borderRadius: "10px",
+                  fontSize: "11px",
+                  color: "rgba(255,255,255,0.7)",
+                }}
+              >
+                <img src={s.icon} alt="" style={{ width: "15px", height: "15px", opacity: 0.85 }} />
+                {s.text}
+              </div>
+            ))}
+          </div>
+
+          {/* Trip cost breakdown */}
+          {(() => {
+            const startD = isDateChangeMode ? newPickupDate : lockedPickupDate;
+            const endD = isDateChangeMode ? newDropoffDate : lockedDropoffDate;
+            if (!startD || !endD) return null;
+            const days = Math.max(1, Math.ceil((endD - startD) / 86400000));
+            const total = days * (car.price || 0);
+            return (
+              <div
+                style={{
+                  marginTop: "14px",
+                  padding: "12px 14px",
+                  background: "rgba(147,51,234,0.06)",
+                  border: "1px solid rgba(192,132,252,0.2)",
+                  borderRadius: "12px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: "12px",
+                    color: "rgba(255,255,255,0.6)",
+                    marginBottom: "6px",
+                  }}
+                >
+                  <span>
+                    {days} day{days > 1 ? "s" : ""} × {car.price} USD/day
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "baseline",
+                  }}
+                >
+                  <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.7)", fontWeight: "600" }}>
+                    Estimated total
+                  </span>
+                  <span style={{ fontSize: "20px", fontWeight: "800", color: "#c084fc" }}>
+                    {total} USD
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
         </div>
 
         {/* Calendar body */}
-        <div style={{ padding: "18px 22px" }}>
+        <div className="fl-avail-calendar-area" style={{ padding: "18px 22px" }}>
           {loading ? (
             <div
               style={{
                 textAlign: "center",
                 padding: "50px",
                 color: "rgba(255,255,255,0.35)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "8px",
               }}
             >
-              ⏳ Loading...
+              <IconHourglass size={16} className="fl-spin-slow" /> Loading...
             </div>
           ) : (
             <>
@@ -892,18 +1206,18 @@ function AvailabilityCalendarModal({
                         l: "Booked",
                       },
                       {
-                        bg: "linear-gradient(135deg,#0400ff,#4ce3f7)",
-                        bd: "2px solid #4ce3f7",
+                        bg: "linear-gradient(135deg,#6d28d9,#c084fc)",
+                        bd: "2px solid #c084fc",
                         l: "Pickup",
                       },
                       {
-                        bg: "linear-gradient(135deg,#4ce3f7,#0400ff)",
-                        bd: "2px solid #4ce3f7",
+                        bg: "linear-gradient(135deg,#c084fc,#6d28d9)",
+                        bd: "2px solid #c084fc",
                         l: "Dropoff",
                       },
                       {
-                        bg: "rgba(76,227,247,0.18)",
-                        bd: "1px solid rgba(76,227,247,0.4)",
+                        bg: "rgba(192,132,252,0.18)",
+                        bd: "1px solid rgba(192,132,252,0.4)",
                         l: "Selected Range",
                       },
                     ]
@@ -961,7 +1275,7 @@ function AvailabilityCalendarModal({
                     style={{
                       textAlign: "center",
                       padding: "5px 0",
-                      color: "#4ce3f7",
+                      color: "#c084fc",
                       fontWeight: "700",
                       fontSize: "0.72rem",
                       letterSpacing: "0.5px",
@@ -1013,8 +1327,8 @@ function AvailabilityCalendarModal({
                   style={{
                     marginTop: "10px",
                     padding: "8px 14px",
-                    background: "rgba(76,227,247,0.08)",
-                    border: "1px solid rgba(76,227,247,0.2)",
+                    background: "rgba(192,132,252,0.08)",
+                    border: "1px solid rgba(192,132,252,0.2)",
                     borderRadius: "8px",
                     textAlign: "center",
                     fontSize: "12px",
@@ -1022,7 +1336,7 @@ function AvailabilityCalendarModal({
                   }}
                 >
                   {fmtDateShort(newPickupDate)} → {fmtDateShort(hoverDate)} ·{" "}
-                  <strong style={{ color: "#4ce3f7" }}>
+                  <strong style={{ color: "#c084fc" }}>
                     {Math.ceil((hoverDate - newPickupDate) / 86400000)} day
                     {Math.ceil((hoverDate - newPickupDate) / 86400000) > 1
                       ? "s"
@@ -1037,8 +1351,8 @@ function AvailabilityCalendarModal({
                     marginTop: "14px",
                     padding: "14px",
                     background:
-                      "linear-gradient(135deg,rgba(4,0,255,0.06),rgba(76,227,247,0.04))",
-                    border: "1px solid rgba(76,227,247,0.2)",
+                      "linear-gradient(135deg,rgba(109,40,217,0.06),rgba(192,132,252,0.04))",
+                    border: "1px solid rgba(192,132,252,0.2)",
                     borderRadius: "14px",
                     textAlign: "center",
                   }}
@@ -1055,7 +1369,7 @@ function AvailabilityCalendarModal({
                   <button
                     onClick={enterDateChangeMode}
                     style={{
-                      background: "linear-gradient(30deg,#0400ff,#4ce3f7)",
+                      background: "linear-gradient(30deg,#6d28d9,#c084fc)",
                       border: "none",
                       borderRadius: "10px",
                       color: "#fff",
@@ -1064,10 +1378,14 @@ function AvailabilityCalendarModal({
                       fontWeight: "700",
                       fontFamily: "Quicksand,sans-serif",
                       fontSize: "13px",
-                      boxShadow: "0 4px 20px rgba(76,227,247,0.3)",
+                      boxShadow: "0 4px 20px rgba(192,132,252,0.3)",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "7px",
                     }}
                   >
-                    📅 Choose Different Dates
+                    <IconCalendar size={14} /> Choose Different Dates
                   </button>
                 </div>
               )}
@@ -1083,9 +1401,13 @@ function AvailabilityCalendarModal({
                     fontSize: "11px",
                     color: "rgba(255,255,255,0.5)",
                     textAlign: "center",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
                   }}
                 >
-                  ✅ Car is free for your dates. Click "Book This Car" below.
+                  <IconCheckCircle size={12} /> Car is free for your dates. Click "Book This Car" below.
                 </div>
               )}
             </>
@@ -1094,19 +1416,21 @@ function AvailabilityCalendarModal({
 
         {/* Footer */}
         <div
+          className="fl-avail-footer-area"
           style={{
             padding: "12px 22px 16px",
             borderTop: "1px solid rgba(255,255,255,0.06)",
             display: "flex",
+            flexDirection: "column",
             gap: "8px",
             justifyContent: "flex-end",
-            flexWrap: "wrap",
+            marginTop: "auto",
           }}
         >
           {isDateChangeMode ? (
             <>
               <button onClick={cancelDateChange} style={footerBtnSec}>
-                ← Back
+                <IconArrowLeft size={13} /> Back
               </button>
               {(selectionStep === "picking_dropoff" ||
                 selectionStep === "ready") && (
@@ -1119,7 +1443,7 @@ function AvailabilityCalendarModal({
                   }}
                   style={footerBtnSec}
                 >
-                  ↻ Reset
+                  <IconRefresh size={13} /> Reset
                 </button>
               )}
               {selectionStep === "ready" && (
@@ -1130,7 +1454,7 @@ function AvailabilityCalendarModal({
                     padding: "10px 20px",
                     background: newWindowBlocked
                       ? "rgba(255,255,255,0.06)"
-                      : "linear-gradient(30deg,#0400ff,#4ce3f7)",
+                      : "linear-gradient(30deg,#6d28d9,#c084fc)",
                     border: "none",
                     borderRadius: "10px",
                     color: newWindowBlocked ? "rgba(255,255,255,0.25)" : "#fff",
@@ -1139,12 +1463,22 @@ function AvailabilityCalendarModal({
                     fontWeight: "700",
                     boxShadow: newWindowBlocked
                       ? "none"
-                      : "0 4px 16px rgba(76,227,247,0.25)",
+                      : "0 4px 16px rgba(192,132,252,0.25)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "7px",
                   }}
                 >
-                  {newWindowBlocked
-                    ? "🚫 Dates Conflicting"
-                    : `✅ Proceed · ${newDaysCount} Day${newDaysCount > 1 ? "s" : ""}`}
+                  {newWindowBlocked ? (
+                    <>
+                      <IconBan size={13} /> Dates Conflicting
+                    </>
+                  ) : (
+                    <>
+                      <IconCheckCircle size={13} /> Proceed · {newDaysCount} Day{newDaysCount > 1 ? "s" : ""}
+                    </>
+                  )}
                 </button>
               )}
             </>
@@ -1158,17 +1492,21 @@ function AvailabilityCalendarModal({
                   onClick={() => onSelect(car)}
                   style={{
                     padding: "10px 20px",
-                    background: "linear-gradient(30deg,#0400ff,#4ce3f7)",
+                    background: "linear-gradient(30deg,#6d28d9,#c084fc)",
                     border: "none",
                     borderRadius: "10px",
                     color: "#fff",
                     cursor: "pointer",
                     fontFamily: "Quicksand,sans-serif",
                     fontWeight: "700",
-                    boxShadow: "0 4px 16px rgba(76,227,247,0.25)",
+                    boxShadow: "0 4px 16px rgba(192,132,252,0.25)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "7px",
                   }}
                 >
-                  ✅ Book This Car
+                  <IconCheckCircle size={13} /> Book This Car
                 </button>
               )}
               {!hasBookingWindow && (
@@ -1176,7 +1514,7 @@ function AvailabilityCalendarModal({
                   onClick={onClose}
                   style={{
                     padding: "10px 20px",
-                    background: "linear-gradient(30deg,#0400ff,#4ce3f7)",
+                    background: "linear-gradient(30deg,#6d28d9,#c084fc)",
                     border: "none",
                     borderRadius: "10px",
                     color: "#fff",
@@ -1191,18 +1529,19 @@ function AvailabilityCalendarModal({
             </>
           )}
         </div>
+        </div>
       </div>
     </div>
   );
 }
 
 const monthBtnStyle = {
-  background: "rgba(76,227,247,0.06)",
-  border: "1px solid rgba(76,227,247,0.2)",
+  background: "rgba(192,132,252,0.06)",
+  border: "1px solid rgba(192,132,252,0.2)",
   borderRadius: "8px",
   padding: "6px 14px",
   cursor: "pointer",
-  color: "#4ce3f7",
+  color: "#c084fc",
   fontFamily: "Quicksand,sans-serif",
   fontWeight: "600",
   fontSize: "0.82rem",
@@ -1216,6 +1555,10 @@ const footerBtnSec = {
   cursor: "pointer",
   fontFamily: "Quicksand,sans-serif",
   fontWeight: "600",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: "6px",
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -1223,73 +1566,21 @@ const footerBtnSec = {
 ═══════════════════════════════════════════════════════════ */
 function ValidationModal({ onClose, onGoToBooking }) {
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        backgroundColor: "rgba(0,0,0,0.7)",
-        zIndex: 1000,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-      onClick={onClose}
-    >
-      <div
-        style={{
-          background: "#1a1a1a",
-          border: "1px solid rgba(255,77,77,0.4)",
-          borderRadius: "16px",
-          padding: "32px",
-          maxWidth: "420px",
-          width: "90%",
-          textAlign: "center",
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div style={{ fontSize: "48px", marginBottom: "16px" }}>🚗</div>
-        <h2 style={{ color: "#fff", marginBottom: "12px" }}>
-          Complete Booking Details First
-        </h2>
-        <p
-          style={{
-            color: "rgba(255,255,255,0.6)",
-            marginBottom: "24px",
-            lineHeight: "1.6",
-          }}
-        >
+    <div className="fl-modal-overlay" onClick={onClose}>
+      <div className="fl-modal-card warn" onClick={(e) => e.stopPropagation()}>
+        <div className="fl-modal-icon" style={{ display: "flex", justifyContent: "center", color: "#f59e0b" }}>
+          <IconCar size={44} />
+        </div>
+        <h2 className="fl-modal-title warn">Complete Booking Details First</h2>
+        <p className="fl-modal-text">
           Please fill in your pickup location, drop-off location and travel
           dates before selecting a vehicle.
         </p>
-        <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
-          <button
-            onClick={onGoToBooking}
-            style={{
-              background: "linear-gradient(30deg,#0400ff,#4ce3f7)",
-              border: "none",
-              borderRadius: "10px",
-              color: "#fff",
-              padding: "12px 24px",
-              fontWeight: "700",
-              cursor: "pointer",
-              fontFamily: "Quicksand,sans-serif",
-            }}
-          >
+        <div className="fl-modal-actions">
+          <button onClick={onGoToBooking} className="fl-modal-btn-primary">
             Fill Booking Form
           </button>
-          <button
-            onClick={onClose}
-            style={{
-              background: "transparent",
-              border: "1px solid rgba(255,255,255,0.2)",
-              borderRadius: "10px",
-              color: "#fff",
-              padding: "12px 24px",
-              fontWeight: "600",
-              cursor: "pointer",
-              fontFamily: "Quicksand,sans-serif",
-            }}
-          >
+          <button onClick={onClose} className="fl-modal-btn-secondary">
             Cancel
           </button>
         </div>
@@ -1303,166 +1594,40 @@ function ValidationModal({ onClose, onGoToBooking }) {
 ═══════════════════════════════════════════════════════════ */
 function DealerShowroomCard({ dealer, carCount, onEnter }) {
   return (
-    <div
-      onClick={onEnter}
-      style={{
-        background:
-          "linear-gradient(135deg,rgba(99,102,241,0.08),rgba(76,227,247,0.04))",
-        border: "1px solid rgba(76,227,247,0.2)",
-        borderRadius: "20px",
-        padding: "22px",
-        cursor: "pointer",
-        transition: "all 0.25s",
-        position: "relative",
-        overflow: "hidden",
-        fontFamily: "Quicksand,sans-serif",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-4px)";
-        e.currentTarget.style.boxShadow = "0 16px 48px rgba(76,227,247,0.12)";
-        e.currentTarget.style.borderColor = "rgba(76,227,247,0.45)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.boxShadow = "none";
-        e.currentTarget.style.borderColor = "rgba(76,227,247,0.2)";
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "-40px",
-          right: "-40px",
-          width: "120px",
-          height: "120px",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(circle,rgba(76,227,247,0.08),transparent)",
-          pointerEvents: "none",
-        }}
-      />
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "16px" }}>
-        <div
-          style={{
-            width: "52px",
-            height: "52px",
-            borderRadius: "14px",
-            flexShrink: 0,
-            background: "linear-gradient(135deg,#0400ff,#4ce3f7)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "20px",
-            color: "#fff",
-            fontWeight: "900",
-            boxShadow: "0 4px 16px rgba(4,0,255,0.25)",
-          }}
-        >
+    <div className="fl-dealer-card" onClick={onEnter}>
+      <div className="fl-dealer-glow" />
+      <div className="fl-dealer-header">
+        <div className="fl-dealer-avatar">
           {dealer.businessName?.[0]?.toUpperCase() || "D"}
         </div>
-        <div style={{ flex: 1 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginBottom: "5px",
-            }}
-          >
-            <h3
-              style={{
-                margin: 0,
-                color: "#f1f5f9",
-                fontWeight: "800",
-                fontSize: "15px",
-              }}
-            >
-              {dealer.businessName}
-            </h3>
-            <span
-              style={{
-                background: "rgba(34,197,94,0.15)",
-                border: "1px solid rgba(34,197,94,0.3)",
-                borderRadius: "20px",
-                padding: "2px 8px",
-                color: "#22c55e",
-                fontSize: "10px",
-                fontWeight: "700",
-              }}
-            >
-              ✅ Verified
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="fl-dealer-name-row">
+            <h3 className="fl-dealer-name">{dealer.businessName}</h3>
+            <span className="fl-dealer-verified fl-icon-row">
+              <IconCheckCircle size={11} /> Verified
             </span>
           </div>
-          <p
-            style={{
-              margin: "0 0 3px",
-              color: "rgba(241,245,249,0.45)",
-              fontSize: "12px",
-            }}
-          >
-            📍 {dealer.businessAddress || dealer.city}
+          <p className="fl-dealer-address fl-icon-row">
+            <IconMapPin size={11} /> {dealer.businessAddress || dealer.city}
             {dealer.state ? `, ${dealer.state}` : ""}
           </p>
           {dealer.phone && (
-            <p
-              style={{
-                margin: "0 0 10px",
-                color: "rgba(241,245,249,0.35)",
-                fontSize: "12px",
-              }}
-            >
-              📞 {dealer.phone}
+            <p className="fl-dealer-phone fl-icon-row">
+              <IconPhone size={11} /> {dealer.phone}
             </p>
           )}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              flexWrap: "wrap",
-            }}
-          >
-            <span
-              style={{
-                background: "rgba(76,227,247,0.1)",
-                border: "1px solid rgba(76,227,247,0.22)",
-                borderRadius: "20px",
-                padding: "3px 12px",
-                color: "#4ce3f7",
-                fontSize: "12px",
-                fontWeight: "700",
-              }}
-            >
-              🚗 {carCount} cars available
+          <div className="fl-dealer-meta">
+            <span className="fl-dealer-count fl-icon-row">
+              <IconCar size={13} /> {carCount} cars available
             </span>
             {dealer.rating > 0 && (
-              <span
-                style={{
-                  color: "#fbbf24",
-                  fontSize: "12px",
-                  fontWeight: "700",
-                }}
-              >
-                ⭐ {dealer.rating.toFixed(1)}
+              <span className="fl-dealer-rating fl-icon-row">
+                <IconStar size={12} /> {dealer.rating.toFixed(1)}
               </span>
             )}
           </div>
           {dealer.description && (
-            <p
-              style={{
-                margin: "8px 0 0",
-                color: "rgba(241,245,249,0.3)",
-                fontSize: "12px",
-                lineHeight: "1.5",
-                fontStyle: "italic",
-                overflow: "hidden",
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-              }}
-            >
-              "{dealer.description}"
-            </p>
+            <p className="fl-dealer-desc">"{dealer.description}"</p>
           )}
         </div>
       </div>
@@ -1484,6 +1649,7 @@ function CarCard({
   isCurrentlyBooked,
   dealerName,
 }) {
+  const carImages = car.images?.length ? car.images : car.image ? [car.image] : [];
   return (
     <div
       className="fleet_card"
@@ -1491,320 +1657,181 @@ function CarCard({
         opacity: isUnavailable && !isCurrentlyBooked ? 0.72 : 1,
         position: "relative",
         border: isCurrentlyBooked
-          ? "2px solid rgba(76,227,247,0.5)"
+          ? "2px solid rgba(192,132,252,0.5)"
           : undefined,
         boxShadow: isCurrentlyBooked
-          ? "0 0 24px rgba(76,227,247,0.15)"
+          ? "0 0 24px rgba(192,132,252,0.15)"
           : undefined,
       }}
     >
       {isCurrentlyBooked && (
-        <div
-          style={{
-            position: "absolute",
-            top: "12px",
-            right: "12px",
-            background: "linear-gradient(135deg,#0400ff,#4ce3f7)",
-            color: "#fff",
-            padding: "4px 14px",
-            borderRadius: "20px",
-            fontSize: "12px",
-            fontWeight: "700",
-            zIndex: 2,
-            boxShadow: "0 4px 12px rgba(76,227,247,0.3)",
-          }}
-        >
-          ✅ Your Selection
+        <div className="fl-badge-selected fl-icon-row">
+          <IconCheckCircle size={12} /> Your Selection
         </div>
       )}
       {dealerName && !isCurrentlyBooked && (
-        <div
-          style={{
-            position: "absolute",
-            top: "12px",
-            left: "12px",
-            background: "rgba(0,0,0,0.6)",
-            backdropFilter: "blur(4px)",
-            color: "#4ce3f7",
-            padding: "2px 8px",
-            borderRadius: "16px",
-            fontSize: "10px",
-            fontWeight: "600",
-            zIndex: 2,
-            border: "1px solid rgba(76,227,247,0.3)",
-          }}
-        >
-          🏢 {dealerName}
+        <div className="fl-badge-dealer-tag fl-icon-row">
+          <IconBuilding size={11} /> {dealerName}
         </div>
       )}
       {isUnavailable && !userOverlapDetails && !isCurrentlyBooked && (
-        <div
-          style={{
-            position: "absolute",
-            top: "12px",
-            right: "12px",
-            background: "rgba(255,77,77,0.92)",
-            color: "#fff",
-            padding: "4px 12px",
-            borderRadius: "20px",
-            fontSize: "12px",
-            fontWeight: "700",
-            zIndex: 2,
-          }}
-        >
-          🚫 Unavailable Here
+        <div className="fl-badge-unavailable fl-icon-row">
+          <IconBan size={12} /> Unavailable Here
         </div>
       )}
-      <img className="fleet_card_image" src={car.image} alt={car.model} />
+      <div className="fleet_card_image_wrap">
+        <ImageCarousel
+          images={carImages}
+          alt={car.model}
+          height="150px"
+          dotColor="#a855f7"
+          arrows
+          loop
+        />
+      </div>
+      <h3 className="fleet_card_model">{car.model}</h3>
       <div className="fleet_card_info">
-        {/* Phase 2: Safety Rating Stars */}
-        {
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "4px",
-              marginBottom: "8px",
-              padding: "4px 8px",
-              background: "rgba(251,191,36,0.08)",
-              border: "1px solid rgba(251,191,36,0.2)",
-              borderRadius: "8px",
-              width: "fit-content",
-            }}
-          >
+        <div className="fl-card-top">
+          {/* Phase 2: Safety Rating Stars */}
+          <div className="fl-safety-row">
             {[1, 2, 3, 4, 5].map((star) => (
-              <span
+              <IconStar
                 key={star}
+                size={13}
+                filled={star <= (car.safetyRating || 0)}
+                className={`fl-safety-star ${star <= (car.safetyRating || 0) ? "filled" : ""}`}
                 style={{
-                  fontSize: "14px",
-                  color:
-                    star <= (car.safetyRating || 0)
-                      ? "#fbbf24"
-                      : "rgba(255,255,255,0.2)",
-                  filter:
-                    star <= (car.safetyRating || 0)
-                      ? "drop-shadow(0 0 3px rgba(251,191,36,0.5))"
-                      : "none",
+                  color: star <= (car.safetyRating || 0) ? "#fbbf24" : "rgba(255,255,255,0.2)",
+                  filter: star <= (car.safetyRating || 0) ? "drop-shadow(0 0 3px rgba(251,191,36,0.5))" : "none",
                 }}
-              >
-                ★
-              </span>
+              />
             ))}
-            <span
-              style={{
-                marginLeft: "4px",
-                color: "rgba(255,255,255,0.5)",
-                fontSize: "11px",
-                fontWeight: "700",
-              }}
-            >
+            <span className="fl-safety-count">
               {(car.safetyRating || 0) > 0
                 ? `${car.safetyRating}/5`
                 : "No ratings yet"}
             </span>
           </div>
-        }
 
-        <h3 className="fleet_card_model">{car.model}</h3>
-
-        {/* Phase 2: Number Plate */}
-        {car.numberPlate && (
-          <div
-            style={{
-              padding: "3px 8px",
-              marginBottom: "6px",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-              borderRadius: "6px",
-              fontSize: "11px",
-              color: "rgba(255,255,255,0.5)",
-              fontFamily: "monospace",
-              fontWeight: "600",
-              letterSpacing: "0.5px",
-            }}
-          >
-            🚘 {car.numberPlate}
+          <div className="fleet_card_specs">
+            {[
+              {
+                icon: "/Images/people.png",
+                alt: "Seats",
+                text: `${car.seats} Seats`,
+              },
+              { icon: "/Images/travel-luggage.png", alt: "Bags", text: car.bags },
+              {
+                icon: "/Images/transmission.png",
+                alt: "Transmission",
+                text: car.transmission,
+              },
+              { icon: "/Images/fuel.png", alt: "Range", text: car.range },
+            ].map(({ icon, alt, text }) => (
+              <div key={alt} className="fleet_spec_item">
+                <img className="fleet_spec_icon" src={icon} alt={alt} />
+                <span className="fleet_spec_text">{text}</span>
+              </div>
+            ))}
           </div>
-        )}
 
-        <div className="fleet_card_specs">
-          {[
-            {
-              icon: "/Images/people.png",
-              alt: "Seats",
-              text: `${car.seats} Seats`,
-            },
-            { icon: "/Images/travel-luggage.png", alt: "Bags", text: car.bags },
-            {
-              icon: "/Images/transmission.png",
-              alt: "Transmission",
-              text: car.transmission,
-            },
-            { icon: "/Images/fuel.png", alt: "Range", text: car.range },
-          ].map(({ icon, alt, text }) => (
-            <div key={alt} className="fleet_spec_item">
-              <img className="fleet_spec_icon" src={icon} alt={alt} />
-              <span className="fleet_spec_text">{text}</span>
+          {/* Phase 2: Number Plate */}
+          {car.numberPlate && (
+            <div className="fl-plate-chip fl-icon-row">
+              <IconTag size={11} /> {car.numberPlate}
             </div>
-          ))}
+          )}
+
+          {/* Phase 2: Additional Info Badges */}
+          <div className="fl-feature-row">
+            {car.emergencyKit && (
+              <span className="fl-feature-badge kit fl-icon-row">
+                <IconBandage size={10} /> Emergency Kit
+              </span>
+            )}
+            {car.gpsAvailable && (
+              <span className="fl-feature-badge gps fl-icon-row">
+                <IconSatellite size={10} /> GPS
+              </span>
+            )}
+            {car.lastServiceDate && (
+              <span className="fl-feature-badge service fl-icon-row">
+                <IconWrench size={10} /> Serviced:{" "}
+                {new Date(car.lastServiceDate).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "short",
+                })}
+              </span>
+            )}
+            {car.pucCertificate && (
+              <span className="fl-feature-badge puc fl-icon-row">
+                <IconCheckCircle size={10} /> PUC:{" "}
+                {new Date(car.pucCertificate).toLocaleDateString("en-IN", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}
+              </span>
+            )}
+          </div>
         </div>
 
-        {/* Phase 2: Additional Info Badges */}
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "4px",
-            marginBottom: "8px",
-            marginTop: "4px",
-          }}
-        >
-          {car.emergencyKit && (
-            <span
-              style={{
-                padding: "2px 8px",
-                background: "rgba(34,197,94,0.1)",
-                border: "1px solid rgba(34,197,94,0.25)",
-                borderRadius: "12px",
-                fontSize: "10px",
-                fontWeight: "600",
-                color: "#22c55e",
-              }}
-            >
-              🩹 Emergency Kit
-            </span>
-          )}
-          {car.gpsAvailable && (
-            <span
-              style={{
-                padding: "2px 8px",
-                background: "rgba(76,227,247,0.1)",
-                border: "1px solid rgba(76,227,247,0.25)",
-                borderRadius: "12px",
-                fontSize: "10px",
-                fontWeight: "600",
-                color: "#4ce3f7",
-              }}
-            >
-              🛰️ GPS
-            </span>
-          )}
-          {car.lastServiceDate && (
-            <span
-              style={{
-                padding: "2px 8px",
-                background: "rgba(168,85,247,0.1)",
-                border: "1px solid rgba(168,85,247,0.25)",
-                borderRadius: "12px",
-                fontSize: "10px",
-                fontWeight: "600",
-                color: "#a855f7",
-              }}
-            >
-              🔧 Serviced:{" "}
-              {new Date(car.lastServiceDate).toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short",
-              })}
-            </span>
-          )}
-          {car.pucCertificate && (
-            <span
-              style={{
-                padding: "2px 8px",
-                background: "rgba(34,197,94,0.08)",
-                border: "1px solid rgba(34,197,94,0.2)",
-                borderRadius: "12px",
-                fontSize: "10px",
-                fontWeight: "600",
-                color: "#22c55e",
-              }}
-            >
-              ✅ PUC:{" "}
-              {new Date(car.pucCertificate).toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              })}
-            </span>
-          )}
-        </div>
-
-        <p className="fleet_card_cost">
-          {formatPrice(car.price)}{" "}
-          <span style={{ fontSize: "12px" }}>/ day</span>
-        </p>
-        <div style={{ display: "flex", gap: "10px", flexDirection: "column" }}>
-          <button
-            className="fleet_book_btn btn"
-            onClick={() => onViewAvailability(car)}
-            style={{
-              background: "rgba(76,227,247,0.1)",
-              border: "1px solid rgba(76,227,247,0.3)",
-            }}
-          >
-            📅 View Availability
-          </button>
-          {isCurrentlyBooked ? (
+        <div className="fl-card-bottom">
+          <p className="fleet_card_cost">
+            {formatPrice(car.price)}{" "}
+            <span style={{ fontSize: "12px" }}>/ day</span>
+          </p>
+          <div className="fl-card-actions">
             <button
-              className="fleet_book_btn btn"
-              onClick={() => onSelect(car)}
-              style={{
-                background: "linear-gradient(30deg,#0400ff,#4ce3f7)",
-                border: "none",
-                color: "#fff",
-                fontWeight: "700",
-                boxShadow: "0 4px 16px rgba(76,227,247,0.25)",
-              }}
+              className="fleet_book_btn btn fl-btn-availability fl-icon-row"
+              onClick={() => onViewAvailability(car)}
             >
-              Continue with This Car
+              <IconCalendar size={13} /> View Availability
             </button>
-          ) : isUnavailable ? (
-            <div style={{ textAlign: "center" }}>
+            {isCurrentlyBooked ? (
+              <button
+                className="fleet_book_btn btn fl-btn-continue"
+                onClick={() => onSelect(car)}
+              >
+                Continue with This Car
+              </button>
+            ) : isUnavailable ? (
+              <div className="fl-card-action-item" style={{ textAlign: "center" }}>
+                <button
+                  className={`fleet_book_btn btn fl-btn-disabled ${userOverlapDetails ? "conflict" : "unavailable"} fl-icon-row`}
+                  disabled
+                  style={{ justifyContent: "center", width: "100%" }}
+                >
+                  {userOverlapDetails ? (
+                    <>
+                      <IconAlertTriangle size={12} /> Trip Conflict
+                    </>
+                  ) : (
+                    <>
+                      <IconBan size={12} /> Unavailable Here
+                    </>
+                  )}
+                </button>
+                {unavailableUntil && !userOverlapDetails && (
+                  <p className="fl-unavailable-note">
+                    Available from{" "}
+                    {new Date(unavailableUntil).toLocaleDateString("en-IN", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })}
+                  </p>
+                )}
+              </div>
+            ) : (
               <button
                 className="fleet_book_btn btn"
-                disabled
-                style={{
-                  opacity: 0.5,
-                  cursor: "not-allowed",
-                  background: userOverlapDetails
-                    ? "rgba(255,165,0,0.2)"
-                    : "rgba(255,77,77,0.2)",
-                  border: userOverlapDetails
-                    ? "1px solid rgba(255,165,0,0.4)"
-                    : "1px solid rgba(255,77,77,0.4)",
-                  color: userOverlapDetails ? "#ffa500" : "#ff4d4d",
-                }}
+                onClick={() => onSelect(car)}
               >
-                {userOverlapDetails
-                  ? "⚠️ Trip Conflict"
-                  : "🚫 Unavailable Here"}
+                Book Now
               </button>
-              {unavailableUntil && !userOverlapDetails && (
-                <p
-                  style={{
-                    fontSize: "11px",
-                    color: "rgba(255,255,255,0.3)",
-                    marginTop: "6px",
-                  }}
-                >
-                  Available from{" "}
-                  {new Date(unavailableUntil).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </p>
-              )}
-            </div>
-          ) : (
-            <button
-              className="fleet_book_btn btn"
-              onClick={() => onSelect(car)}
-            >
-              Book Now
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -2119,6 +2146,15 @@ function Fleet() {
   /* ── RENDER ── */
   return (
     <section className="fleet_section">
+      {/* Ambient starfield + glow, matching profile/booking pages */}
+      <div className="fl_stars" aria-hidden="true">
+        <div className="fl_star_layer fl_star_layer_a"></div>
+        <div className="fl_star_layer fl_star_layer_b"></div>
+        <div className="fl_star_layer fl_star_layer_c"></div>
+      </div>
+      <div className="fl_ambient_a" aria-hidden="true"></div>
+      <div className="fl_ambient_b" aria-hidden="true"></div>
+
       {/* Modals */}
       {showModal && (
         <ValidationModal
@@ -2150,113 +2186,66 @@ function Fleet() {
       )}
 
       {/* Title */}
-      <h2 className="fleet_title">
-        {selectedDealer
-          ? `🏢 ${selectedDealer.businessName}`
-          : "Select Your Ride!"}
+      <h2 className="fleet_title fl-icon-row block">
+        {selectedDealer ? (
+          <>
+            <IconBuilding size={22} /> {selectedDealer.businessName}
+          </>
+        ) : (
+          "Select Your Ride!"
+        )}
       </h2>
-
-      {/* Back button inside dealer showroom */}
-      {selectedDealer && (
-        <button
-          onClick={() => {
-            setSelectedDealer(null);
-            setActiveCategory("All");
-          }}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            padding: "10px 20px",
-            marginBottom: "20px",
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            borderRadius: "12px",
-            color: "#f1f5f9",
-            cursor: "pointer",
-            fontFamily: "Quicksand,sans-serif",
-            fontWeight: "600",
-            fontSize: "13px",
-          }}
-        >
-          ← Back to Fleet
-        </button>
-      )}
 
       {/* Currently selected car notice */}
       {currentlyBookedCarId && bookingSummary && (
-        <div
-          style={{
-            background:
-              "linear-gradient(135deg,rgba(4,0,255,0.08),rgba(76,227,247,0.05))",
-            border: "1px solid rgba(76,227,247,0.35)",
-            borderRadius: "12px",
-            padding: "12px 20px",
-            marginBottom: "16px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "10px",
-            flexWrap: "wrap",
-          }}
-        >
-          <span
-            style={{ color: "#4ce3f7", fontWeight: "700", fontSize: "14px" }}
-          >
-            ✅ You have a car selected
+        <div className="fl-notice-bar">
+          <span className="headline fl-icon-row">
+            <IconCheckCircle size={14} /> You have a car selected
           </span>
-          <span style={{ color: "rgba(255,255,255,0.5)", fontSize: "13px" }}>
+          <span className="subtext">
             Scroll down or it's pinned at the top
           </span>
         </div>
       )}
 
-      {/* Booking summary banner */}
-      {bookingSummary && (
-        <div
-          style={{
-            background: "rgba(76,227,247,0.08)",
-            border: "1px solid rgba(76,227,247,0.3)",
-            borderRadius: "12px",
-            padding: "12px 24px",
-            marginBottom: "24px",
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            flexWrap: "wrap",
-            justifyContent: "center",
-          }}
-        >
-          <span style={{ color: "#4ce3f7", fontWeight: "700" }}>
-            ✓ Booking Details
-          </span>
-          <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.9rem" }}>
-            📍 {bookingSummary.pickup} → {bookingSummary.dropoff}
-          </span>
-          <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.9rem" }}>
-            📅 {bookingSummary.pickupDate} → {bookingSummary.dropoffDate}
-          </span>
-          <span style={{ color: "rgba(255,255,255,0.7)", fontSize: "0.9rem" }}>
-            🗓️ {bookingSummary.days} days · {bookingSummary.tripType}
-          </span>
+      {/* Sticky top row: booking summary (left) + back-to-fleet (right),
+          pinned to the top of the viewport while scrolling */}
+      <div className="fl-top-row">
+        {bookingSummary && (
+          <div className="fl-summary-bar">
+            <span className="label fl-icon-row">
+              <IconCheckCircle size={13} /> Booking Details
+            </span>
+            <span className="detail fl-icon-row">
+              <IconMapPin size={12} /> {bookingSummary.pickup} → {bookingSummary.dropoff}
+            </span>
+            <span className="detail fl-icon-row">
+              <IconCalendar size={12} /> {bookingSummary.pickupDate} → {bookingSummary.dropoffDate}
+            </span>
+            <span className="detail fl-icon-row">
+              <IconCalendarDays size={12} /> {bookingSummary.days} days · {bookingSummary.tripType}
+            </span>
+            <button
+              onClick={() => navigate("/booking")}
+              className="fl-summary-edit-btn"
+            >
+              Edit
+            </button>
+          </div>
+        )}
+
+        {/* {selectedDealer && (
           <button
-            onClick={() => navigate("/booking")}
-            style={{
-              background: "transparent",
-              border: "1px solid rgba(76,227,247,0.4)",
-              borderRadius: "8px",
-              color: "#4ce3f7",
-              padding: "4px 14px",
-              cursor: "pointer",
-              fontSize: "0.85rem",
-              fontFamily: "Quicksand,sans-serif",
-              fontWeight: "600",
+            className="fl-back-to-fleet-btn fl-icon-row"
+            onClick={() => {
+              setSelectedDealer(null);
+              setActiveCategory("All");
             }}
           >
-            Edit
+            <IconArrowLeft size={13} /> Back to Fleet
           </button>
-        </div>
-      )}
+        )} */}
+      </div>
 
       {/* Loading states */}
       {availabilityLoading && (
@@ -2267,9 +2256,13 @@ function Fleet() {
             color: "rgba(255,255,255,0.4)",
             fontSize: "0.85rem",
             marginBottom: "16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "7px",
           }}
         >
-          ⏳ Checking availability at {bookingSummary?.pickup}...
+          <IconHourglass size={13} className="fl-spin-slow" /> Checking availability at {bookingSummary?.pickup}...
         </div>
       )}
       {dealerCarsLoading && (
@@ -2280,9 +2273,13 @@ function Fleet() {
             color: "rgba(255,255,255,0.4)",
             fontSize: "0.85rem",
             marginBottom: "16px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "7px",
           }}
         >
-          ⏳ Loading partner fleet...
+          <IconHourglass size={13} className="fl-spin-slow" /> Loading partner fleet...
         </div>
       )}
 
@@ -2298,19 +2295,26 @@ function Fleet() {
             marginBottom: "20px",
             fontSize: "13px",
             color: "rgba(255,255,255,0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: "6px",
           }}
         >
-          🚫 {Object.keys(unavailableCarIds).length} car
+          <IconBan size={13} />
+          {Object.keys(unavailableCarIds).length} car
           {Object.keys(unavailableCarIds).length > 1 ? "s" : ""} booked at{" "}
           <strong>{bookingSummary?.pickup}</strong>
           <span
+            className="fl-icon-row"
             style={{
               color: "rgba(255,255,255,0.3)",
               marginLeft: "6px",
               fontSize: "12px",
             }}
           >
-            (open 📅 to pick alternate dates)
+            (open <IconCalendar size={11} /> to pick alternate dates)
           </span>
         </div>
       )}
@@ -2335,7 +2339,7 @@ function Fleet() {
               marginBottom: "12px",
             }}
           >
-            <span style={{ fontSize: "20px" }}>⚠️</span>
+            <IconAlertTriangle size={18} style={{ color: "#ffa500" }} />
             <span
               style={{ color: "#ffa500", fontWeight: "700", fontSize: "14px" }}
             >
@@ -2383,18 +2387,19 @@ function Fleet() {
               }}
             >
               <span
+                className="fl-icon-row"
                 style={{ color: "#fff", fontWeight: "700", fontSize: "14px" }}
               >
-                🚗 {userOverlappingBookings.details?.carModel}
+                <IconCar size={14} /> {userOverlappingBookings.details?.carModel}
               </span>
               <span
                 style={{
-                  background: "rgba(76,227,247,0.1)",
-                  border: "1px solid rgba(76,227,247,0.25)",
+                  background: "rgba(192,132,252,0.1)",
+                  border: "1px solid rgba(192,132,252,0.25)",
                   borderRadius: "6px",
                   padding: "4px 8px",
                   fontSize: "11px",
-                  color: "#4ce3f7",
+                  color: "#c084fc",
                   fontWeight: "600",
                 }}
               >
@@ -2410,30 +2415,30 @@ function Fleet() {
             >
               {[
                 {
-                  icon: "📍",
+                  Icon: IconMapPin,
                   color: "#22c55e",
                   label: "Pickup",
                   value: userOverlappingBookings.details?.pickup,
                 },
                 {
-                  icon: "📍",
+                  Icon: IconMapPin,
                   color: "#ff4d4d",
                   label: "Dropoff",
                   value: userOverlappingBookings.details?.dropoff,
                 },
                 {
-                  icon: "📅",
-                  color: "#4ce3f7",
+                  Icon: IconCalendar,
+                  color: "#c084fc",
                   label: "Travel Dates",
                   value: `${new Date(userOverlappingBookings.details?.pickupDate + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })} → ${new Date(userOverlappingBookings.details?.dropoffDate + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}`,
                 },
                 {
-                  icon: "🗓️",
+                  Icon: IconCalendarDays,
                   color: "#ffa500",
                   label: "Duration",
                   value: `${userOverlappingBookings.details?.days} day${userOverlappingBookings.details?.days > 1 ? "s" : ""} · ${userOverlappingBookings.details?.tripType}`,
                 },
-              ].map(({ icon, color, label, value }) => (
+              ].map(({ Icon, color, label, value }) => (
                 <div
                   key={label}
                   style={{
@@ -2442,8 +2447,8 @@ function Fleet() {
                     gap: "6px",
                   }}
                 >
-                  <span style={{ color, fontSize: "14px", flexShrink: 0 }}>
-                    {icon}
+                  <span style={{ color, flexShrink: 0, display: "flex", marginTop: "1px" }}>
+                    <Icon size={14} />
                   </span>
                   <div>
                     <p
@@ -2520,49 +2525,20 @@ function Fleet() {
       {/* ── DEALER SHOWROOMS (only when NOT inside a dealer) ── */}
       {!selectedDealer && matchingDealers.length > 0 && !dealerCarsLoading && (
         <div style={{ marginBottom: "40px" }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              marginBottom: "16px",
-            }}
-          >
-            <h3
-              style={{
-                margin: 0,
-                color: "#4ce3f7",
-                fontSize: "15px",
-                fontWeight: "700",
-              }}
-            >
-              🏢 Partner Showrooms
+          <div className="fl-showroom-header">
+            <h3 className="fl-showroom-title fl-icon-row">
+              <IconBuilding size={15} /> Partner Showrooms
+            </h3>
+            <div className="fl-showroom-meta">
               {bookingSummary?.pickup && (
-                <span
-                  style={{
-                    color: "rgba(255,255,255,0.4)",
-                    fontSize: "12px",
-                    fontWeight: "400",
-                    marginLeft: "8px",
-                  }}
-                >
+                <span className="fl-showroom-location">
                   near {bookingSummary.pickup}
                 </span>
               )}
-            </h3>
-            <span
-              style={{
-                background: "rgba(76,227,247,0.1)",
-                border: "1px solid rgba(76,227,247,0.22)",
-                borderRadius: "20px",
-                padding: "2px 10px",
-                color: "#4ce3f7",
-                fontSize: "11px",
-                fontWeight: "700",
-              }}
-            >
-              {matchingDealers.length} available
-            </span>
+              <span className="fl-showroom-badge">
+                {matchingDealers.length} available
+              </span>
+            </div>
           </div>
           <div
             style={{
@@ -2601,7 +2577,9 @@ function Fleet() {
               marginBottom: "30px",
             }}
           >
-            <div style={{ fontSize: "48px", marginBottom: "12px" }}>📍</div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: "12px", color: "#ffa500" }}>
+              <IconMapPin size={44} />
+            </div>
             <h3
               style={{ color: "#ffa500", margin: "0 0 8px", fontSize: "18px" }}
             >
@@ -2619,91 +2597,57 @@ function Fleet() {
             </p>
             <button
               onClick={() => navigate("/booking")}
+              className="fl-icon-row"
               style={{
                 padding: "8px 20px",
-                background: "rgba(76,227,247,0.1)",
-                border: "1px solid rgba(76,227,247,0.3)",
+                background: "rgba(192,132,252,0.1)",
+                border: "1px solid rgba(192,132,252,0.3)",
                 borderRadius: "10px",
-                color: "#4ce3f7",
+                color: "#c084fc",
                 cursor: "pointer",
                 fontFamily: "Quicksand,sans-serif",
                 fontWeight: "600",
+                margin: "0 auto",
+                justifyContent: "center",
               }}
             >
-              📝 Change Pickup Location
+              <IconClipboardCheck size={13} /> Change Pickup Location
             </button>
           </div>
         )}
 
       {/* ── DEALER SHOWROOM INFO BAR ── */}
       {selectedDealer && (
-        <div
-          style={{
-            background: "rgba(76,227,247,0.05)",
-            border: "1px solid rgba(76,227,247,0.18)",
-            borderRadius: "14px",
-            padding: "16px 20px",
-            marginBottom: "24px",
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            flexWrap: "wrap",
-          }}
-        >
-          <div
-            style={{
-              width: "44px",
-              height: "44px",
-              borderRadius: "12px",
-              flexShrink: 0,
-              background: "linear-gradient(135deg,#0400ff,#4ce3f7)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "18px",
-              color: "#fff",
-              fontWeight: "900",
-            }}
-          >
+        <div className="fl-dealer-info-bar">
+          <div className="fl-dealer-avatar" style={{ width: 44, height: 44, fontSize: 18 }}>
             {selectedDealer.businessName?.[0]?.toUpperCase()}
           </div>
-          <div style={{ flex: 1 }}>
-            <p
-              style={{
-                margin: "0 0 2px",
-                color: "#f1f5f9",
-                fontWeight: "700",
-                fontSize: "14px",
-              }}
-            >
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p className="fl-dealer-name" style={{ marginBottom: 2 }}>
               {selectedDealer.businessName}
             </p>
-            <p
-              style={{
-                margin: 0,
-                color: "rgba(255,255,255,0.45)",
-                fontSize: "12px",
-              }}
-            >
-              📍 {selectedDealer.city}
+            <p className="fl-dealer-address fl-icon-row" style={{ margin: 0 }}>
+              <IconMapPin size={11} /> {selectedDealer.city}
               {selectedDealer.state ? `, ${selectedDealer.state}` : ""} ·{" "}
               {selectedDealerCars.length} cars
-              {selectedDealer.phone && ` · 📞 ${selectedDealer.phone}`}
+              {selectedDealer.phone && (
+                <>
+                  {" "}· <IconPhone size={11} /> {selectedDealer.phone}
+                </>
+              )}
             </p>
           </div>
           {selectedDealer.rating > 0 && (
-            <span
-              style={{ color: "#fbbf24", fontSize: "14px", fontWeight: "700" }}
-            >
-              ⭐ {selectedDealer.rating.toFixed(1)}
+            <span className="fl-dealer-rating fl-icon-row" style={{ fontSize: 14 }}>
+              <IconStar size={13} /> {selectedDealer.rating.toFixed(1)}
             </span>
           )}
         </div>
       )}
 
-      {/* ── CATEGORY FILTER + SORT — only when cars exist or inside dealer ── */}
+      {/* ── CATEGORY FILTER + SORT — combined row, sort on the right ── */}
       {(selectedDealer || baseList.length > 0) && (
-        <>
+        <div className="fl-filter-row">
           <div className="fleet_categories">
             {categories.map((cat) => (
               <button
@@ -2733,22 +2677,16 @@ function Fleet() {
               ))}
             </select>
           </div>
-        </>
+        </div>
       )}
 
       {/* ── EMPTY STATE inside dealer showroom ── */}
       {selectedDealer && filtered.length === 0 && (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "60px 20px",
-            background: "rgba(255,255,255,0.02)",
-            border: "1px dashed rgba(255,255,255,0.08)",
-            borderRadius: "20px",
-          }}
-        >
-          <div style={{ fontSize: "48px", marginBottom: "12px" }}>🚗</div>
-          <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "15px" }}>
+        <div className="fl-empty-state">
+          <div className="fl-empty-icon" style={{ display: "flex", justifyContent: "center", color: "rgba(255,255,255,0.3)" }}>
+            <IconCar size={44} />
+          </div>
+          <p className="fl-empty-text">
             {activeCategory === "All"
               ? "This showroom has no cars available right now"
               : `No ${activeCategory} cars in this showroom`}
@@ -2756,15 +2694,8 @@ function Fleet() {
           {activeCategory !== "All" && (
             <button
               onClick={() => setActiveCategory("All")}
+              className="fl-inline-action-btn"
               style={{
-                marginTop: "12px",
-                padding: "8px 20px",
-                background: "rgba(76,227,247,0.1)",
-                border: "1px solid rgba(76,227,247,0.3)",
-                borderRadius: "10px",
-                color: "#4ce3f7",
-                cursor: "pointer",
-                fontFamily: "Quicksand,sans-serif",
                 fontWeight: "600",
               }}
             >
@@ -2776,13 +2707,13 @@ function Fleet() {
 
       {/* ── CAR GRID ── */}
       <div className="fleet_cards_wrapper">
-        {filtered.map((car) => {
+        {filtered.map((car, carIdx) => {
           const isUserOverlapping = userOverlappingBookings.allCars === true;
           const isUnavailable = !!unavailableCarIds[car.id];
           const isCurrentlyBooked = car.id === currentlyBookedCarId;
           return (
             <CarCard
-              key={car.id}
+              key={car.id ? `${car.id}-${carIdx}` : carIdx}
               car={car}
               onSelect={handleSelectCar}
               onViewAvailability={handleViewAvailability}

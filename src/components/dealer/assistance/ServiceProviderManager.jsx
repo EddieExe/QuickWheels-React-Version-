@@ -141,7 +141,7 @@ export default function ServiceProviderManager({ dealerId }) {
     <div style={{ fontFamily: "Quicksand, sans-serif" }}>
       {/* Header */}
       <div style={{ marginBottom: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
-        <div>
+        <div className="sp_heading">
           {/* Header with inline SVG instead of building emoji */}
           <h2 style={{ 
             margin: "0 0 5px", 
@@ -190,7 +190,7 @@ export default function ServiceProviderManager({ dealerId }) {
 
       {/* Add / Edit Form */}
       {showForm && (
-        <div style={{
+        <div className="edit_form" style={{
           background: "rgba(255,255,255,.03)", borderRadius: "16px",
           padding: "20px", marginBottom: "20px", border: "1px solid rgba(239,68,68,.2)",
         }}>

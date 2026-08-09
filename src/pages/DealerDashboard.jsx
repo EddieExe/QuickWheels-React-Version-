@@ -46,6 +46,7 @@ import PerformanceMetrics from "../components/dealer/analytics/PerformanceMetric
 import CustomerSatisfaction from "../components/dealer/analytics/CustomerSatisfaction";
 import CarDetailModal from "../components/dealer/CarDetailModal";
 import NotificationFilters from "../components/dealer/notifications/NotificationFilters";
+import ImageCarousel from "../components/dealer/ImageCarousel";
 
 // ─── Constants ────────────────────────────────────────────
 const CAR_TYPES = [
@@ -648,6 +649,9 @@ function SectionHeader({
   badgeColor = "#a855f7",
   icon,
   iconBg = "linear-gradient(135deg,#0400ff,#a855f7)",
+  titleClassName = "qw_shine_heading",
+  className = "",
+  titleStyle = {},
 }) {
   return (
     <div
@@ -662,11 +666,13 @@ function SectionHeader({
         flexShrink: 0,
       }}
     >
-      <div>
+      <div className={className}>
         <h2
+          className={titleClassName}
           style={{
             margin: "0 0 4px",
             fontSize: "22px",
+            ...titleStyle,
           }}
         >
           {title}
@@ -780,6 +786,7 @@ function FilterInput({
   return (
     <div style={{ position: "relative" }}>
       <span
+        className="filter-input-icon"
         style={{
           position: "absolute",
           left: "16px",
@@ -1998,6 +2005,7 @@ function CarModal({ dealerId, dealerCity, car, onClose, onSaved }) {
 
   return (
     <div
+      className="carmodal-overlay"
       onClick={onClose}
       style={{
         position: "fixed",
@@ -2389,12 +2397,15 @@ function CarModal({ dealerId, dealerCity, car, onClose, onSaved }) {
           .carmodal-left {
             width: 100% !important;
             min-width: 0 !important;
+            flex: none !important;
+            overflow: visible !important;
             border-right: none !important;
             border-bottom: 1px solid rgba(255,255,255,0.05) !important;
             padding: 18px !important;
           }
           .carmodal-right {
             width: 100% !important;
+            flex: none !important;
             overflow-y: visible !important;
             padding: 18px !important;
           }
@@ -2414,42 +2425,170 @@ function CarModal({ dealerId, dealerCity, car, onClose, onSaved }) {
           }
           .carmodal-gallery-box {
             height: 180px !important;
+            flex: none !important;
+          }
+          .carmodal-gallery-wrap {
+            flex: none !important;
           }
           .carmodal-footer-btns {
             gap: 8px !important;
           }
         }
-        @media (max-width: 480px) {
+
+        /* ═══ ≤479px: PHONES ═══
+           Same treatment as CarDetailModal: the modal goes true
+           full-bleed (no rounded corners / gutter), every touch target
+           gets sized up, and every element that could clip or wrap
+           unpredictably is pinned down explicitly. */
+        @media (max-width: 479px) {
+          .carmodal-overlay {
+            padding: 0 !important;
+          }
           .carmodal-shell {
-            border-radius: 14px !important;
+            position: fixed !important;
+            inset: 0 !important;
+            width: auto !important;
+            max-width: none !important;
+            height: auto !important;
+            max-height: none !important;
+            margin: 0 !important;
+            box-sizing: border-box !important;
+            border-radius: 0 !important;
+            border-left: none !important;
+            border-right: none !important;
           }
-          .carmodal-left,
-          .carmodal-right {
-            padding: 14px !important;
+          .carmodal-form {
+            overflow-y: auto !important;
+            width: 100% !important;
+            padding: 10px !important;
           }
-          .carmodal-field-grid {
-            grid-template-columns: 1fr !important;
-            gap: 8px !important;
+
+          /* The real cause of the invisible gallery: both this wrapper
+             and .carmodal-gallery-box carry an INLINE style={{flex:"1"}}
+             (flex-basis: 0%), which overrides height entirely for flex
+             items — so the earlier height:190px rule was never actually
+             winning. Forcing flex:none here restores height as the
+             sizing authority. */
+          .carmodal-gallery-wrap {
+            flex: none !important;
           }
-          .carmodal-gallery-box {
-            height: 160px !important;
+
+          /* Header */
+          .carmodal-header {
+            padding: 12px 14px !important;
           }
           .carmodal-header-title {
-            font-size: 14px !important;
+            font-size: 18px !important;
+            gap: 8px !important;
           }
           .carmodal-header-title svg {
             width: 15px !important;
             height: 15px !important;
           }
+          .carmodal-header-sub {
+            font-size: 10px !important;
+            margin: 2px 0 0 23px !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+          }
           .carmodal-close-btn {
-            width: 28px !important;
-            height: 28px !important;
+            width: 30px !important;
+            height: 30px !important;
+            border-radius: 9px !important;
           }
+          .carmodal-close-btn svg {
+            width: 14px !important;
+            height: 14px !important;
+          }
+
+          /* Left column (gallery + status + footer) */
+          .carmodal-left,
+          .carmodal-right {
+            padding: 12px !important;
+          }
+          .carmodal-left p {.}
+          .carmodal-gallery-box {
+            height: 190px !important;
+            flex: none !important;
+            border-radius: 12px !important;
+          }
+          .gallery-btn {
+            width: 30px !important;
+            height: 30px !important;
+          }
+          .gallery-btn svg {
+            width: 13px !important;
+            height: 13px !important;
+          }
+          .premium-pill {
+            padding: 5px 9px !important;
+            font-size: 9px !important;
+            gap: 4px !important;
+          }
+          .premium-pill svg {
+            width: 9px !important;
+            height: 9px !important;
+          }
+
+          .carmodal-status-toggle {
+            padding: 11px !important;
+            border-radius: 12px !important;
+            gap: 10px !important;
+          }
+
+          .carmodal-status-toggle div p {
+            font-size: 12px !important;
+          }
+
           .carmodal-footer-btns {
-            flex-direction: column !important;
+            gap: 8px !important;
+            padding-top: 12px !important;
           }
-          .carmodal-footer-btns button {
-            width: 100% !important;
+          .carmodal-cancel-btn,
+          .carmodal-save-btn {
+            padding: 9px 16px !important;
+            font-size: 12px !important;
+            border-radius: 10px !important;
+          }
+          .carmodal-save-btn svg,
+          .carmodal-cancel-btn svg {
+            width: 15px !important;
+            height: 15px !important;
+          }
+
+          /* Right column form fields */
+          .carmodal-field-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+          }
+          .carmodal-label {
+            font-size: 11px !important;
+            margin-bottom: 4px !important;
+          }
+          .input-premium {
+            padding: 10px 12px !important;
+            font-size: 13px !important;
+            border-radius: 10px !important;
+            /* Native <select> chrome on mobile can ignore padding and
+               collide with the custom chevron unless both vendor
+               prefixes are set — same fix applied across the rest of
+               the dashboard. */
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+          }
+          textarea.input-premium {
+            min-height: 70px !important;
+          }
+          .carmodal-error {
+            padding: 9px 12px !important;
+            font-size: 11px !important;
+            gap: 6px !important;
+          }
+          .carmodal-error svg {
+            width: 12px !important;
+            height: 12px !important;
+            flex-shrink: 0 !important;
           }
         }
       `}</style>
@@ -2497,7 +2636,7 @@ function CarModal({ dealerId, dealerCity, car, onClose, onSaved }) {
         <form className="carmodal-form" onSubmit={handleSubmit}>
           {/* LEFT - Media Gallery (42%) */}
           <div className="carmodal-left">
-            <div style={{ display: "flex", flexDirection: "column", marginBottom: "16px", flex: "1", minHeight: 0 }}>
+            <div className="carmodal-gallery-wrap" style={{ display: "flex", flexDirection: "column", marginBottom: "16px", flex: "1", minHeight: 0 }}>
               <p style={{
                 margin: "0 0 10px",
                 color: "#a855f7",
@@ -2759,7 +2898,13 @@ function CarModal({ dealerId, dealerCity, car, onClose, onSaved }) {
                         value={form[f.name]}
                         onChange={handleChange}
                         className="input-premium"
-                        style={{ appearance: "none", paddingRight: "30px", cursor: "pointer" }}
+                        style={{
+                          WebkitAppearance: "none",
+                          MozAppearance: "none",
+                          appearance: "none",
+                          paddingRight: "30px",
+                          cursor: "pointer",
+                        }}
                       >
                         {f.opts.map((o) => (
                           <option key={o} style={{ background: "#0c0c16", color: "#fff" }}>{o}</option>
@@ -4576,8 +4721,8 @@ function SettingsTab() {
           }} />
         </div>
         <div style={{ flex: 1 }}>
-          <p style={{ margin: 0, color: "#fff", fontWeight: "600", fontSize: "13px" }}>{label}</p>
-          {sub && <p style={{ margin: "2px 0 0", color: "rgba(255,255,255,0.35)", fontSize: "11px" }}>{sub}</p>}
+          <p className="toggle-label" style={{ margin: 0, color: "#fff", fontWeight: "600", fontSize: "13px" }}>{label}</p>
+          {sub && <p className="toggle-sub" style={{ margin: "2px 0 0", color: "rgba(255,255,255,0.35)", fontSize: "11px" }}>{sub}</p>}
         </div>
       </div>
     );
@@ -4586,7 +4731,7 @@ function SettingsTab() {
   // ── Section label ──
   function SectionLabel({ children }) {
     return (
-      <p style={{
+      <p className="settings-section-label" style={{
         margin: "0 0 12px",
         color: "#60a5fa",
         fontSize: "10px",
@@ -4732,12 +4877,24 @@ function SettingsTab() {
           }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 479px) {
+          .settings-sticky-mobile {
+            padding: 0px !important;
+          }
           .settings-scroll-area {
             padding: 12px 0px !important;
           }
+          .settings-header-bar p {
+            font-size: 12px !important;
+          }
           .settings-card {
             padding: 14px !important;
+          }
+          .settings-card card svg {
+            font-size: 5px !important;
+          }
+          .settings-grid-2col label {
+            font-size: 11px !important;
           }
           .settings-grid-3col {
             grid-template-columns: 1fr 1fr !important;
@@ -4748,6 +4905,23 @@ function SettingsTab() {
           }
           .settings-header-bar h2 {
             font-size: 19px !important;
+          }
+          /* Section labels — Identity, About Your Business, Social
+             Media, Phone Numbers, Working Hours, Services, Channels,
+             etc. — all share the one SectionLabel component. */
+          .settings-section-label {
+            font-size: 13.5px !important;
+            margin-bottom: 20px !important;
+          }
+          /* Toggle rows — covers Services (Operations) and every row
+             in Notifications identically, since both use the same
+             Toggle component. Label goes 13px -> 13.5px; sub stays at
+             its existing 11px either way. */
+          .toggle-label {
+            font-size: 13.5px !important;
+          }
+          .toggle-sub {
+            font-size: 11px !important;
           }
         }
       `}</style>
@@ -5181,7 +5355,7 @@ function SettingsTab() {
 
           {/* ══ NOTIFICATIONS ══ */}
           {activeSection === "notifications" && (
-            <div style={{ animation: "fadeIn 0.3s ease" }}>
+            <div className="settings-notifications-tab" style={{ animation: "fadeIn 0.3s ease" }}>
               <div className="settings-notif-grid">
                 <Card>
                   <SectionLabel>
@@ -5640,8 +5814,8 @@ function SidebarBtn({ active, color = "#818cf8", kpiColor = "#059669", icon, lab
             font-size: 17px !important;
           }
           .analytics-right .analytics-chart-toggle button {
-            font-size: 9px !important;
-            padding: 4px 10px !important;
+            font-size: 10px !important;
+            padding: 5px 10px !important;
           }
           .analytics-right .analytics-chart-bars {
             gap: 6px !important;
@@ -5675,17 +5849,17 @@ function SidebarBtn({ active, color = "#818cf8", kpiColor = "#059669", icon, lab
             align-items: stretch !important;
           }
           .analytics-right .analytics-fleet-item-top {
-            flex-direction: column !important;
-            align-items: stretch !important;
-            gap: 8px !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
           }
           .analytics-right .analytics-fleet-item-top p {
             max-width: 100% !important;
             font-size: 13px !important;
           }
           .analytics-right .analytics-fleet-item-stats {
-            flex-wrap: wrap !important;
-            gap: 8px !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 6px !important;
           }
           .analytics-right .analytics-fleet-item-stats span {
             font-size: 11px !important;
@@ -5773,8 +5947,12 @@ function SidebarBtn({ active, color = "#818cf8", kpiColor = "#059669", icon, lab
 
         @media (max-width: 480px) {
           .analytics-container {
-            padding: 6px !important;
+            padding: 0px !important;
             gap: 0px !important;
+          }
+          .section-header-row {
+            padding: 0px 0px 20px !important;
+            margin: 0px !important;
           }
           .analytics-right .analytics-content-wrapper {
             padding: 12px !important;
@@ -5791,6 +5969,18 @@ function SidebarBtn({ active, color = "#818cf8", kpiColor = "#059669", icon, lab
           .analytics-right .analytics-chart-wrapper {
             padding: 0px !important;
           }
+          .analytics-right .analytics-trend-card {
+            padding: 14px !important;
+          }
+          .analytics-right .analytics-chart-header {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+          }
+          .analytics-right .analytics-chart-toggle {
+            align-self: flex-end !important;
+            margin-left: auto !important;
+          }
           .analytics-right .analytics-status-breakdown {
             padding: 14px !important;
           }
@@ -5801,7 +5991,7 @@ function SidebarBtn({ active, color = "#818cf8", kpiColor = "#059669", icon, lab
             grid-template-columns: 1fr 1fr 1fr !important;
           }
           .analytics-right .analytics-monthly-summary-grid span {
-            font-size: 9px !important;
+            font-size: 11px !important;
           }
           .analytics-right .analytics-fleet-item {
             padding: 12px 14px !important;
@@ -6620,7 +6810,7 @@ function SidebarBtn({ active, color = "#818cf8", kpiColor = "#059669", icon, lab
                 flex: 1,
                 minWidth: 0,
               }}>
-                <div style={{
+                <div className="analytics-trend-card" style={{
                   background: "linear-gradient(145deg, rgba(5,150,105,0.06), rgba(5,150,105,0.015))",
                   border: "1px solid rgba(5,150,105,0.2)",
                   borderRadius: "22px",
@@ -6813,7 +7003,7 @@ function SidebarBtn({ active, color = "#818cf8", kpiColor = "#059669", icon, lab
                                   fontWeight: "700",
                                   color: isHovered ? "#34d399" : "transparent",
                                   whiteSpace: "nowrap",
-                                  transition: "all 0.25s cubic-bezier(0.16,1,0.3,1)",
+                                  transition: "all 0.6s cubic-bezier(0.16,1,0.3,1)",
                                   opacity: isHovered ? 1 : 0,
                                   transform: isHovered ? "translateY(0) scale(1)" : "translateY(6px) scale(0.95)",
                                   minWidth: "60px",
@@ -6836,7 +7026,7 @@ function SidebarBtn({ active, color = "#818cf8", kpiColor = "#059669", icon, lab
                                   boxShadow: isHovered 
                                     ? "0 0 24px rgba(52,211,153,0.25), 0 0 48px rgba(5,150,105,0.08)" 
                                     : "none",
-                                  transition: "all 0.3s cubic-bezier(0.16,1,0.3,1)",
+                                  transition: "all 0.7s cubic-bezier(0.16,1,0.3,1)",
                                   transform: isHovered ? "scaleY(1.02) scaleX(0.95)" : "scaleY(1) scaleX(1)",
                                   position: "relative",
                                 }}>
@@ -7268,16 +7458,16 @@ return (
         @media(max-width:768px){
           .dealer-sidebar{
             position:fixed!important;
-            z-index:300!important;
+            z-index:260!important;
             top:0!important;
             left:0!important;
             transform:translateX(-100%);
             backdrop-filter:none!important;
             -webkit-backdrop-filter:none!important;
             background:#0c0c16!important;
-            width:82vw!important;
-            max-width:300px!important;
-            min-width:0!important;
+            width:260px!important;
+            max-width:260px!important;
+            min-width:260px!important;
             box-shadow:12px 0 40px rgba(0,0,0,0.6)!important;
           }
           .dealer-sidebar.open{transform:translateX(0)!important}
@@ -7291,10 +7481,6 @@ return (
             .dealer-tab-wrapper{ padding: 0px 6px !important; }
           }
             @media(max-width:768px){
-            .dealer-sidebar{position:fixed!important;z-index:200;transform:translateX(-100%)}
-            .dealer-sidebar.open{transform:translateX(0)!important}
-            .mobile-menu-btn{display:flex!important}
-            .header-stats{display:none!important}
 
             /* NEW: stack section header title/sub above the badge on mobile */
             .section-header-row{
@@ -7396,7 +7582,7 @@ return (
       <aside
         className={`dealer-sidebar ${mobileSidebar ? "open" : ""}`}
         style={{
-          width: "auto",
+          width: iS,
           minWidth: iS,
           height: "100vh",
           background:
@@ -7769,9 +7955,23 @@ return (
         }}
       >
         
-        {/* ── Header ── */}
+        {/* ── Header (Dealer Dashboard) ── */}
         <header className="dnav-header">
           <nav className="dnav-shell">
+            {/* Mobile menu toggle */}
+            <button
+              className="dnav-home-btn mobile-menu-btn"
+              onClick={() => setMobileSidebar(p => !p)}
+              style={{ display: "none" }}
+              title="Menu"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+
             {/* Brand */}
             <div className="dnav-brand">
               <img className="dnav-logo" src="/Images/logo2.png" alt="QuickWheels" />
@@ -7810,6 +8010,7 @@ return (
               )}
 
               <div 
+                className="dnav-title-block"
                 style={{
                   fontSize: "16px",
                   marginRight: "20px"
@@ -7836,7 +8037,7 @@ return (
               </div>
 
               {/* Add Car Button */}
-              <button className="dnav-add-btn" onClick={openAddCar}>
+              <button className="dnav-add-btn dnav-add-btn-header" onClick={openAddCar}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="12" y1="5" x2="12" y2="19" />
                   <line x1="5" y1="12" x2="19" y2="12" />
@@ -8276,7 +8477,7 @@ return (
                       }
                     }
 
-                    @media (max-width: 480px) {
+                    @media (max-width: 479px) {
                       .overview-container {
                         padding: 6px !important;
                         gap: 10px !important;
@@ -8286,7 +8487,7 @@ return (
                         gap: 8px !important;
                       }
                       .overview-fleet-grid {
-                        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) !important;
+                        grid-template-columns: repeat(2, 1fr) !important;
                       }
                       .overview-stats-content {
                         padding: ${overviewCollapsed ? '0 12px' : '14px 12px'} !important;
@@ -8303,7 +8504,7 @@ return (
                         gap: 8px !important;
                       }
                       .overview-fleet-grid {
-                        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)) !important;
+                        grid-template-columns: repeat(2, 1fr) !important;
                       }
                     }
                   `}</style>
@@ -8850,7 +9051,7 @@ return (
                         opacity: ${bookingsFilterCollapsed ? '0' : '1'} !important;
                         overflow: hidden !important;
                         transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s ease !important;
-                        gap: 12px !important;
+                        gap: 10px !important;
                       }
                     }
 
@@ -8961,6 +9162,7 @@ return (
                         FILTER & SEARCH
                       </div>
 
+                      {/* Search — full width on its own */}
                       <FilterInput
                         icon={
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -8972,73 +9174,82 @@ return (
                         value={bookingSearch}
                         onChange={setBookingSearch}
                       />
-                      <FilterInput
-                        icon={
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="1" y="3" width="22" height="13" rx="2" ry="2" />
-                          </svg>
-                        }
-                        placeholder="Filter by car model..."
-                        value={bookingFilterCar}
-                        onChange={setBookingFilterCar}
-                      />
-                      <FilterSelect
-                        icon={
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                            <line x1="16" y1="2" x2="16" y2="6" />
-                            <line x1="8" y1="2" x2="8" y2="6" />
-                            <line x1="3" y1="10" x2="21" y2="10" />
-                          </svg>
-                        }
-                        value={bookingFilterDate}
-                        onChange={setBookingFilterDate}
-                      >
-                        <option value="" style={{ background: "#111" }}>All Dates</option>
-                        {uniqueDates.map((d) => (
-                          <option key={d} value={d} style={{ background: "#111" }}>{d}</option>
-                        ))}
-                      </FilterSelect>
-                      <FilterSelect
-                        icon={
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                          </svg>
-                        }
-                        value={bookingFilter}
-                        onChange={setBookingFilter}
-                      >
-                        <option value="all" style={{ background: "#111" }}>All Operational Status</option>
-                        <option value="pending_approval" style={{ background: "#111" }}>⏳ Pending Approval</option>
-                        <option value="dealer_confirmed" style={{ background: "#111" }}>📤 Dealer Approved</option>
-                        <option value="confirmed" style={{ background: "#111" }}>✅ Confirmed</option>
-                        <option value="active" style={{ background: "#111" }}>🚀 Active Trips</option>
-                        <option value="on_hold" style={{ background: "#111" }}>⏸ On Hold</option>
-                        <option value="completed" style={{ background: "#111" }}>🏁 Completed</option>
-                        <option value="cancelled_dealer" style={{ background: "#111" }}>🔶 Cancelled by You</option>
-                        <option value="cancelled_admin" style={{ background: "#111" }}>🔴 Cancelled by Admin</option>
-                        <option value="cancelled_user" style={{ background: "#111" }}>👤 Cancelled by User</option>
-                        <option value="rejected" style={{ background: "#111" }}>🚫 Rejected</option>
-                      </FilterSelect>
-                      <FilterSelect
-                        icon={
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <line x1="8" y1="6" x2="21" y2="6" />
-                            <line x1="8" y1="12" x2="21" y2="12" />
-                            <line x1="8" y1="18" x2="21" y2="18" />
-                            <line x1="3" y1="6" x2="3.01" y2="6" />
-                            <line x1="3" y1="12" x2="3.01" y2="12" />
-                            <line x1="3" y1="18" x2="3.01" y2="18" />
-                          </svg>
-                        }
-                        value={bookingSortBy}
-                        onChange={setBookingSortBy}
-                      >
-                        <option value="newest" style={{ background: "#111" }}>Chronological: Newest</option>
-                        <option value="oldest" style={{ background: "#111" }}>Chronological: Oldest</option>
-                        <option value="priceHigh" style={{ background: "#111" }}>Valuation: High to Low</option>
-                        <option value="priceLow" style={{ background: "#111" }}>Valuation: Low to High</option>
-                      </FilterSelect>
+
+                      {/* Row 1: Car model + Date */}
+                      <div className="bookings-filter-row">
+                        <FilterInput
+                          icon={
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="1" y="3" width="22" height="13" rx="2" ry="2" />
+                            </svg>
+                          }
+                          placeholder="Filter by car model..."
+                          value={bookingFilterCar}
+                          onChange={setBookingFilterCar}
+                        />
+                        <FilterSelect
+                          icon={
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                              <line x1="16" y1="2" x2="16" y2="6" />
+                              <line x1="8" y1="2" x2="8" y2="6" />
+                              <line x1="3" y1="10" x2="21" y2="10" />
+                            </svg>
+                          }
+                          value={bookingFilterDate}
+                          onChange={setBookingFilterDate}
+                        >
+                          <option value="" style={{ background: "#111" }}>All Dates</option>
+                          {uniqueDates.map((d) => (
+                            <option key={d} value={d} style={{ background: "#111" }}>{d}</option>
+                          ))}
+                        </FilterSelect>
+                      </div>
+
+                      {/* Row 2: Status + Sort */}
+                      <div className="bookings-filter-row">
+                        <FilterSelect
+                          icon={
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            </svg>
+                          }
+                          value={bookingFilter}
+                          onChange={setBookingFilter}
+                        >
+                          <option value="all" style={{ background: "#111" }}>All Operational Status</option>
+                          <option value="pending_approval" style={{ background: "#111" }}>⏳ Pending Approval</option>
+                          <option value="dealer_confirmed" style={{ background: "#111" }}>📤 Dealer Approved</option>
+                          <option value="confirmed" style={{ background: "#111" }}>✅ Confirmed</option>
+                          <option value="active" style={{ background: "#111" }}>🚀 Active Trips</option>
+                          <option value="on_hold" style={{ background: "#111" }}>⏸ On Hold</option>
+                          <option value="completed" style={{ background: "#111" }}>🏁 Completed</option>
+                          <option value="cancelled_dealer" style={{ background: "#111" }}>🔶 Cancelled by You</option>
+                          <option value="cancelled_admin" style={{ background: "#111" }}>🔴 Cancelled by Admin</option>
+                          <option value="cancelled_user" style={{ background: "#111" }}>👤 Cancelled by User</option>
+                          <option value="rejected" style={{ background: "#111" }}>🚫 Rejected</option>
+                        </FilterSelect>
+                        <FilterSelect
+                          icon={
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="8" y1="6" x2="21" y2="6" />
+                              <line x1="8" y1="12" x2="21" y2="12" />
+                              <line x1="8" y1="18" x2="21" y2="18" />
+                              <line x1="3" y1="6" x2="3.01" y2="6" />
+                              <line x1="3" y1="12" x2="3.01" y2="12" />
+                              <line x1="3" y1="18" x2="3.01" y2="18" />
+                            </svg>
+                          }
+                          value={bookingSortBy}
+                          onChange={setBookingSortBy}
+                        >
+                          <option value="newest" style={{ background: "#111" }}>Chronological: Newest</option>
+                          <option value="oldest" style={{ background: "#111" }}>Chronological: Oldest</option>
+                          <option value="priceHigh" style={{ background: "#111" }}>Valuation: High to Low</option>
+                          <option value="priceLow" style={{ background: "#111" }}>Valuation: Low to High</option>
+                        </FilterSelect>
+                      </div>
+
                       {(bookingSearch || bookingFilterCar || bookingFilterDate || bookingFilter !== "all") && (
                         <ResetBtn
                           onClick={() => {
@@ -9337,6 +9548,8 @@ return (
                       >
                         FILTER & SEARCH
                       </div>
+
+                      {/* Search — full width alone */}
                       <FilterInput
                         icon={
                           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -9349,55 +9562,99 @@ return (
                         onChange={setCarSearch}
                         accentColor="#0ea5e9"
                       />
-                      <FilterSelect
-                        icon={
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <rect x="1" y="3" width="15" height="13" rx="2" ry="2" />
-                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-                          </svg>
-                        }
-                        value={carFilterType}
-                        onChange={setCarFilterType}
-                        accentColor="#0ea5e9"
-                      >
-                        <option value="All" style={{ background: "#111" }}>All Categories</option>
-                        {CAR_TYPES.map((t) => (
-                          <option key={t} value={t} style={{ background: "#111" }}>{t}</option>
-                        ))}
-                      </FilterSelect>
-                      <FilterSelect
-                        icon={
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <circle cx="12" cy="12" r="10" />
-                            <polyline points="12 6 12 12 16 14" />
-                          </svg>
-                        }
-                        value={carFilterTransmission}
-                        onChange={setCarFilterTransmission}
-                        accentColor="#0ea5e9"
-                      >
-                        <option value="All" style={{ background: "#111" }}>All Transmissions</option>
-                        {TRANSMISSION.map((t) => (
-                          <option key={t} value={t} style={{ background: "#111" }}>{t}</option>
-                        ))}
-                      </FilterSelect>
-                      <FilterSelect
-                        icon={
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M13 2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-                          </svg>
-                        }
-                        value={carFilterFuel}
-                        onChange={setCarFilterFuel}
-                        accentColor="#0ea5e9"
-                      >
-                        <option value="All" style={{ background: "#111" }}>All Fuel Types</option>
-                        {FUEL_TYPES.map((t) => (
-                          <option key={t} value={t} style={{ background: "#111" }}>{t}</option>
-                        ))}
-                      </FilterSelect>
 
-                      {/* Tier legend */}
+                      {/* Row 1: Category + Transmission */}
+                      <div className="fleet-filter-row">
+                        <FilterSelect
+                          icon={
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <rect x="1" y="3" width="15" height="13" rx="2" ry="2" />
+                              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                            </svg>
+                          }
+                          value={carFilterType}
+                          onChange={setCarFilterType}
+                          accentColor="#0ea5e9"
+                        >
+                          <option value="All" style={{ background: "#111" }}>All Categories</option>
+                          {CAR_TYPES.map((t) => (
+                            <option key={t} value={t} style={{ background: "#111" }}>{t}</option>
+                          ))}
+                        </FilterSelect>
+                        <FilterSelect
+                          icon={
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <circle cx="12" cy="12" r="10" />
+                              <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                          }
+                          value={carFilterTransmission}
+                          onChange={setCarFilterTransmission}
+                          accentColor="#0ea5e9"
+                        >
+                          <option value="All" style={{ background: "#111" }}>All Transmissions</option>
+                          {TRANSMISSION.map((t) => (
+                            <option key={t} value={t} style={{ background: "#111" }}>{t}</option>
+                          ))}
+                        </FilterSelect>
+                      </div>
+
+                      {/* Row 2: Fuel + Add New Car, side by side — MOVED UP */}
+                      <div className="fleet-filter-row">
+                        <FilterSelect
+                          icon={
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M13 2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+                            </svg>
+                          }
+                          value={carFilterFuel}
+                          onChange={setCarFilterFuel}
+                          accentColor="#0ea5e9"
+                        >
+                          <option value="All" style={{ background: "#111" }}>All Fuel Types</option>
+                          {FUEL_TYPES.map((t) => (
+                            <option key={t} value={t} style={{ background: "#111" }}>{t}</option>
+                          ))}
+                        </FilterSelect>
+                        <button
+                          onClick={openAddCar}
+                          className="add_car_btn"
+                          style={{
+                            ...btnPrimary,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "8px",
+                            padding: "10px 15px",
+                            background: "linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)",
+                            boxShadow: "0 8px 24px rgba(14,165,233,0.25), inset 0 1px 1px rgba(255,255,255,0.15)",
+                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            borderRadius: "8px",
+                            color: "#ffffff",
+                            fontWeight: "600",
+                            fontSize: "14px",
+                            cursor: "pointer",
+                            transition: "all 0.2s ease-in-out",
+                            width: "100%",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.transform = "translateY(-1px)";
+                            e.currentTarget.style.boxShadow = "0 12px 28px rgba(14,165,233,0.35), inset 0 1px 1px rgba(255,255,255,0.25)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.transform = "translateY(0)";
+                            e.currentTarget.style.boxShadow = "0 8px 24px rgba(14,165,233,0.25), inset 0 1px 1px rgba(255,255,255,0.15)";
+                          }}
+                        >
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                          </svg>
+                          <span>Add New Car</span>
+                        </button>
+                      </div>
+
+                      {/* Tier legend — NOW COMES AFTER both filter rows */}
                       <div
                         style={{
                           background: "rgba(255,255,255,0.02)",
@@ -9441,41 +9698,6 @@ return (
                           label="RESET FILTERS"
                         />
                       )}
-
-                      <button
-                        onClick={openAddCar}
-                        style={{
-                          ...btnPrimary,
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "8px",
-                          padding: "10px 15px",
-                          background: "linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%)",
-                          boxShadow: "0 8px 24px rgba(14,165,233,0.25), inset 0 1px 1px rgba(255,255,255,0.15)",
-                          border: "1px solid rgba(255, 255, 255, 0.1)",
-                          borderRadius: "8px",
-                          color: "#ffffff",
-                          fontWeight: "600",
-                          fontSize: "14px",
-                          cursor: "pointer",
-                          transition: "all 0.2s ease-in-out",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = "translateY(-1px)";
-                          e.currentTarget.style.boxShadow = "0 12px 28px rgba(14,165,233,0.35), inset 0 1px 1px rgba(255,255,255,0.25)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = "translateY(0)";
-                          e.currentTarget.style.boxShadow = "0 8px 24px rgba(14,165,233,0.25), inset 0 1px 1px rgba(255,255,255,0.15)";
-                        }}
-                      >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <line x1="12" y1="5" x2="12" y2="19"></line>
-                          <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        <span>Add New Car</span>
-                      </button>
                     </div>
                   </div>
 
@@ -9572,23 +9794,14 @@ return (
                                 e.currentTarget.style.borderColor = car.isAvailable ? "rgba(34,197,94,.12)" : "rgba(255,255,255,.06)";
                               }}
                             >
-                              <div style={{ position: "relative", height: "185px", overflow: "hidden" }}>
-                                <img
-                                  src={(car.images?.length ? car.images[0] : car.image) || "/Images/placeholder-car.png"}
+                              <div style={{ position: "relative", height: "185px", overflow: "hidden" }} onClick={(e) => e.stopPropagation()}>
+                                <ImageCarousel
+                                  images={car.images?.length ? car.images : (car.image ? [car.image] : [])}
                                   alt={car.model}
-                                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "transform .5s ease" }}
-                                  onMouseEnter={(e) => (e.target.style.transform = "scale(1.05)")}
-                                  onMouseLeave={(e) => (e.target.style.transform = "scale(1)")}
+                                  height="185px"
+                                  dotColor="#0ea5e9"
                                 />
-                                {car.images?.length > 1 && (
-                                  <div style={{ position: "absolute", bottom: "8px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "4px", zIndex: 2 }}>
-                                    {car.images.slice(0, 4).map((_, i) => (
-                                      <div key={i} style={{ width: i === 0 ? "12px" : "4px", height: "4px", borderRadius: "2px", background: i === 0 ? "#0ea5e9" : "rgba(255,255,255,0.5)" }} />
-                                    ))}
-                                    {car.images.length > 4 && <div style={{ width: "4px", height: "4px", borderRadius: "2px", background: "rgba(255,255,255,0.3)" }} />}
-                                  </div>
-                                )}
-                                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top,rgba(10,10,20,.95) 0%,rgba(10,10,20,.4) 50%,transparent 100%)" }} />
+                                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top,rgba(10,10,20,.95) 0%,rgba(10,10,20,.4) 50%,transparent 100%)", pointerEvents: "none" }} />
                                 <div
                                   style={{
                                     position: "absolute", top: "12px", right: "12px",
@@ -10218,18 +10431,73 @@ return (
 
                     @media (max-width: 480px) {
                       .customers-container {
-                        padding: 6px !important;
+                        padding: 0px !important;
                         gap: 0px !important;
-                      }
+                      }                
                       .customer-row {
                         padding: 14px !important;
                       }
                       .customer-row-stats {
-                        flex-wrap: wrap !important;
-                        gap: 12px !important;
+                        flex-wrap: nowrap !important;
+                        gap: 8px !important;
+                        justify-content: space-between !important;
+                      }
+                      .customer-row-stats > div {
+                        flex-shrink: 0 !important;
                       }
                       .customer-row-stats > button {
+                        width: auto !important;
+                        flex-shrink: 0 !important;
+                        padding: 8px 12px !important;
+                        font-size: 10px !important;
+                        white-space: nowrap !important;
+                      }
+                      .selected-user-card {
+                        text-align: left !important;
+                        padding: 14px !important;
+                      }
+                      .selected-user-toprow {
+                        flex-direction: row !important;
+                        align-items: center !important;
+                        text-align: left !important;
                         width: 100% !important;
+                      }
+                      .selected-user-avatar {
+                        flex-shrink: 0 !important;
+                      }
+                      .selected-user-info {
+                        min-width: 0 !important;
+                        flex: 1 !important;
+                        text-align: left !important;
+                      }
+                      .selected-user-info h3,
+                      .selected-user-info p {
+                        overflow: hidden !important;
+                        text-overflow: ellipsis !important;
+                        white-space: nowrap !important;
+                      }
+                      .selected-user-stats {
+                        display: flex !important;
+                        flex-direction: row !important;
+                        align-items: center !important;
+                        justify-content: space-between !important;
+                        width: 100% !important;
+                        text-align: left !important;
+                      }
+                      .selected-user-stats p {
+                        margin: 0 !important;
+                      }
+                      .booking-row2-route span {
+                        font-size: 11px !important;
+                      }
+                      .booking-row2-grid span {
+                        font-size: 11px !important;
+                      }
+                      .no_of_bookings {
+                        font-size: 16px !important;
+                      }
+                      .revenue {
+                        font-size: 13.5px !important;
                       }
                     }
                   `}</style>
@@ -10371,6 +10639,7 @@ return (
                         </button>
                         {selectedUser && (
                           <div
+                            className="selected-user-card"
                             style={{
                               background: "linear-gradient(135deg,rgba(14,165,233,.02),rgba(99,102,241,.02))",
                               border: "1px solid rgba(14,165,233,.12)",
@@ -10384,41 +10653,55 @@ return (
                             }}
                           >
                             <div
+                              className="selected-user-toprow"
                               style={{
-                                width: "56px",
-                                height: "56px",
-                                borderRadius: "18px",
-                                background: "linear-gradient(135deg,#4f46e5,#6366f1)",
                                 display: "flex",
+                                flexDirection: "column",
                                 alignItems: "center",
-                                justifyContent: "center",
-                                fontSize: "22px",
-                                fontWeight: "800",
-                                color: "#fff",
+                                gap: "12px",
                               }}
                             >
-                              {(selectedUser.name || selectedUser.email || "?")[0].toUpperCase()}
-                            </div>
-                            <div>
-                              <h3 style={{ margin: "0 0 4px", fontSize: "15px", color: "#fff", fontWeight: "700" }}>
-                                {selectedUser.name || "Unknown"}
-                              </h3>
-                              <p style={{ margin: 0, color: "rgba(255,255,255,.4)", fontSize: "12px", wordBreak: "break-all" }}>
-                                {selectedUser.email}
-                              </p>
+                              <div
+                                className="selected-user-avatar"
+                                style={{
+                                  width: "56px",
+                                  height: "56px",
+                                  borderRadius: "18px",
+                                  background: "linear-gradient(135deg,#4f46e5,#6366f1)",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  fontSize: "22px",
+                                  fontWeight: "800",
+                                  color: "#fff",
+                                }}
+                              >
+                                {(selectedUser.name || selectedUser.email || "?")[0].toUpperCase()}
+                              </div>
+                              <div className="selected-user-info">
+                                <h3 style={{ margin: "0 0 4px", fontSize: "15px", color: "#fff", fontWeight: "700" }}>
+                                  {selectedUser.name || "Unknown"}
+                                </h3>
+                                <p style={{ margin: 0, color: "rgba(255,255,255,.4)", fontSize: "12px", wordBreak: "break-all" }}>
+                                  {selectedUser.email}
+                                </p>
+                              </div>
                             </div>
                             <div
+                              className="selected-user-stats"
                               style={{
                                 padding: "8px 14px",
                                 borderRadius: "10px",
                                 background: "rgba(14,165,233,.08)",
                                 border: "1px solid rgba(14,165,233,.15)",
+                                width: "100%",
+                                boxSizing: "border-box",
                               }}
                             >
-                              <p style={{ margin: 0, fontSize: "18px", color: "#fff", fontWeight: "800" }}>
+                              <p className="no_of_bookings" style={{ margin: 0, fontSize: "18px", color: "#fff", fontWeight: "800" }}>
                                 {userBookings.length} <span style={{ fontSize: "12px", opacity: 0.5 }}>Bookings</span>
                               </p>
-                              <p style={{ margin: "2px 0 0", fontSize: "13px", color: "#22c55e", fontWeight: "700" }}>
+                              <p className="revenue" style={{ margin: "2px 0 0", fontSize: "13px", color: "#22c55e", fontWeight: "700" }}>
                                 ${selectedUser.revenue?.toLocaleString() || 0} Revenue
                               </p>
                             </div>
@@ -10738,7 +11021,7 @@ return (
 
                     @media (max-width: 480px) {
                       .late-returns-container {
-                        padding: 6px !important;
+                        padding: 0px !important;
                         gap: 0px !important;
                       }
                       .late-returns-right .late-returns-content-wrapper {
@@ -10992,7 +11275,7 @@ return (
 
                     @media (max-width: 480px) {
                       .extension-requests-container {
-                        padding: 6px !important;
+                        padding: 0px !important;
                         gap: 0px !important;
                       }
                       .extension-requests-right .extension-requests-content-wrapper {
@@ -11278,15 +11561,37 @@ return (
 
                     @media (max-width: 480px) {
                       .assistance-container {
-                        padding: 6px !important;
+                        padding: 0px !important;
                         gap: 0px !important;
                       }
                       .assistance-right .assistance-content-wrapper {
                         padding: 12px !important;
                       }
                       .assistance-tab-nav-mobile button {
-                        font-size: 10px !important;
-                        padding: 8px 10px !important;
+                        font-size: 11px !important;
+                        padding: 10px !important;
+                      }
+                      .sp_heading h2 {
+                        font-size: 16px !important;
+                      }
+                      .sp_heading p {
+                        font-size: 12px !important;
+                      }
+                      .edit_form {
+                        padding: 14px !important;
+                      }
+                      .edit_form form {
+                        padding: 0px !important;
+                        width: 100% !important;
+                      }
+                      .edit_form input {
+                        font-size: 12px !important;
+                      }
+                      .edit_form button {
+                        font-size: 12px !important;
+                      }
+                      .assistance-content-wrapper button {
+                        font-size: 12px !important;
                       }
                     }
                   `}</style>
@@ -11698,7 +12003,7 @@ return (
 
                     @media (max-width: 480px) {
                       .notifications-container {
-                        padding: 6px !important;
+                        padding: 0px !important;
                         gap: 0px !important;
                       }
                       .notifications-right .notifications-content-wrapper {

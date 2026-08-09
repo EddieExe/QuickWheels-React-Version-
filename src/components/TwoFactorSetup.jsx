@@ -95,8 +95,10 @@ export default function TwoFactorSetup({ user, currentlyEnabled, onStatusChange 
   // ── Idle state (not enabled) ──
   if (!currentlyEnabled && phase === "idle") {
     return (
-      <div style={containerStyle}>
-        <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
+      <div style={{
+        padding: 0
+      }}>
+        <div className="prf-2fa-header-row" style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
           <div style={iconBubble("#a855f7")}>
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -122,7 +124,7 @@ export default function TwoFactorSetup({ user, currentlyEnabled, onStatusChange 
               Not enabled — your account has standard protection only
             </p>
           </div>
-          <span style={badge("rgba(239,68,68,0.15)", "#ef4444", "rgba(239,68,68,0.3)")}>
+          <span className="prf-2fa-badge" style={badge("rgba(239,68,68,0.15)", "#ef4444", "rgba(239,68,68,0.3)")}>
             OFF
           </span>
         </div>
@@ -143,7 +145,7 @@ export default function TwoFactorSetup({ user, currentlyEnabled, onStatusChange 
   // ── Setup: show QR code ──
   if (phase === "setup") {
     return (
-      <div style={containerStyle}>
+      <div>
         <h3 style={stepTitle}>Step 1 — Scan QR Code</h3>
         <p style={descText}>
           Open your authenticator app and scan the QR code below, or enter the
@@ -211,7 +213,7 @@ export default function TwoFactorSetup({ user, currentlyEnabled, onStatusChange 
             Cancel
           </button>
           <button
-          className="btn"
+          className="auth_btn btn"
           onClick={() => setPhase("verify")}
           >
             I've scanned it, Next
@@ -224,7 +226,7 @@ export default function TwoFactorSetup({ user, currentlyEnabled, onStatusChange 
   // ── Verify: enter TOTP token ──
   if (phase === "verify") {
     return (
-      <div style={containerStyle}>
+      <div>
         <h3 style={stepTitle}>Step 2 — Verify Code</h3>
         <p style={descText}>
           Enter the 6-digit code currently shown in your authenticator app to
@@ -284,7 +286,7 @@ export default function TwoFactorSetup({ user, currentlyEnabled, onStatusChange 
               Back
             </button>
             <button 
-              className="btn" 
+              className="auth_btn btn" 
               type="submit" 
               disabled={loading} 
               style={{ 
@@ -353,7 +355,7 @@ export default function TwoFactorSetup({ user, currentlyEnabled, onStatusChange 
   if (currentlyEnabled && phase === "idle") {
     return (
       <div style={containerStyle}>
-        <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
+        <div className="prf-2fa-header-row" style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
           <div style={iconBubble("#a855f7")}>
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
@@ -379,7 +381,7 @@ export default function TwoFactorSetup({ user, currentlyEnabled, onStatusChange 
               Active — your account has enhanced security
             </p>
           </div>
-          <span style={badge("rgba(168,85,247,0.15)", "#a855f7", "rgba(168,85,247,0.3)")}>
+          <span className="prf-2fa-badge" style={badge("rgba(168,85,247,0.15)", "#a855f7", "rgba(168,85,247,0.3)")}>
             ON
           </span>
         </div>

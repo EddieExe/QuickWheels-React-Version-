@@ -98,13 +98,27 @@ export default function QuickActionBar({ onVerifyPickup, onVerifyReturn, onAddVe
             padding: 14px !important;
           }
         }
-        @media (max-width: 480px) {
+        @media (max-width: 479px) {
           .qa-grid {
             grid-template-columns: 1fr 1fr !important;
             gap: 8px !important;
           }
+
+          .qa-grid button {
+            padding: 12px !important
+          }
+
+          .action_label {
+            font-size: 12px !important;
+          }
+
+          .action_desc {
+            font-size: 10px !important;
+          }
+
           .qa-card-outer {
             padding: 12px !important;
+            margin-bottom: 12px !important;
           }
         }
         @media (max-width: 360px) {
@@ -171,10 +185,10 @@ export default function QuickActionBar({ onVerifyPickup, onVerifyReturn, onAddVe
               </div>
               
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: "700", fontSize: "14px", color: "#fff", marginBottom: "2px" }}>
+                <div className="action_label" style={{ fontWeight: "700", fontSize: "14px", color: "#fff", marginBottom: "2px" }}>
                   {action.label}
                 </div>
-                <div style={{ fontSize: "11px", color: T.textSec, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <div className="action_desc" style={{ fontSize: "11px", color: T.textSec, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                   {action.description}
                 </div>
               </div>

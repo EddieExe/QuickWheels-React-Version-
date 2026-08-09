@@ -243,7 +243,7 @@ function SignIn() {
   }
 
   return (
-    <div className="auth-container">
+    <div className="auth-container signin-page">
       <div className="stars-container">
         <div id="stars"></div>
         <div id="stars2"></div>
@@ -314,7 +314,7 @@ function SignIn() {
 
           <button
             type="submit"
-            className="book_btn qw_fancy_btn signin_btn"
+            className="qw_fancy_btn signin_btn"
             disabled={loading}
           >
             <FancyButtonFx />
@@ -335,13 +335,15 @@ function SignIn() {
             </span>
           </button>
 
-          <SocialAuthButtons
-            onGoogle={handleGoogleSignIn}
-            onMicrosoft={handleMicrosoftSignIn}
-            loading={loading}
-          />
+          <div className="signin-social-wrapper">
+            <SocialAuthButtons
+              onGoogle={handleGoogleSignIn}
+              onMicrosoft={handleMicrosoftSignIn}
+              loading={loading}
+            />
+          </div>
 
-          <p style={{ marginTop: "12px" }}>
+          <p>
             Don't have an account? <Link to="/signup">Sign Up</Link>
           </p>
 

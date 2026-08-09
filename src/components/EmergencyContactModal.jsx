@@ -193,7 +193,7 @@ export default function EmergencyContactModal({ isOpen, onClose, onSave }) {
         {/* Sticky header — stays visible even if the form scrolls, and
             never sits underneath the fixed site navbar since the overlay
             itself now starts below it */}
-        <div style={{
+        <div className='emergency_contact_modal' style={{
           position: 'sticky', top: 0, zIndex: 2,
           background: 'linear-gradient(135deg, rgba(12,12,22,0.98) 0%, rgba(20,20,40,0.98) 100%)',
           display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
@@ -205,7 +205,7 @@ export default function EmergencyContactModal({ isOpen, onClose, onSave }) {
               <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             <div>
-              <h2 style={{ margin: 0, color: '#fff', fontSize: '20px', fontWeight: '800', letterSpacing: '-0.2px' }}>
+              <h2 className='qw_shine_heading' style={{ margin: 0, color: '#fff', fontSize: '20px', fontWeight: '800', letterSpacing: '-0.2px' }}>
                 Emergency Contact
               </h2>
               <p style={{ margin: '4px 0 0', color: 'rgba(255,255,255,0.4)', fontSize: '12px' }}>
@@ -233,7 +233,7 @@ export default function EmergencyContactModal({ isOpen, onClose, onSave }) {
           </button>
         </div>
 
-        <div style={{ padding: '20px 28px 24px' }}>
+        <div className='emergency_contact_info' style={{ padding: '20px 28px 24px' }}>
           {/* Feedback */}
           {error && (
             <div style={{

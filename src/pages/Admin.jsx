@@ -38,6 +38,15 @@ import RetentionAnalytics from "../components/admin/RetentionAnalytics";
 import RevenueRoutes from "../components/admin/RevenueRoutes";
 import DealerDocuments from "../components/admin/DealerDocuments";
 import DealerPerformance from "../components/admin/DealerPerformance";
+
+// Collapsible sections (System Monitor, Filters, Audit Log, Backup, etc.)
+// should default OPEN on desktop — same as before — but CLOSED on mobile,
+// where a screen full of pre-expanded panels is overwhelming. This only
+// affects each section's initial state on mount, not its ability to be
+// toggled afterward.
+function getDefaultCollapsibleOpen() {
+  return typeof window !== "undefined" ? window.innerWidth > 768 : true;
+}
 import DealerCommission from "../components/admin/DealerCommission";
 import { createPaymentRecord } from "../utils/paymentLedger";
 import BreakdownRequests from "../components/admin/BreakdownRequests";
@@ -220,6 +229,9 @@ function AdminSectionHeader({
   sub,
   badge,
   icon,
+  titleClassName = "qw_shine_heading",
+  className = "",
+  titleStyle = {},
 }) {
   return (
     <div
@@ -234,8 +246,8 @@ function AdminSectionHeader({
         flexShrink: 0,
       }}
     >
-      <div>
-        <h2 style={{ margin: "0 0 4px", fontSize: "22px" }}>{title}</h2>
+      <div className={className}>
+        <h2 className={titleClassName} style={{ margin: "0 0 4px", fontSize: "22px", ...titleStyle }}>{title}</h2>
         <p style={{ margin: 0, color: "rgba(255,255,255,0.4)", fontSize: "13.5px" }}>{sub}</p>
       </div>
       {badge && (
@@ -1016,40 +1028,73 @@ const STATUS_OPTIONS = [
 // ─── Custom dropdown used by the Status filter (options can't render SVGs natively) ───
 function IconSelect({ value, options, onChange }) {
   const [open, setOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0, width: 0 });
   const ref = useRef(null);
+  const menuRef = useRef(null);
+
+  const updatePosition = () => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    setMenuPos({ top: rect.bottom + 6, left: rect.left, width: rect.width });
+  };
 
   useEffect(() => {
-    const handler = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const handler = e => {
+      if (
+        ref.current && !ref.current.contains(e.target) &&
+        menuRef.current && !menuRef.current.contains(e.target)
+      ) setOpen(false);
+    };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  // Recompute position on open, and keep it pinned to the trigger while
+  // the sidebar scrolls or the viewport resizes — fixed positioning means
+  // it no longer moves automatically with the scroll container.
+  useEffect(() => {
+    if (!open) return;
+    updatePosition();
+    const onScrollOrResize = () => updatePosition();
+    window.addEventListener("scroll", onScrollOrResize, true);
+    window.addEventListener("resize", onScrollOrResize);
+    return () => {
+      window.removeEventListener("scroll", onScrollOrResize, true);
+      window.removeEventListener("resize", onScrollOrResize);
+    };
+  }, [open]);
 
   const selected = options.find(o => o.value === value) || options[0];
 
   return (
     <div ref={ref} style={{ position: "relative" }}>
+      {/* Structure now matches the input/select pattern used elsewhere in
+          this sidebar: icon absolutely positioned at left:16px, label
+          starting at padding-left:44px — instead of the old flex+gap
+          layout, which was the source of the visual mismatch. */}
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
+        className="icon-select-trigger"
         style={{
-          width: "100%", display: "flex", alignItems: "center", gap: "10px",
-          padding: "14px 40px 14px 16px", background: "rgba(255,255,255,0.03)",
+          width: "100%", display: "block", position: "relative",
+          padding: "14px 40px 14px 44px", background: "rgba(255,255,255,0.03)",
           border: open ? "1px solid rgba(168,85,247,0.6)" : "1px solid rgba(255,255,255,0.08)",
           borderRadius: "14px", color: "#fff", fontSize: "13.5px", fontFamily: "Quicksand",
-          cursor: "pointer", textAlign: "left", position: "relative",
+          cursor: "pointer", textAlign: "left",
           boxShadow: open ? "0 0 0 4px rgba(147,51,234,0.15)" : "none",
-          transition: "all 0.25s ease"
+          transition: "all 0.25s ease", boxSizing: "border-box"
         }}
       >
-        <span style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+        <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", display: "flex", alignItems: "center", pointerEvents: "none" }}>
           {selected.icon ? selected.icon(selected.color, 14) : (
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z" />
             </svg>
           )}
         </span>
-        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selected.label}</span>
-        <span style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)" }}>
+        <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selected.label}</span>
+        <span style={{ position: "absolute", right: "14px", top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"
             style={{ transition: "transform 0.25s ease", transform: open ? "rotate(180deg)" : "rotate(0deg)" }}>
             <polyline points="6 9 12 15 18 9" />
@@ -1058,11 +1103,22 @@ function IconSelect({ value, options, onChange }) {
       </button>
 
       {open && (
-        <div style={{
-          position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 100,
-          background: "#13131f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "14px",
-          boxShadow: "0 16px 40px rgba(0,0,0,0.5)", maxHeight: "280px", overflowY: "auto", padding: "6px"
-        }}>
+        <div
+          ref={menuRef}
+          className="icon-select-menu"
+          style={{
+            /* position:fixed is the actual fix for the clipped dropdown:
+               its containing block is the viewport, not any ancestor with
+               overflow:hidden (like .filter-collapsible-wrapper, which
+               needs that overflow for its collapse animation) — so it
+               paints on top instead of getting cut off. */
+            position: "fixed",
+            top: menuPos.top, left: menuPos.left, width: menuPos.width,
+            zIndex: 99999,
+            background: "#13131f", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "14px",
+            boxShadow: "0 16px 40px rgba(0,0,0,0.5)", maxHeight: "280px", overflowY: "auto", padding: "6px"
+          }}
+        >
           {options.map(opt => (
             <div
               key={opt.value || "all"}
@@ -1140,8 +1196,8 @@ export default function Admin() {
   const [emergencyTab, setEmergencyTab] = useState("breakdown");
   const [filterType, setFilterType] = useState("all");
   const [search, setSearch] = useState("");
-  const [isStatsVisible, setIsStatsVisible] = useState(true);
-  const [isFiltersVisible, setIsFiltersVisible] = useState(true);
+  const [isStatsVisible, setIsStatsVisible] = useState(getDefaultCollapsibleOpen);
+  const [isFiltersVisible, setIsFiltersVisible] = useState(getDefaultCollapsibleOpen);
   const [showPerformance, setShowPerformance] = useState(false);
   const [showCommission, setShowCommission] = useState(false);
   const [selectedDealer, setSelectedDealer] = useState(null);
@@ -1153,26 +1209,26 @@ export default function Admin() {
 
   const bookingsRef  = useRef(null);
   const isFirstLoad  = useRef(true);
-  const [svcOpen, setSvcOpen] = useState(true);
-  const [telOpen, setTelOpen] = useState(true);
-  const [uptimeOpen, setUptimeOpen] = useState(true);
-  const [templateOpen, setTemplateOpen] = useState(true);
-  const [templateStatsOpen, setTemplateStatsOpen] = useState(true);
-  const [metricsOpen, setMetricsOpen] = useState(true);
-  const [filterOpen, setFilterOpen] = useState(true);
-  const [fleetOpen, setFleetOpen] = useState(true);
-  const [trendsOpen, setTrendsOpen] = useState(true);
-  const [aboutOpen, setAboutOpen] = useState(true);
-  const [auditOpen, setAuditOpen] = useState(true);
-  const [tamperOpen, setTamperOpen] = useState(true);
-  const [configOpen, setConfigOpen] = useState(true);
-  const [adminOnlyOpen, setAdminOnlyOpen] = useState(true);
-  const [exportOpen, setExportOpen] = useState(true);
-  const [dataOpen, setDataOpen] = useState(true);
-  const [noteOpen, setNoteOpen] = useState(true);
-  const [backupOpen, setBackupOpen] = useState(true);
-  const [recoveryOpen, setRecoveryOpen] = useState(true);
-  const [retentionOpen, setRetentionOpen] = useState(true);
+  const [svcOpen, setSvcOpen] = useState(getDefaultCollapsibleOpen);
+  const [telOpen, setTelOpen] = useState(getDefaultCollapsibleOpen);
+  const [uptimeOpen, setUptimeOpen] = useState(getDefaultCollapsibleOpen);
+  const [templateOpen, setTemplateOpen] = useState(getDefaultCollapsibleOpen);
+  const [templateStatsOpen, setTemplateStatsOpen] = useState(getDefaultCollapsibleOpen);
+  const [metricsOpen, setMetricsOpen] = useState(getDefaultCollapsibleOpen);
+  const [filterOpen, setFilterOpen] = useState(getDefaultCollapsibleOpen);
+  const [fleetOpen, setFleetOpen] = useState(getDefaultCollapsibleOpen);
+  const [trendsOpen, setTrendsOpen] = useState(getDefaultCollapsibleOpen);
+  const [aboutOpen, setAboutOpen] = useState(getDefaultCollapsibleOpen);
+  const [auditOpen, setAuditOpen] = useState(getDefaultCollapsibleOpen);
+  const [tamperOpen, setTamperOpen] = useState(getDefaultCollapsibleOpen);
+  const [configOpen, setConfigOpen] = useState(getDefaultCollapsibleOpen);
+  const [adminOnlyOpen, setAdminOnlyOpen] = useState(getDefaultCollapsibleOpen);
+  const [exportOpen, setExportOpen] = useState(getDefaultCollapsibleOpen);
+  const [dataOpen, setDataOpen] = useState(getDefaultCollapsibleOpen);
+  const [noteOpen, setNoteOpen] = useState(getDefaultCollapsibleOpen);
+  const [backupOpen, setBackupOpen] = useState(getDefaultCollapsibleOpen);
+  const [recoveryOpen, setRecoveryOpen] = useState(getDefaultCollapsibleOpen);
+  const [retentionOpen, setRetentionOpen] = useState(getDefaultCollapsibleOpen);
 
   // ── Filtered nav from RBAC ────────────────────────────────
   const filteredNav = getFilteredNavItems(adminRole);
@@ -1381,7 +1437,7 @@ async function handleDeleteDealer(dealer) {
   setSortBy("newest");
   setSearch("");
   setFilterType("all");
-  setIsFiltersVisible(true);
+  setIsFiltersVisible(getDefaultCollapsibleOpen());
 
   await new Promise(r => setTimeout(r, 350));
   setTabLoading(false);
@@ -1802,8 +1858,8 @@ const userBookingsUniqueDates = [...new Set(userBookings.map(b=>b.date).filter(B
 function CarAnalyticsSection({ bookings, dealers }) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("revenue");
-  const [fleetOpen, setFleetOpen] = useState(true);
-  const [filterOpen, setFilterOpen] = useState(true);
+  const [fleetOpen, setFleetOpen] = useState(getDefaultCollapsibleOpen);
+  const [filterOpen, setFilterOpen] = useState(getDefaultCollapsibleOpen);
 
   return (
     <div
@@ -2461,8 +2517,8 @@ function LocationsSection({ bookings }) {
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("revenue");
   const [viewMode, setViewMode] = useState("routes");
-  const [viewOpen, setViewOpen] = useState(true);
-  const [filterOpen, setFilterOpen] = useState(true);
+  const [viewOpen, setViewOpen] = useState(getDefaultCollapsibleOpen);
+  const [filterOpen, setFilterOpen] = useState(getDefaultCollapsibleOpen);
 
   return (
     <div
@@ -3546,7 +3602,7 @@ function TrendsSection({ bookings, cars, popularCars, popularLocations }) {
 
       {/* MAIN */}
       <div style={{ flex:1, display:"flex", flexDirection:"column", overflow:"hidden", minWidth:0 }}>
-        {/* Header */}
+          {/* Header (Admin Panel) */}
           <header className="dnav-header">
             <nav className="dnav-shell">
               {/* Mobile menu toggle */}
@@ -5323,6 +5379,10 @@ function TrendsSection({ bookings, cars, popularCars, popularLocations }) {
                           }
 
                           @media (max-width: 479px) {
+                            .admin-split-layout {
+                              padding: 4px 0px !important;
+                            }
+
                             .dealer-card .dealer-card-actions button {
                               padding: 4px 6px !important;
                               font-size: 7px !important;
@@ -8918,6 +8978,10 @@ function TrendsSection({ bookings, cars, popularCars, popularLocations }) {
                       }
                     }
                     @media (max-width: 480px) {
+                      .admin-split-layout {
+                        padding: 4px 0px !important;
+                      }
+
                       .template-categories-grid {
                         grid-template-columns: 1fr 1fr !important;
                         gap: 3px !important;
@@ -10755,6 +10819,10 @@ function TrendsSection({ bookings, cars, popularCars, popularLocations }) {
                     }
 
                     @media (max-width: 480px) {
+                      .admin-split-layout {
+                        padding: 4px 0px !important;
+                      }
+                        
                       .admin-overview-metric-grid {
                         grid-template-columns: 1fr !important;
                         gap: 8px !important;

@@ -354,6 +354,11 @@
 }
 
 @media (max-width: 479px) {
+    .contact_form form {
+        width: 100% !important;  
+        padding: 0 !important; 
+    }
+
     .contact_badge {
         padding: 9px 16px;
         font-size: 12px;
@@ -370,6 +375,8 @@
     }
 
     .contact_content h2 {
+        display: flex;
+        justify-content: center;
         margin-bottom: 30px;
     }
 }

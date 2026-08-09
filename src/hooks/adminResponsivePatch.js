@@ -602,8 +602,6 @@ export const RESPONSIVE_CSS = `
   background: transparent !important;
 }
 
-// Add to RESPONSIVE_CSS in adminResponsivePatch.js
-
 /* ══════════════════════════════════════════════════════════
    SECTION: DEALER SECTION - MOBILE RESPONSIVE (FIXED)
 ══════════════════════════════════════════════════════════ */
@@ -1820,7 +1818,7 @@ export const RESPONSIVE_CSS = `
   .user-card-inner    { padding: 10px 12px !important; gap: 6px !important; }
   .dealer-card-inner  { padding: 10px 12px !important; gap: 6px !important; }
   .admin-booking-card { padding: 10px !important; }
-  .booking-card-meta-grid { grid-template-columns: 1fr !important; gap: 6px !important; }
+  .booking-card-meta-grid { grid-template-columns: 1fr !important; gap: 6px !important; margin: 0px !important }
   .booking-card-actions button { font-size: 9px !important; padding: 5px 8px !important; min-width: 50px !important; }
   .booking-card-status-badge span { font-size: 8px !important; padding: 2px 6px !important; }
 
@@ -2114,18 +2112,6 @@ export const RESPONSIVE_CSS = `
 
 /* ══════════════════════════════════════════════════════════
    SECTION 19: SYSTEM SIDEBAR — MOBILE RESPONSIVE
-   Same class of bug as Dealers/Emergency had: the sidebar was
-   never getting a mobile override at all, so it kept its
-   desktop flex-basis/sticky/height rules on small screens and
-   overflowed. This gives .system-sidebar (and its scroll area)
-   the same "stack into a column" treatment the other sections
-   already had.
-
-   UPDATE: padding tightened per feedback — left/right padding
-   was wasting space on narrow screens (the whole point of the
-   stacked layout is to reclaim that horizontal room), so this
-   now uses "12px 0px" instead of a flat "12px" on all sides.
-   Gap between the sidebar and content was also trimmed.
 ══════════════════════════════════════════════════════════ */
 
 @media (max-width: 767px) {
@@ -2169,10 +2155,6 @@ export const RESPONSIVE_CSS = `
     overflow: visible !important;
   }
 
-  /* The card wrapping <SystemMonitoring /> in AdminDashboard.jsx used a
-     flat 24px padding on every side — far too much on a small screen.
-     Add className="system-content-card" to that wrapper div and this
-     rule shrinks its padding without touching desktop. */
   .system-content-card {
     padding: 12px !important;
     border-radius: 14px !important;
@@ -2219,10 +2201,6 @@ export const RESPONSIVE_CSS = `
 
 /* ══════════════════════════════════════════════════════════
    SECTION 20: CAR ANALYTICS — BASE (DESKTOP) LAYOUT
-   Converts the car row from ad-hoc inline styles to classes so
-   it can be reflowed responsively, and adds a smooth open/close
-   animation for the expanded detail panel (previously the panel
-   was conditionally mounted/unmounted with no transition at all).
 ══════════════════════════════════════════════════════════ */
 
 .car-card {
@@ -2288,9 +2266,6 @@ export const RESPONSIVE_CSS = `
 
 .car-dealer-sep { flex-shrink: 0 !important; }
 
-/* Utilization + revenue block. display:contents on desktop keeps
-   .car-utilization and .car-revenue behaving as plain siblings of
-   .car-card-row (i.e. exactly the pre-existing desktop layout). */
 .car-metrics-row {
   display: contents !important;
 }
@@ -2317,8 +2292,6 @@ export const RESPONSIVE_CSS = `
   transform: rotate(180deg) !important;
 }
 
-/* Expanded detail panel — always mounted, animated via max-height
-   so opening/closing is a smooth slide instead of an instant snap. */
 .car-details {
   max-height: 0px;
   opacity: 0;
@@ -2352,10 +2325,6 @@ export const RESPONSIVE_CSS = `
 
 /* ══════════════════════════════════════════════════════════
    SECTION 22: CAR ANALYTICS — MOBILE (≤767px)
-   The row now wraps into two lines instead of squeezing every
-   element into one: a top line (rank, thumbnail, name/dealer,
-   chevron) and a full-width metrics line (utilization + revenue)
-   underneath, separated by a divider.
 ══════════════════════════════════════════════════════════ */
 
 @media (max-width: 767px) {
@@ -2386,8 +2355,6 @@ export const RESPONSIVE_CSS = `
 
   .car-expand { order: 4 !important; }
 
-  /* Force a line break: this item alone claims the full row width,
-     pushing utilization + revenue onto their own line below. */
   .car-metrics-row {
     display: flex !important;
     flex: 1 1 100% !important;
@@ -2432,5 +2399,200 @@ export const RESPONSIVE_CSS = `
   .car-dealer { font-size: 9px !important; gap: 5px !important; }
   .car-metrics-row { gap: 10px !important; }
   .car-revenue p:first-child { font-size: 14px !important; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SECTION 24: UNIVERSAL SIDEBAR MOBILE STACKING FIX
+   ────────────────────────────────────────────────────────
+   THE ROOT CAUSE OF THE OVERLAPPING/SQUISHED UI:
+   Every "*-sidebar" panel (bookings, users, dealers, reviews,
+   notifications, fleet, locations, trends, templates, settings,
+   export, backup, etc.) shares the same desktop pattern:
+   flex:0 0 22%, sticky, fixed height, hidden overflow. Several
+   of these — specifically Fleet (.fleet-sidebar), Locations
+   (.locations-sidebar), Trends (.trends-sidebar), Templates
+   (.template-sidebar), Settings (.settings-sidebar), Export
+   (.export-sidebar) and Backup (.backup-sidebar) — never got a
+   working mobile override. They tried to rely on a
+   ":first-child" selector to reset themselves on small screens,
+   but in every one of those sections the sidebar div is NOT
+   actually the first child of ".admin-split-layout" — a local
+   <style> tag written above it in the JSX is. That selector
+   silently never matched, so those sidebars stayed pinned at
+   ~22% of the viewport width on phones, crushing every icon
+   into its label. This single rule fixes all of them at once,
+   by targeting the real class name instead of a fragile
+   positional selector, so nothing gets missed again.
+══════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .fleet-sidebar, .locations-sidebar, .trends-sidebar,
+  .template-sidebar, .settings-sidebar, .export-sidebar, .backup-sidebar {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    position: relative !important;
+    top: auto !important;
+    overflow: visible !important;
+    padding-right: 0 !important;
+    display: block !important;
+  }
+
+  .fleet-sidebar-header, .locations-sidebar-header, .trends-sidebar-header,
+  .template-sidebar-header, .settings-sidebar-header,
+  .export-sidebar-header, .backup-sidebar-header {
+    position: relative !important;
+    top: auto !important;
+  }
+
+  .fleet-sidebar .ca-scroll,
+  .locations-sidebar .loc-scroll,
+  .trends-sidebar .tr-scroll,
+  .template-sidebar .al-scroll,
+  .settings-sidebar .as-scroll,
+  .export-sidebar .er-scroll,
+  .backup-sidebar .db-scroll {
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    max-height: none !important;
+  }
+
+  /* Belt-and-suspenders: make sure every section's split layout
+     stacks even if a section-local media query missed it. */
+  .admin-split-layout {
+    flex-direction: column !important;
+  }
+  .admin-content-area {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SECTION 25: COLLAPSIBLE TRIGGER — ICON/LABEL OVERLAP GUARD
+══════════════════════════════════════════════════════════ */
+@media (max-width: 479px) {
+  .filter-toggle-btn,
+  [class*="collapsible-trigger"] {
+    gap: 8px !important;
+  }
+  .filter-toggle-btn span:first-child,
+  [class*="collapsible-trigger"] > span:first-child {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .filter-toggle-btn svg,
+  [class*="collapsible-trigger"] svg {
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   SECTION 26: COMPACT FILTER GRID (≤479px ONLY)  — v3
+   ────────────────────────────────────────────────────────
+   THE ROOT CAUSE OF THE "STILL OVERLAPPING" REPORT (round 2):
+   Two separate bugs stacked on top of each other:
+
+   1) The v1 rule used ":has(button)" to force PermissionGuard-
+      wrapped action buttons to full width. But components like
+      IconSelect render their OWN trigger as an internal
+      <button> too — so ":has(button)" also force-expanded
+      IconSelect (e.g. the "Operational Status" dropdown) to
+      full width. That pushed the very next item ("Chronological:
+      Newest") onto its own orphaned row, which is exactly why
+      they stopped pairing. Fixed by dropping ":has(button)"
+      entirely — only a DIRECT "> button" child is treated as an
+      action button now.
+
+   2) CSS Grid items default to "min-width: auto", meaning a
+      grid cell refuses to shrink below its CONTENT's natural
+      size — not the 50% the column track asks for. Since these
+      inputs/selects have deeply nested content (absolutely
+      positioned icon + padded text + chevron) with an implicit
+      natural width wider than 50%, the grid cells were
+      overflowing past their track and visually overlapping
+      their neighbour, even though the grid math said "1fr 1fr".
+      Fixed by forcing "min-width: 0" on every grid item, which
+      is the standard fix for this well-known Grid/Flexbox
+      shrink-to-fit gotcha.
+══════════════════════════════════════════════════════════ */
+@media (max-width: 479px) {
+  .filter-collapsible-wrapper > div {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    align-items: start !important;
+  }
+
+  /* Critical: allow grid cells to actually shrink to 50% instead
+     of overflowing to fit their content's natural width. */
+  .filter-collapsible-wrapper > div > * {
+    min-width: 0 !important;
+  }
+
+  /* First control (search) always gets its own full-width row */
+  .filter-collapsible-wrapper > div > *:first-child {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Real top-level buttons/links (Reset, Select All, etc.) stay
+     full-width. Intentionally NOT using ":has(button)" here —
+     see note above about IconSelect false-positives. */
+  .filter-collapsible-wrapper > div > button,
+  .filter-collapsible-wrapper > div > a {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* A lone leftover control (odd item out) gets the full row too,
+     instead of sitting alone at half width with empty space beside it */
+  .filter-collapsible-wrapper > div > *:last-child:nth-child(even) {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Give paired-up controls breathing room: kill any lingering
+     native select arrow (which can double up with a custom SVG
+     chevron and look like an overlap), trim the font so labels
+     have more room before truncating, and guarantee overflow
+     text actually truncates instead of colliding with the
+     chevron/icon next to it. */
+  .filter-collapsible-wrapper input,
+  .filter-collapsible-wrapper select,
+  .filter-collapsible-wrapper .icon-select-trigger {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 11.5px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    height: 40px !important;
+  }
+
+  /* Custom dropdown triggers (e.g. IconSelect's flex-based
+     <button>) already truncate their own label span, but pin
+     every icon inside them so it never gets crushed by the text
+     next to it. */
+  .filter-collapsible-wrapper button svg,
+  .filter-collapsible-wrapper [class*="premium-select-wrapper"] svg {
+    flex-shrink: 0 !important;
+  }
+
+  /* Any absolutely-positioned decorative icon sitting in front of
+     an input/select (the little colored SVG at the left edge)
+     should never be able to grow past its own box and crowd the
+     text that starts right after it. */
+  .filter-collapsible-wrapper > div > * > span[style*="position: absolute"],
+  .filter-collapsible-wrapper > div > * > span[style*="position:absolute"] {
+    pointer-events: none !important;
+  }
 }
 `;

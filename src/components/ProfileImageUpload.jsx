@@ -88,7 +88,7 @@ export default function ProfileImageUpload({ currentImageUrl, onImageUpdate }) {
         Profile Image
       </label>
 
-      <div style={{
+      <div className="pp_row" style={{
         display: 'flex',
         alignItems: 'center',
         gap: '20px',
@@ -134,7 +134,7 @@ export default function ProfileImageUpload({ currentImageUrl, onImageUpdate }) {
         </div>
 
         {/* Controls */}
-        <div style={{ flex: 1, minWidth: '200px' }}>
+        <div className='pp_control_btn' style={{ flex: 1, minWidth: '200px' }}>
           <input
             ref={fileInputRef}
             type="file"
@@ -143,7 +143,7 @@ export default function ProfileImageUpload({ currentImageUrl, onImageUpdate }) {
             style={{ display: 'none' }}
           />
 
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div className="pp_btn_row" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
@@ -270,7 +270,7 @@ export default function ProfileImageUpload({ currentImageUrl, onImageUpdate }) {
             </p>
           )}
 
-          <p style={{
+          <p className='pp_text' style={{
             color: 'rgba(255,255,255,0.4)',
             fontSize: '11px',
             marginTop: '6px',

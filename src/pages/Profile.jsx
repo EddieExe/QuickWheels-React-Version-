@@ -1147,7 +1147,7 @@ function Profile() {
                 </div>
 
                 {/* Save button */}
-                <button type="submit" className="btn" style={{ width: "100%", maxWidth: "180px" }}>
+                <button type="submit" className="btn profile_btn" style={{ width: "100%", maxWidth: "180px" }}>
                   Save Changes
                 </button>
               </form>
@@ -1323,7 +1323,7 @@ function Profile() {
                 </div>
                 </div>
 
-                <button type="submit" className="btn" style={{ width: "100%", maxWidth: "220px" }}>
+                <button type="submit" className="btn profile_btn" style={{ width: "100%", maxWidth: "220px" }}>
                   Update Password
                 </button>
               </form>
@@ -1456,7 +1456,7 @@ function Profile() {
                         <button onClick={() => setShowEmergencyModal(true)} style={{ padding: "7px 14px", borderRadius: "8px", background: "rgba(168,85,247,0.08)", border: "1px solid rgba(168,85,247,0.25)", color: "#a855f7", fontWeight: "600", fontSize: "12px", cursor: "pointer" }}>Edit</button>
                       </div>
                       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginBottom: "12px" }}>
-                        {[{ label: "📞 Phone", val: formatPhone(emergencyContact.phone) }, { label: "🤝 Relationship", val: emergencyContact.relation }].map(({ label, val }) => (
+                        {[{ label: "Phone", val: formatPhone(emergencyContact.phone) }, { label: " Relationship", val: emergencyContact.relation }].map(({ label, val }) => (
                           <div key={label} style={{ padding: "12px 14px", background: "rgba(255,255,255,0.025)", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.05)" }}>
                             <span style={{ color: "rgba(255,255,255,0.3)", fontSize: "9px", fontWeight: "700", textTransform: "uppercase", letterSpacing: "0.07em", display: "block", marginBottom: "4px" }}>{label}</span>
                             <span style={{ color: "#fff", fontSize: "14px", fontWeight: "600" }}>{val}</span>
