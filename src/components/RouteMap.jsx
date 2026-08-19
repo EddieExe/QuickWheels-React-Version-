@@ -6,9 +6,16 @@ import {
   Marker,
   InfoWindow,
 } from "@react-google-maps/api";
-import { getUserLocation } from "../utils/locationService";
 import { API_KEYS } from "../utils/apiConfig";
 import GoogleMapWrapper from "./GoogleMapWrapper";
+import { useTripNavigation } from "../context/TripNavigationContext";
+import { lerpPoint } from "../utils/routeGeometry";
+
+/**
+ * RouteMap — presentational.
+ * The route, the position feed and every number below the map come from
+ * TripNavigationContext.
+ */
 
 const mapContainerStyle = {
   width: "100%",
@@ -18,13 +25,7 @@ const mapContainerStyle = {
 
 const defaultCenter = { lat: 19.076, lng: 72.8777 };
 
-// Fallback coords used ONLY when geocoding fails
-const FALLBACK = {
-  pickup: { lat: 19.076, lng: 72.8777 }, // Mumbai
-  dropoff: { lat: 18.5204, lng: 73.8567 }, // Pune
-};
-
-// Marker icon config - created ONCE outside render
+// Built once — a fresh object per render remounts the marker.
 const CAR_MARKER_ICON = {
   url:
     "data:image/svg+xml;charset=UTF-8," +
@@ -39,219 +40,87 @@ const CAR_MARKER_ICON = {
   anchor: { x: 20, y: 20 },
 };
 
-export default function RouteMap({ pickup, dropoff, progress = 0 }) {
-  const [userLocation, setUserLocation] = useState(null);
-  const [carPosition, setCarPosition] = useState(null);
-  const [directionsResult, setDirectionsResult] = useState(null);
+const MAP_STYLES = [
+  { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+  { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+];
+
+export default function RouteMap({ pickup, dropoff }) {
+  const {
+    route,
+    position,
+    isTracking,
+    toggleTracking,
+    isSimulated,
+    totalDistanceText,
+    etaText,
+    remainingText,
+    progressPercent,
+  } = useTripNavigation();
+
   const [showTraffic, setShowTraffic] = useState(true);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
-  const [isTracking, setIsTracking] = useState(false);
-  const [mapReady, setMapReady] = useState(false);
-  const [routeInfo, setRouteInfo] = useState({
-    totalDistance: "-- km",
-    eta: "--",
-    remainingDistance: "-- km",
-    currentLocation: "Getting location...",
-    progressPercent: 0,
-  });
-
-  const trackingRef = useRef(null);
+  const [followCar, setFollowCar] = useState(true);
   const mapRef = useRef(null);
-  const destinationRef = useRef(FALLBACK.dropoff); // Store resolved destination for live tracking
 
-  // ── Geocode address to coordinates ──
-  async function geocodeAddress(address) {
-    if (!address || !window.google?.maps) return null;
-    return new Promise((resolve) => {
-      new google.maps.Geocoder().geocode({ address }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          resolve({
-            lat: results[0].geometry.location.lat(),
-            lng: results[0].geometry.location.lng(),
-            formatted: results[0].formatted_address,
-          });
-        } else {
-          console.warn("Geocoding failed for:", address);
-          resolve(null);
-        }
-      });
-    });
-  }
+  const markerPosition = useSmoothedPosition(position);
 
-  // ── Step 1: Get user GPS location ──
-  useEffect(() => {
-    (async () => {
-      try {
-        const location = await getUserLocation();
-        setUserLocation(location);
-        setCarPosition(location);
-      } catch (error) {
-        console.error("Location error:", error);
-      }
-    })();
-
-    return () => {
-      if (trackingRef.current)
-        navigator.geolocation?.clearWatch(trackingRef.current);
-    };
-  }, []);
-
-  // ── Step 2: Map ready → geocode & fetch route ──
-  useEffect(() => {
-    if (mapReady && pickup && dropoff) {
-      fetchRoute();
-    }
-  }, [mapReady, pickup, dropoff]);
-
-  async function fetchRoute() {
-    if (!window.google?.maps) return;
-
-    const pickupCoords = await geocodeAddress(pickup);
-    const dropoffCoords = await geocodeAddress(dropoff);
-
-    const origin = pickupCoords || FALLBACK.pickup;
-    const destination = dropoffCoords || FALLBACK.dropoff;
-
-    destinationRef.current = destination; // Store for live tracking
-    console.log(
-      "📍 Route:",
-      origin.formatted || origin,
-      "→",
-      destination.formatted || destination,
-    );
-
-    const service = new google.maps.DirectionsService();
-    service.route(
-      {
-        origin: new google.maps.LatLng(origin.lat, origin.lng),
-        destination: new google.maps.LatLng(destination.lat, destination.lng),
-        travelMode: google.maps.TravelMode.DRIVING,
-        drivingOptions: {
-          departureTime: new Date(),
-          trafficModel: "bestguess",
-        },
-      },
-      (result, status) => {
-        if (status === "OK") {
-          setDirectionsResult(result);
-          const leg = result.routes[0].legs[0];
-          setRouteInfo({
-            totalDistance: leg.distance.text,
-            eta: leg.duration_in_traffic?.text || leg.duration.text,
-            remainingDistance: leg.distance.text,
-            currentLocation: leg.start_address || pickup || "Pickup",
-            progressPercent: 0,
-          });
-        } else {
-          console.error("Directions failed:", status);
-        }
-      },
-    );
-  }
-
-  // ── Map callbacks ──
   const onMapLoad = useCallback((map) => {
     mapRef.current = map;
-    setMapReady(true);
   }, []);
 
   const onMapUnmount = useCallback(() => {
     mapRef.current = null;
-    setMapReady(false);
   }, []);
 
-  // ── Live GPS tracking ──
-  function toggleLiveTracking() {
-    if (isTracking) {
-      navigator.geolocation?.clearWatch(trackingRef.current);
-      trackingRef.current = null;
-      setIsTracking(false);
-      return;
-    }
+  // Follow the car by panning, not by driving the `center` prop — a
+  // controlled centre snaps back on every fix and fights the user's panning.
+  useEffect(() => {
+    if (!followCar || !markerPosition || !mapRef.current) return;
+    mapRef.current.panTo(markerPosition);
+  }, [followCar, markerPosition]);
 
-    if (!navigator.geolocation) return;
-    setIsTracking(true);
-
-    trackingRef.current = navigator.geolocation.watchPosition(
-      (position) => {
-        const newPos = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        setCarPosition(newPos);
-
-        if (directionsResult && window.google?.maps?.geometry) {
-          const dest = destinationRef.current;
-          const totalDist = directionsResult.routes[0].legs[0].distance.value;
-          const remaining =
-            google.maps.geometry.spherical.computeDistanceBetween(
-              new google.maps.LatLng(newPos.lat, newPos.lng),
-              new google.maps.LatLng(dest.lat, dest.lng),
-            );
-          const pct = Math.round((1 - remaining / totalDist) * 100);
-
-          setRouteInfo((prev) => ({
-            ...prev,
-            remainingDistance: `${Math.round(remaining / 100) / 10} km`,
-            currentLocation: `📍 ${newPos.lat.toFixed(4)}, ${newPos.lng.toFixed(4)}`,
-            progressPercent: Math.max(0, Math.min(100, pct)),
-          }));
-        }
-      },
-      (error) => console.warn("GPS error:", error.message),
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 },
-    );
-  }
+  // Frame the whole route once it arrives, before any fix exists.
+  useEffect(() => {
+    if (!route?.rawResult || !mapRef.current || !window.google?.maps) return;
+    const bounds = route.rawResult.routes[0].bounds;
+    if (bounds) mapRef.current.fitBounds(bounds, 40);
+  }, [route]);
 
   return (
     <div className="dashboard-card trip-dashboard-full">
-      <div className="dashboard-card-header" style={{ display: "flex", alignItems: "center", gap: "12px", padding: "0px 16px" }}>
+      <div
+        className="dashboard-card-header"
+        style={{ display: "flex", alignItems: "center", gap: "12px", padding: "0px 16px" }}
+      >
         <span className="icon">🗺️</span>
         <h3>Live Route Map</h3>
-        <div
-          style={{
-            marginLeft: "auto",
-            display: "flex",
-            gap: "8px",
-            alignItems: "center",
-          }}
-        >
-          <button
-            onClick={() => setShowTraffic(!showTraffic)}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "6px",
-              border: `1px solid ${showTraffic ? "rgba(76,227,247,0.3)" : "rgba(255,255,255,0.1)"}`,
-              background: showTraffic
-                ? "rgba(76,227,247,0.1)"
-                : "rgba(255,255,255,0.03)",
-              color: showTraffic ? "#4ce3f7" : "rgba(255,255,255,0.4)",
-              fontSize: "10px",
-              fontWeight: "600",
-              cursor: "pointer",
-              fontFamily: "Quicksand, sans-serif",
-            }}
+        <div style={{ marginLeft: "auto", display: "flex", gap: "8px", alignItems: "center" }}>
+          <MapPill
+            active={showTraffic}
+            activeColor="#4ce3f7"
+            onClick={() => setShowTraffic((v) => !v)}
           >
             🚦 Traffic
-          </button>
-          <button
-            onClick={toggleLiveTracking}
-            style={{
-              padding: "4px 10px",
-              borderRadius: "6px",
-              border: `1px solid ${isTracking ? "rgba(34,197,94,0.3)" : "rgba(76,227,247,0.2)"}`,
-              background: isTracking
-                ? "rgba(34,197,94,0.1)"
-                : "rgba(76,227,247,0.06)",
-              color: isTracking ? "#22c55e" : "#4ce3f7",
-              fontSize: "10px",
-              fontWeight: "600",
-              cursor: "pointer",
-              fontFamily: "Quicksand, sans-serif",
-            }}
+          </MapPill>
+          <MapPill
+            active={followCar}
+            activeColor="#4ce3f7"
+            onClick={() => setFollowCar((v) => !v)}
           >
-            {isTracking ? "🟢 Live" : "📍 Track"}
-          </button>
+            {followCar ? "🎯 Following" : "🎯 Follow"}
+          </MapPill>
+          <MapPill
+            active={isTracking}
+            activeColor="#22c55e"
+            onClick={toggleTracking}
+          >
+            {isTracking ? (isSimulated ? "🟢 Simulating" : "🟢 Live") : "📍 Track"}
+          </MapPill>
         </div>
       </div>
 
@@ -268,37 +137,13 @@ export default function RouteMap({ pickup, dropoff, progress = 0 }) {
           <GoogleMapWrapper>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
-              center={carPosition || userLocation || defaultCenter}
+              center={defaultCenter}
               zoom={10}
               onLoad={onMapLoad}
               onUnmount={onMapUnmount}
+              onDragStart={() => setFollowCar(false)}
               options={{
-                styles: [
-                  { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-                  {
-                    elementType: "labels.text.stroke",
-                    stylers: [{ color: "#242f3e" }],
-                  },
-                  {
-                    elementType: "labels.text.fill",
-                    stylers: [{ color: "#746855" }],
-                  },
-                  {
-                    featureType: "road",
-                    elementType: "geometry",
-                    stylers: [{ color: "#38414e" }],
-                  },
-                  {
-                    featureType: "road",
-                    elementType: "geometry.stroke",
-                    stylers: [{ color: "#212a37" }],
-                  },
-                  {
-                    featureType: "water",
-                    elementType: "geometry",
-                    stylers: [{ color: "#17263c" }],
-                  },
-                ],
+                styles: MAP_STYLES,
                 zoomControl: true,
                 mapTypeControl: false,
                 streetViewControl: false,
@@ -306,9 +151,9 @@ export default function RouteMap({ pickup, dropoff, progress = 0 }) {
               }}
             >
               {showTraffic && <TrafficLayer />}
-              {directionsResult && (
+              {route?.rawResult && (
                 <DirectionsRenderer
-                  directions={directionsResult}
+                  directions={route.rawResult}
                   options={{
                     polylineOptions: {
                       strokeColor: "#4ce3f7",
@@ -316,12 +161,13 @@ export default function RouteMap({ pickup, dropoff, progress = 0 }) {
                       strokeOpacity: 0.8,
                     },
                     suppressMarkers: false,
+                    preserveViewport: true,
                   }}
                 />
               )}
-              {carPosition && (
+              {markerPosition && (
                 <Marker
-                  position={carPosition}
+                  position={markerPosition}
                   icon={CAR_MARKER_ICON}
                   onClick={() => setShowInfoWindow(true)}
                 >
@@ -337,7 +183,9 @@ export default function RouteMap({ pickup, dropoff, progress = 0 }) {
                       >
                         <strong>🚗 Your Location</strong>
                         <br />
-                        {routeInfo.currentLocation}
+                        {markerPosition.lat.toFixed(4)}, {markerPosition.lng.toFixed(4)}
+                        <br />
+                        {remainingText} to go
                       </div>
                     </InfoWindow>
                   )}
@@ -356,18 +204,81 @@ export default function RouteMap({ pickup, dropoff, progress = 0 }) {
       </div>
 
       <div className="route-info-overlay">
-        {["Distance", "ETA", "Remaining", "Progress"].map((label) => (
+        {[
+          ["Distance", totalDistanceText],
+          ["ETA", etaText],
+          ["Remaining", remainingText],
+          ["Progress", `${Math.round(progressPercent)}%`],
+        ].map(([label, value]) => (
           <div className="route-info-item" key={label}>
             <div className="label">{label}</div>
-            <div className="value">
-              {label === "Distance" && routeInfo.totalDistance}
-              {label === "ETA" && routeInfo.eta}
-              {label === "Remaining" && routeInfo.remainingDistance}
-              {label === "Progress" && `${routeInfo.progressPercent}%`}
-            </div>
+            <div className="value">{value}</div>
           </div>
         ))}
       </div>
     </div>
   );
+}
+
+function MapPill({ active, activeColor, onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: "4px 10px",
+        borderRadius: "6px",
+        border: `1px solid ${active ? `${activeColor}4d` : "rgba(255,255,255,0.1)"}`,
+        background: active ? `${activeColor}1a` : "rgba(255,255,255,0.03)",
+        color: active ? activeColor : "rgba(255,255,255,0.4)",
+        fontSize: "10px",
+        fontWeight: "600",
+        cursor: "pointer",
+        fontFamily: "Quicksand, sans-serif",
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+/**
+ * Fixes arrive about once a second; drawing them raw makes the car teleport.
+ * Tween between the previous and latest fix so it glides instead.
+ */
+const TWEEN_MS = 900;
+
+function useSmoothedPosition(target) {
+  const [tweened, setTweened] = useState(null);
+  const fromRef = useRef(null);
+  const frameRef = useRef(null);
+
+  useEffect(() => {
+    if (!target) {
+      fromRef.current = null;
+      return undefined;
+    }
+
+    // First fix of a run: nothing to tween from, render it as-is.
+    const from = fromRef.current;
+    if (!from) {
+      fromRef.current = target;
+      return undefined;
+    }
+
+    const startedAt = performance.now();
+    const step = (now) => {
+      const t = Math.min(1, (now - startedAt) / TWEEN_MS);
+      setTweened(lerpPoint(from, target, t));
+      if (t < 1) frameRef.current = requestAnimationFrame(step);
+      else fromRef.current = target;
+    };
+    frameRef.current = requestAnimationFrame(step);
+
+    return () => cancelAnimationFrame(frameRef.current);
+  }, [target]);
+
+  if (!target) return null;
+  // Until the first frame of a tween lands, `tweened` still holds the previous
+  // fix, which keeps the marker continuous rather than snapping ahead.
+  return tweened ?? target;
 }
