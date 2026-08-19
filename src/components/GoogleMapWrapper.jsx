@@ -1,10 +1,5 @@
-import { useLoadScript } from '@react-google-maps/api';
-import { API_KEYS } from '../utils/apiConfig';
-
-// MUST be defined outside the component — prevents @react-google-maps/api
-// from treating a new array reference as a changed prop on every render,
-// which would cause the script to reload in an infinite loop.
-const LIBRARIES = ['places', 'geometry'];
+import { useJsApiLoader } from '@react-google-maps/api';
+import { GOOGLE_MAPS_LOADER_OPTIONS } from '../utils/googleMapsLoader';
 
 /**
  * GoogleMapWrapper
@@ -12,10 +7,7 @@ const LIBRARIES = ['places', 'geometry'];
  * All map components must be rendered inside this wrapper.
  */
 export default function GoogleMapWrapper({ children }) {
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: API_KEYS.GOOGLE_MAPS || '',
-    libraries: LIBRARIES,
-  });
+  const { isLoaded, loadError } = useJsApiLoader(GOOGLE_MAPS_LOADER_OPTIONS);
 
   if (loadError) {
     console.error('Google Maps load error:', loadError);

@@ -9,7 +9,8 @@ import TripTimeline from "../components/TripTimeline";
 import TollCalculator from "../components/TollCalculator";
 import AttractionsNearby from "../components/AttractionsNearby";
 import LiveNavigation from "../components/LiveNavigation";
-import EmergencyHub from "../components/emergency/EmergencyHub";
+import { TripNavigationProvider } from "../context/TripNavigationContext";
+import EmergencyHub from "../components/emergency/emergencyHub";
 import AssistanceRequest from "../components/assistance/AssistanceRequest";
 import TripExtensionModal from "../components/TripExtensionModal";
 import NotificationCenter from "../components/notifications/NotificationCenter";
@@ -427,32 +428,37 @@ export default function TripDashboard() {
       ══════════════════════════════════════════ */}
       <div className="tdb-body">
 
-        {/* ──────────────────────────────────────
-            COL LEFT 25%: Live Navigation
-        ────────────────────────────────────── */}
-        <aside className="tdb-col-left">
-          <div className="tdb-left-inner">
-            <LiveNavigation
-              key={`nav-${booking.pickup}-${booking.dropoff}`}
-              pickupAddress={booking.pickup}
-              dropoffAddress={booking.dropoff}
-            />
-          </div>
-        </aside>
+        {/* Owns the route, the position feed and every derived figure, so the
+           left panel and the map always show the same numbers. In demo mode
+           the feed is a simulated drive along the real route polyline. */}
+        <TripNavigationProvider
+          key={`nav-${booking.pickup}-${booking.dropoff}`}
+          pickup={booking.pickup}
+          dropoff={booking.dropoff}
+          mode={isDemoMode ? "sim" : "gps"}
+        >
+          {/* ──────────────────────────────────────
+              COL LEFT 25%: Live Navigation
+          ────────────────────────────────────── */}
+          <aside className="tdb-col-left">
+            <div className="tdb-left-inner">
+              <LiveNavigation
+                pickupAddress={booking.pickup}
+                dropoffAddress={booking.dropoff}
+              />
+            </div>
+          </aside>
 
 
-        {/* ──────────────────────────────────────
-            COL MIDDLE 50%: Map
-        ────────────────────────────────────── */}
-        <main className="tdb-col-mid">
-          <div className="tdb-map-fill">
-            <RouteMap
-              pickup={booking.pickup}
-              dropoff={booking.dropoff}
-              progress={35}
-            />
-          </div>
-        </main>
+          {/* ──────────────────────────────────────
+              COL MIDDLE 50%: Map
+          ────────────────────────────────────── */}
+          <main className="tdb-col-mid">
+            <div className="tdb-map-fill">
+              <RouteMap pickup={booking.pickup} dropoff={booking.dropoff} />
+            </div>
+          </main>
+        </TripNavigationProvider>
 
 
         {/* ──────────────────────────────────────
