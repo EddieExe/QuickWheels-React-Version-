@@ -271,6 +271,7 @@ function AvailabilityCalendarModal({
   bookingWindow,
   userPickupLocation,
   onUpdateBookingDates,
+  formatPrice,
 }) {
   const initialMonth = bookingWindow?.pickupDate
     ? new Date(bookingWindow.pickupDate + "T00:00:00")
@@ -784,7 +785,7 @@ function AvailabilityCalendarModal({
                   fontSize: "0.78rem",
                 }}
               >
-                {car.price} USD/day · {car.seats} seats · {car.transmission}
+                {formatPrice ? formatPrice(car.price) : `$${car.price}`}/day · {car.seats} seats · {car.transmission}
               </p>
               {userPickupLocation && (
                 <p
@@ -1113,7 +1114,7 @@ function AvailabilityCalendarModal({
                   }}
                 >
                   <span>
-                    {days} day{days > 1 ? "s" : ""} × {car.price} USD/day
+                    {days} day{days > 1 ? "s" : ""} × {formatPrice ? formatPrice(car.price) : `$${car.price}`}/day
                   </span>
                 </div>
                 <div
@@ -1127,7 +1128,7 @@ function AvailabilityCalendarModal({
                     Estimated total
                   </span>
                   <span style={{ fontSize: "20px", fontWeight: "800", color: "#c084fc" }}>
-                    {total} USD
+                    {formatPrice ? formatPrice(total) : `$${total} USD`}
                   </span>
                 </div>
               </div>
@@ -1592,13 +1593,21 @@ function ValidationModal({ onClose, onGoToBooking }) {
 /* ═══════════════════════════════════════════════════════════
    DEALER SHOWROOM CARD
 ═══════════════════════════════════════════════════════════ */
-function DealerShowroomCard({ dealer, carCount, onEnter }) {
+function DealerShowroomCard({ dealer, carCount, onEnter, onViewDetails, ratingInfo }) {
   return (
     <div className="fl-dealer-card" onClick={onEnter}>
       <div className="fl-dealer-glow" />
-      <div className="fl-dealer-header">
-        <div className="fl-dealer-avatar">
-          {dealer.businessName?.[0]?.toUpperCase() || "D"}
+      <div className="fl-dealer-header" style={{ alignItems: "center" }}>
+        <div className="fl-dealer-avatar" style={{ overflow: "hidden" }}>
+          {dealer.logo ? (
+            <img
+              src={dealer.logo}
+              alt={dealer.businessName || "Dealer"}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            dealer.businessName?.[0]?.toUpperCase() || "D"
+          )}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="fl-dealer-name-row">
@@ -1620,9 +1629,9 @@ function DealerShowroomCard({ dealer, carCount, onEnter }) {
             <span className="fl-dealer-count fl-icon-row">
               <IconCar size={13} /> {carCount} cars available
             </span>
-            {dealer.rating > 0 && (
+            {ratingInfo && ratingInfo.count > 0 && (
               <span className="fl-dealer-rating fl-icon-row">
-                <IconStar size={12} /> {dealer.rating.toFixed(1)}
+                <IconStar size={12} /> {ratingInfo.avg.toFixed(1)} ({ratingInfo.count})
               </span>
             )}
           </div>
@@ -1630,14 +1639,246 @@ function DealerShowroomCard({ dealer, carCount, onEnter }) {
             <p className="fl-dealer-desc">"{dealer.description}"</p>
           )}
         </div>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onViewDetails?.();
+          }}
+          className="fl-inline-action-btn"
+          style={{ fontWeight: "600", flexShrink: 0, marginLeft: "auto" }}
+        >
+          View Details
+        </button>
       </div>
     </div>
   );
 }
 
 /* ═══════════════════════════════════════════════════════════
-   CAR CARD
+   DEALER DETAILS MODAL
 ═══════════════════════════════════════════════════════════ */
+function DealerDetailsModal({ dealer, carCount, onClose }) {
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      setError("");
+      try {
+        const snap = await getDocs(
+          query(collection(db, "reviews"), where("dealerId", "==", dealer.id)),
+        );
+        const list = snap.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          // Sort newest-first client-side rather than via orderBy, so this
+          // doesn't need a composite Firestore index to work.
+          .sort((a, b) => {
+            const aTime = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+            const bTime = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+            return bTime - aTime;
+          });
+        if (!cancelled) setReviews(list);
+      } catch (err) {
+        console.error("Failed to load dealer reviews:", err);
+        if (!cancelled) setError("Couldn't load reviews right now. Please try again.");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [dealer.id]);
+
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length
+    : null;
+
+  return (
+    <div className="fl-modal-overlay" onClick={onClose}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: "linear-gradient(160deg, #17102b, #0d0a1a)",
+          border: "1px solid rgba(168,85,247,0.25)",
+          borderRadius: "24px",
+          width: "100%",
+          maxWidth: "560px",
+          maxHeight: "85vh",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          boxShadow: "0 25px 60px rgba(0,0,0,0.55)",
+        }}
+      >
+        {/* Header */}
+        <div style={{ padding: "24px 24px 16px", borderBottom: "1px solid rgba(255,255,255,0.08)", flexShrink: 0, position: "relative" }}>
+          <button
+            onClick={onClose}
+            style={{
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              background: "rgba(255,255,255,0.06)",
+              border: "none",
+              borderRadius: "50%",
+              width: "32px",
+              height: "32px",
+              cursor: "pointer",
+              color: "rgba(255,255,255,0.6)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <IconClose size={14} />
+          </button>
+
+          <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
+            <div
+              style={{
+                width: "60px",
+                height: "60px",
+                borderRadius: "16px",
+                overflow: "hidden",
+                flexShrink: 0,
+                background: dealer.logo ? "transparent" : "linear-gradient(135deg,#4f46e5,#6366f1)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "22px",
+                fontWeight: "800",
+                color: "#fff",
+              }}
+            >
+              {dealer.logo ? (
+                <img src={dealer.logo} alt={dealer.businessName || "Dealer"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              ) : (
+                dealer.businessName?.[0]?.toUpperCase() || "D"
+              )}
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                <h2 style={{ color: "#fff", margin: 0, fontSize: "19px" }}>{dealer.businessName}</h2>
+                <span className="fl-dealer-verified fl-icon-row">
+                  <IconCheckCircle size={11} /> Verified
+                </span>
+              </div>
+              {avgRating !== null ? (
+                <div style={{ margin: "4px 0 0", display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                  <span style={{ display: "flex", gap: "1px" }}>
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <IconStar key={n} size={13} filled={n <= Math.round(avgRating)} />
+                    ))}
+                  </span>
+                  <span style={{ color: "#fbbf24", fontSize: "13px" }}>
+                    {avgRating.toFixed(1)} · {reviews.length} review{reviews.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+              ) : (
+                !loading && (
+                  <p style={{ margin: "4px 0 0", color: "rgba(255,255,255,0.4)", fontSize: "13px" }}>
+                    No reviews yet
+                  </p>
+                )
+              )}
+            </div>
+          </div>
+
+          {dealer.description && (
+            <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "13px", margin: "14px 0 0", fontStyle: "italic" }}>
+              "{dealer.description}"
+            </p>
+          )}
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "14px", marginTop: "14px" }}>
+            <span className="fl-dealer-address fl-icon-row" style={{ fontSize: "13px" }}>
+              <IconMapPin size={13} /> {dealer.businessAddress || dealer.city}
+              {dealer.state ? `, ${dealer.state}` : ""}{dealer.country ? `, ${dealer.country}` : ""}
+            </span>
+            {dealer.phone && (
+              <span className="fl-dealer-phone fl-icon-row" style={{ fontSize: "13px" }}>
+                <IconPhone size={13} /> {dealer.phone}
+              </span>
+            )}
+            <span className="fl-dealer-count fl-icon-row" style={{ fontSize: "13px" }}>
+              <IconCar size={13} /> {carCount} cars available
+            </span>
+          </div>
+
+          {dealer.gstNumber && (
+            <p style={{ color: "rgba(255,255,255,0.35)", fontSize: "11px", margin: "10px 0 0", display: "flex", alignItems: "center", gap: "5px" }}>
+              <IconClipboardCheck size={11} /> GST: {dealer.gstNumber}
+            </p>
+          )}
+        </div>
+
+        {/* Reviews list */}
+        <div style={{ padding: "18px 24px 24px", overflowY: "auto", flex: 1 }}>
+          <h3 style={{ color: "#fff", fontSize: "14px", margin: "0 0 14px" }}>
+            Customer Reviews
+          </h3>
+
+          {loading && (
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textAlign: "center", padding: "20px 0" }}>
+              Loading reviews…
+            </p>
+          )}
+
+          {!loading && error && (
+            <p style={{ color: "#ef4444", fontSize: "13px", textAlign: "center", padding: "20px 0" }}>
+              {error}
+            </p>
+          )}
+
+          {!loading && !error && reviews.length === 0 && (
+            <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "13px", textAlign: "center", padding: "20px 0" }}>
+              This dealer doesn't have any reviews yet. Be the first to book and
+              share your experience!
+            </p>
+          )}
+
+          {!loading && !error && reviews.map((r) => (
+            <div
+              key={r.id}
+              style={{
+                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                padding: "14px 0",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
+                <div>
+                  <p style={{ color: "#fff", fontSize: "13px", fontWeight: "600", margin: 0 }}>
+                    {r.userName || "Verified Customer"}
+                  </p>
+                  {r.carModel && (
+                    <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "11px", margin: "2px 0 0" }}>
+                      Rented: {r.carModel}
+                    </p>
+                  )}
+                </div>
+                <div style={{ display: "flex", gap: "2px", flexShrink: 0 }}>
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <IconStar key={n} size={12} filled={n <= (r.rating || 0)} />
+                  ))}
+                </div>
+              </div>
+              {r.comment && (
+                <p style={{ color: "rgba(255,255,255,0.7)", fontSize: "13px", margin: "8px 0 0", lineHeight: 1.5 }}>
+                  {r.comment}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 function CarCard({
   car,
   onSelect,
@@ -1854,6 +2095,8 @@ function Fleet() {
   const [bookingSummary, setBookingSummary] = useState(null);
   const [unavailableCarIds, setUnavailableCarIds] = useState({});
   const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [detailsDealer, setDetailsDealer] = useState(null);
+  const [dealerRatings, setDealerRatings] = useState({}); // dealerId → { avg, count }
   const [userOverlappingBookings, setUserOverlappingBookings] = useState({});
   const [currentlyBookedCarId, setCurrentlyBookedCarId] = useState(null);
   const [dealerCars, setDealerCars] = useState([]);
@@ -1953,13 +2196,6 @@ function Fleet() {
               ...carDoc.data(),
               dealerId: dealer.id,
             };
-            console.log(`🚗 Car: ${car.model}`, {
-              safetyRating: car.safetyRating,
-              numberPlate: car.numberPlate,
-              emergencyKit: car.emergencyKit,
-              gpsAvailable: car.gpsAvailable,
-              allData: car,
-            });
             if (car.isAvailable !== false) allDealerCars.push(car);
           });
         }
@@ -2090,6 +2326,43 @@ function Fleet() {
     });
   }, [dealersMap, bookingSummary?.pickup]);
 
+  // Live-computed dealer ratings — dealer.rating on the doc itself is never
+  // actually kept in sync (it's only ever initialized to 0 at dealer
+  // creation), so the ★ badge would never show without this. Batches into
+  // one query per up-to-30 dealers currently in view rather than one query
+  // per dealer card.
+  useEffect(() => {
+    const ids = matchingDealers.map((d) => d.id).slice(0, 30);
+    if (ids.length === 0) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const snap = await getDocs(
+          query(collection(db, "reviews"), where("dealerId", "in", ids)),
+        );
+        const grouped = {};
+        snap.docs.forEach((d) => {
+          const r = d.data();
+          if (!r.dealerId) return;
+          (grouped[r.dealerId] ||= []).push(r.rating || 0);
+        });
+        const result = {};
+        Object.entries(grouped).forEach(([dealerId, ratings]) => {
+          result[dealerId] = {
+            avg: ratings.reduce((s, r) => s + r, 0) / ratings.length,
+            count: ratings.length,
+          };
+        });
+        if (!cancelled) setDealerRatings(result);
+      } catch (err) {
+        console.error("Failed to load dealer ratings:", err);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [matchingDealers]);
+
   // ── Cars for selected dealer showroom ──────────────────────
   const selectedDealerCars = useMemo(() => {
     if (!selectedDealer) return [];
@@ -2122,7 +2395,13 @@ function Fleet() {
     if (selectedDealer) return selectedDealerCars;
     if (bookingSummary?.pickup && bookingSummary.pickup.trim() !== "")
       return [];
-    return [...cars];
+    // Demo/placeholder inventory (src/data/cars.js) — not tied to any real
+    // dealer, so it can never carry a valid dealerId and was slipping
+    // through to Payment.jsx as an unbookable "ghost" booking. Hidden for
+    // now; flip back to `return [...cars];` if you want to reuse this list
+    // later (e.g. for a "QuickWheels-owned fleet" concept), but give it a
+    // real backing dealer/admin-fulfillment path before re-enabling.
+    return [];
   }, [selectedDealer, selectedDealerCars, bookingSummary?.pickup]);
 
   // ── Apply category filter + sort ───────────────────────────
@@ -2182,6 +2461,15 @@ function Fleet() {
           }
           userPickupLocation={bookingSummary?.pickup || ""}
           onUpdateBookingDates={handleUpdateBookingDates}
+          formatPrice={formatPrice}
+        />
+      )}
+
+      {detailsDealer && (
+        <DealerDetailsModal
+          dealer={detailsDealer}
+          carCount={getDealerCarCount(detailsDealer.id)}
+          onClose={() => setDetailsDealer(null)}
         />
       )}
 
@@ -2196,41 +2484,79 @@ function Fleet() {
         )}
       </h2>
 
-      {/* Currently selected car notice */}
-      {currentlyBookedCarId && bookingSummary && (
-        <div className="fl-notice-bar">
-          <span className="headline fl-icon-row">
-            <IconCheckCircle size={14} /> You have a car selected
-          </span>
-          <span className="subtext">
-            Scroll down or it's pinned at the top
-          </span>
-        </div>
-      )}
-
-      {/* Sticky top row: booking summary (left) + back-to-fleet (right),
+      {/* Sticky top row: booking summary (left) + dealer info card (right),
           pinned to the top of the viewport while scrolling */}
       <div className="fl-top-row">
         {bookingSummary && (
           <div className="fl-summary-bar">
-            <span className="label fl-icon-row">
-              <IconCheckCircle size={13} /> Booking Details
-            </span>
-            <span className="detail fl-icon-row">
-              <IconMapPin size={12} /> {bookingSummary.pickup} → {bookingSummary.dropoff}
-            </span>
-            <span className="detail fl-icon-row">
-              <IconCalendar size={12} /> {bookingSummary.pickupDate} → {bookingSummary.dropoffDate}
-            </span>
-            <span className="detail fl-icon-row">
-              <IconCalendarDays size={12} /> {bookingSummary.days} days · {bookingSummary.tripType}
-            </span>
-            <button
-              onClick={() => navigate("/booking")}
-              className="fl-summary-edit-btn"
-            >
-              Edit
-            </button>
+            <div className="fl-summary-header">
+              <span className="label fl-icon-row">
+                <IconCheckCircle size={13} /> Booking Details
+              </span>
+              <button
+                onClick={() => navigate("/booking")}
+                className="fl-summary-edit-btn"
+              >
+                Edit
+              </button>
+            </div>
+            <div className="fl-summary-details">
+              <span className="detail fl-icon-row">
+                <IconMapPin size={12} /> {bookingSummary.pickup} → {bookingSummary.dropoff}
+              </span>
+              <span className="detail fl-icon-row">
+                <IconCalendar size={12} /> {bookingSummary.pickupDate} → {bookingSummary.dropoffDate}
+              </span>
+              <span className="detail fl-icon-row">
+                <IconCalendarDays size={12} /> {bookingSummary.days} days · {bookingSummary.tripType}
+              </span>
+            </div>
+          </div>
+        )}
+
+        {selectedDealer && (
+          <div className="fl-dealer-info-bar">
+            <div className="fl-dealer-avatar" style={{ width: 44, height: 44, fontSize: 18, overflow: "hidden" }}>
+              {selectedDealer.logo ? (
+                <img
+                  src={selectedDealer.logo}
+                  alt={selectedDealer.businessName || "Dealer"}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                selectedDealer.businessName?.[0]?.toUpperCase()
+              )}
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p className="fl-dealer-name" style={{ marginBottom: 2 }}>
+                {selectedDealer.businessName}
+              </p>
+              <p className="fl-dealer-address fl-icon-row" style={{ margin: 0 }}>
+                <IconMapPin size={11} /> {selectedDealer.city}
+                {selectedDealer.state ? `, ${selectedDealer.state}` : ""} ·{" "}
+                {selectedDealerCars.length} cars
+                {selectedDealer.phone && (
+                  <>
+                    {" "}· <IconPhone size={11} /> {selectedDealer.phone}
+                  </>
+                )}
+              </p>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
+              {dealerRatings[selectedDealer.id]?.count > 0 && (
+                <span className="fl-dealer-rating fl-icon-row">
+                  <IconStar size={13} /> {dealerRatings[selectedDealer.id].avg.toFixed(1)} ({dealerRatings[selectedDealer.id].count})
+                </span>
+              )}
+              <button
+                type="button"
+                onClick={() => setDetailsDealer(selectedDealer)}
+                className="fl-inline-action-btn"
+                style={{ fontWeight: "600" }}
+              >
+                View Details
+              </button>
+            </div>
           </div>
         )}
 
@@ -2552,10 +2878,12 @@ function Fleet() {
                 key={dealer.id}
                 dealer={dealer}
                 carCount={getDealerCarCount(dealer.id)}
+                ratingInfo={dealerRatings[dealer.id]}
                 onEnter={() => {
                   setSelectedDealer(dealer);
                   setActiveCategory("All");
                 }}
+                onViewDetails={() => setDetailsDealer(dealer)}
               />
             ))}
           </div>
@@ -2616,34 +2944,9 @@ function Fleet() {
           </div>
         )}
 
-      {/* ── DEALER SHOWROOM INFO BAR ── */}
-      {selectedDealer && (
-        <div className="fl-dealer-info-bar">
-          <div className="fl-dealer-avatar" style={{ width: 44, height: 44, fontSize: 18 }}>
-            {selectedDealer.businessName?.[0]?.toUpperCase()}
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <p className="fl-dealer-name" style={{ marginBottom: 2 }}>
-              {selectedDealer.businessName}
-            </p>
-            <p className="fl-dealer-address fl-icon-row" style={{ margin: 0 }}>
-              <IconMapPin size={11} /> {selectedDealer.city}
-              {selectedDealer.state ? `, ${selectedDealer.state}` : ""} ·{" "}
-              {selectedDealerCars.length} cars
-              {selectedDealer.phone && (
-                <>
-                  {" "}· <IconPhone size={11} /> {selectedDealer.phone}
-                </>
-              )}
-            </p>
-          </div>
-          {selectedDealer.rating > 0 && (
-            <span className="fl-dealer-rating fl-icon-row" style={{ fontSize: 14 }}>
-              <IconStar size={13} /> {selectedDealer.rating.toFixed(1)}
-            </span>
-          )}
-        </div>
-      )}
+      {/* ── DEALER SHOWROOM INFO BAR (was here; moved into the sticky
+           .fl-top-row above so it sits beside Booking Details and stays
+           pinned while scrolling, instead of scrolling away separately) ── */}
 
       {/* ── CATEGORY FILTER + SORT — combined row, sort on the right ── */}
       {(selectedDealer || baseList.length > 0) && (
@@ -2679,6 +2982,26 @@ function Fleet() {
           </div>
         </div>
       )}
+
+      {/* ── EMPTY STATE: genuinely nothing to show — no dealers exist in
+           the system at all (not "no dealers near you", that's the block
+           below already). This only fires when neither the Partner
+           Showrooms grid nor the "No Partner Showrooms in X" block above
+           is rendering, so it never stacks under/duplicates them. ── */}
+      {!selectedDealer &&
+        matchingDealers.length === 0 &&
+        filtered.length === 0 &&
+        !dealerCarsLoading &&
+        !bookingSummary?.pickup && (
+          <div className="fl-empty-state">
+            <div className="fl-empty-icon" style={{ display: "flex", justifyContent: "center", color: "rgba(255,255,255,0.3)" }}>
+              <IconCar size={44} />
+            </div>
+            <p className="fl-empty-text">
+              Enter a pickup location above to see cars available to book.
+            </p>
+          </div>
+        )}
 
       {/* ── EMPTY STATE inside dealer showroom ── */}
       {selectedDealer && filtered.length === 0 && (

@@ -5,12 +5,19 @@ const {
   onDocumentCreated,
   onDocumentUpdated,
 } = require("firebase-functions/v2/firestore");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const https = require("https");
 
 initializeApp();
 const db = getFirestore();
+
+const GEMINI_API_KEY = defineSecret("GEMINI_API_KEY");
+const TWILIO_ACCOUNT_SID = defineSecret("TWILIO_ACCOUNT_SID");
+const TWILIO_AUTH_TOKEN = defineSecret("TWILIO_AUTH_TOKEN");
+const TWILIO_PHONE_NUMBER = defineSecret("TWILIO_PHONE_NUMBER");
 
 // ── System Logging ─────────────────────────────────────────
 async function logSystemEvent(level, message, details = {}) {
@@ -154,6 +161,7 @@ function getEmailSubject(type, booking) {
     no_show_penalty: `❌ No-Show Penalty Applied`,
     booking_confirmed: `✅ Booking Confirmed: ${booking.carModel}`,
     pickup_2h_reminder: `⏰ Pickup in 2 Hours: ${booking.carModel}`,
+    emergency_sos: `🚨 EMERGENCY — QuickWheels SOS Alert`,
   };
   return subjects[type] || "QuickWheels Update";
 }
@@ -224,6 +232,17 @@ async function getEmailHTML(type, booking) {
         <h2>⏰ Pickup in 2 Hours!</h2>
         <p>Your ${booking.carModel} pickup is in about 2 hours.</p>
         <p>Please head to the pickup location.</p>
+      </div>
+    `,
+    emergency_sos: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; border: 3px solid #ef4444;">
+        <h2 style="color: #ef4444;">🚨 EMERGENCY ALERT</h2>
+        <p><strong>User:</strong> ${booking.userName || "Unknown"} (${booking.userEmail || "no email"})</p>
+        ${booking.locationUrl ? `<p><strong>📍 Location:</strong> <a href="${booking.locationUrl}">${booking.locationUrl}</a></p>` : "<p>📍 Location: Not available</p>"}
+        ${booking.coordinates ? `<p><strong>Coordinates:</strong> ${booking.coordinates}</p>` : ""}
+        ${booking.carModel ? `<p><strong>🚗 Vehicle:</strong> ${booking.carModel} (${booking.numberPlate || "N/A"})</p>` : ""}
+        ${booking.id ? `<p><strong>🆔 Booking:</strong> ${booking.id}</p>` : ""}
+        <p style="color: #ef4444; font-weight: bold;">Please respond immediately.</p>
       </div>
     `,
   };
@@ -660,6 +679,13 @@ module.exports.processEmailQueue = onDocumentCreated(
       pickupDate: data.pickupDate,
       dropoffDate: data.dropoffDate,
       total: data.total,
+      // Emergency-alert-specific fields — undefined/dropped for every other
+      // email type, which is fine, getEmailHTML only reads them for
+      // type === "emergency_sos".
+      userEmail: data.userEmail,
+      locationUrl: data.locationUrl,
+      coordinates: data.coordinates,
+      numberPlate: data.numberPlate,
     };
 
     const subject = getEmailSubject(data.type, booking);
@@ -693,5 +719,247 @@ module.exports.processEmailQueue = onDocumentCreated(
     }
   },
 );
+
+// ── AI Attraction Context (server-side Gemini call) ──────────
+// AttractionsNearby.jsx used to call api.anthropic.com directly from the
+// browser with no API key at all — either it silently 401'd every time, or
+// (worse) a key was meant to go in there, which would have exposed it to
+// every visitor. Now uses Google's Gemini API (free tier, no billing
+// required) instead of Anthropic — same reasoning still applies though:
+// this MUST run server-side, key lives only in this function's secret
+// binding, never sent to or readable by the client.
+function callGemini(apiKey, model, prompt) {
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+    });
+    const req = https.request(
+      {
+        hostname: "generativelanguage.googleapis.com",
+        path: `/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(payload),
+        },
+      },
+      (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            reject(new Error(`Gemini API returned ${res.statusCode}: ${data.slice(0, 300)}`));
+            return;
+          }
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(new Error("Invalid JSON from Gemini: " + data.slice(0, 200)));
+          }
+        });
+      },
+    );
+    req.on("error", reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
+module.exports.generateAttractionContext = onCall(
+  { secrets: [GEMINI_API_KEY] },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "You must be signed in to use this feature.");
+    }
+
+    const { cityName, attractionNames } = request.data || {};
+    if (!cityName || typeof cityName !== "string") {
+      throw new HttpsError("invalid-argument", "cityName is required.");
+    }
+    if (!Array.isArray(attractionNames) || attractionNames.length === 0) {
+      throw new HttpsError("invalid-argument", "attractionNames must be a non-empty array.");
+    }
+
+    const prompt = `You are a travel expert for India. For the city "${cityName}", provide rich travel context for these attractions: ${attractionNames.join(", ")}.
+
+Return ONLY a valid JSON object (no markdown, no backticks) in this exact shape:
+{
+  "cityHighlight": "One compelling sentence about why ${cityName} is worth visiting",
+  "bestTime": "Best months to visit ${cityName}",
+  "mustTryFood": ["dish1", "dish2", "dish3"],
+  "attractions": {
+    "ATTRACTION_NAME": {
+      "speciality": "What makes it unique in one sentence",
+      "tip": "One practical visitor tip",
+      "category": "nature|culture|food|adventure"
+    }
+  }
+}
+
+Use the exact attraction names as keys. Keep every string under 100 characters.`;
+
+    let geminiRes;
+      const maxRetries = 2;
+
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          geminiRes = await callGemini(
+            GEMINI_API_KEY.value(),
+            "gemini-3.6-flash",
+            prompt,
+          );
+
+          break;
+        } catch (err) {
+          console.error(
+            `[generateAttractionContext] Gemini attempt ${attempt + 1} failed:`,
+            err.message,
+          );
+
+          const isTemporaryError =
+            err.message.includes("Gemini API returned 503") ||
+            err.message.includes("Gemini API returned 429");
+
+          if (!isTemporaryError || attempt === maxRetries) {
+            throw new HttpsError(
+              "internal",
+              "Failed to generate attraction context.",
+            );
+          }
+
+          const delay = (attempt + 1) * 2000;
+
+          console.log(
+            `[generateAttractionContext] Retrying Gemini in ${delay}ms...`,
+          );
+
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+      }
+
+    const text = geminiRes?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+    const clean = text.replace(/```json|```/g, "").trim();
+
+    try {
+      return JSON.parse(clean);
+    } catch (err) {
+      console.error("[generateAttractionContext] Failed to parse AI response:", clean.slice(0, 300));
+      throw new HttpsError("internal", "Failed to parse AI response.");
+    }
+  },
+);
+
+// ── Emergency SMS (server-side Twilio call) ──────────────────
+// /api/send-sms was never a real endpoint — every SOS activation's SMS
+// step was silently 404ing. Twilio's Auth Token is a real credential (can
+// send messages and spend money on the account) so it has to live in a
+// secret, exactly like the Anthropic key — never in client code.
+function sendTwilioSMS({ accountSid, authToken, from, to, body }) {
+  return new Promise((resolve, reject) => {
+    const payload = new URLSearchParams({ To: to, From: from, Body: body }).toString();
+    const auth = Buffer.from(`${accountSid}:${authToken}`).toString("base64");
+
+    const req = https.request(
+      {
+        hostname: "api.twilio.com",
+        path: `/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Length": Buffer.byteLength(payload),
+          "Authorization": `Basic ${auth}`,
+        },
+      },
+      (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
+          let parsed;
+          try {
+            parsed = JSON.parse(data);
+          } catch (e) {
+            reject(new Error("Invalid JSON from Twilio: " + data.slice(0, 200)));
+            return;
+          }
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            // Twilio's error responses include a human-readable `message`
+            // field — e.g. "The number +91... is unverified" on a trial
+            // account. Surface that instead of just the status code.
+            reject(new Error(parsed?.message || `Twilio API returned ${res.statusCode}`));
+            return;
+          }
+          resolve(parsed);
+        });
+      },
+    );
+    req.on("error", reject);
+    req.write(payload);
+    req.end();
+  });
+}
+
+module.exports.sendEmergencySMS = onCall(
+  { secrets: [TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER] },
+  async (request) => {
+    if (!request.auth) {
+      throw new HttpsError("unauthenticated", "You must be signed in to use this feature.");
+    }
+
+    const { to, message } = request.data || {};
+    if (!to || typeof to !== "string") {
+      throw new HttpsError("invalid-argument", "to (phone number) is required.");
+    }
+    if (!message || typeof message !== "string") {
+      throw new HttpsError("invalid-argument", "message is required.");
+    }
+
+    // Twilio requires E.164 format (+<country code><number>) — emergency
+    // contacts are saved as bare 10-digit Indian numbers (e.g.
+    // "7447288791"), which Twilio rejects outright ("Invalid 'To' Phone
+    // Number"). Normalize here rather than requiring every existing saved
+    // contact to be re-entered.
+    const normalizedTo = normalizePhoneNumber(to);
+    if (!normalizedTo) {
+      throw new HttpsError(
+        "invalid-argument",
+        `"${to}" doesn't look like a valid phone number.`,
+      );
+    }
+
+    try {
+      const result = await sendTwilioSMS({
+        accountSid: TWILIO_ACCOUNT_SID.value(),
+        authToken: TWILIO_AUTH_TOKEN.value(),
+        from: TWILIO_PHONE_NUMBER.value(),
+        to: normalizedTo,
+        body: message,
+      });
+      return { success: true, sid: result.sid };
+    } catch (err) {
+      console.error("[sendEmergencySMS] Twilio send failed:", err.message);
+      // On a trial account this is very likely "recipient not verified" —
+      // surface the real reason to the client rather than a generic error,
+      // since the SOS flow already has a native-SMS-app fallback that
+      // should kick in when this fails.
+      throw new HttpsError("internal", err.message || "Failed to send SMS.");
+    }
+  },
+);
+
+// Normalizes a phone number to E.164 format. Assumes India (+91) for any
+// number that doesn't already have a country code, since that's this app's
+// primary market — adjust if you expand elsewhere.
+function normalizePhoneNumber(raw) {
+  const digitsOnly = raw.replace(/[^\d+]/g, "");
+  if (digitsOnly.startsWith("+")) {
+    return /^\+\d{8,15}$/.test(digitsOnly) ? digitsOnly : null;
+  }
+  // Strip a leading trunk-prefix "0" some people include (e.g. "07447288791")
+  const withoutLeadingZero = digitsOnly.replace(/^0+/, "");
+  if (/^\d{10}$/.test(withoutLeadingZero)) {
+    return `+91${withoutLeadingZero}`;
+  }
+  return null;
+}
 
 // updated again

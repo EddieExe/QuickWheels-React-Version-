@@ -357,7 +357,7 @@ export const AUTO_TRANSITION_RULES = [
 
       const createdAt = parseBookingDate(b.createdAt);
       if (!createdAt) return false;
-      return Date.now() >= createdAt.getTime() + 1 * 60 * 1000;
+      return Date.now() >= createdAt.getTime() + 60 * 60 * 1000;
     },
     newStatus: BOOKING_STATUS.CONFIRMED,
     reason: "Auto-confirmed after approval deadline",

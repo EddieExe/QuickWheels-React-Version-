@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCurrency } from "../context/CurrencyContext";
 import "../styles/addons.css";
 
 /* ── Minimal inline icon set, same pattern as the Fleet page ── */
@@ -82,6 +83,7 @@ const addonsList = [
 ];
 
 function Addons() {
+  const { formatPrice } = useCurrency();
   // load previously selected addons from localStorage
   const [selectedAddons, setSelectedAddons] = useState(() => {
     const saved = localStorage.getItem("selectedAddons");
@@ -144,7 +146,7 @@ function Addons() {
                 <p className="addon_description">{addon.description}</p>
                 <div className="addon_price_row">
                   <span className="addon_price">
-                    +{addon.price} <span>USD/Day</span>
+                    +{formatPrice(addon.price)} <span>/Day</span>
                   </span>
                   <span className="addon_toggle_hint ad-icon-row">
                     {isSelected ? (
@@ -170,7 +172,7 @@ function Addons() {
             <div className="addons_summary_left">
               <span className="addons_summary_label">Add-ons total</span>
               <span className="addons_summary_total">
-                +{totalPerDay} <span>USD/day</span>
+                +{formatPrice(totalPerDay)} <span>/day</span>
               </span>
             </div>
             <span className="addons_summary_count ad-icon-row">

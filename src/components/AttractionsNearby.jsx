@@ -14,6 +14,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { API_KEYS } from "../utils/apiConfig";
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 // ── Placeholder images by type ─────────────────────────────
 const TYPE_IMAGES = {
@@ -226,25 +227,21 @@ Return ONLY a valid JSON object (no markdown, no backticks) in this exact shape:
 
 Use the exact attraction names as keys. Keep every string under 100 characters.`;
 
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }],
-      }),
-    });
-
-    const data = await res.json();
-    const text = data?.content?.[0]?.text || "{}";
-    const clean = text.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(clean);
+    // This used to call api.anthropic.com directly from the browser with no
+    // API key attached — which either silently failed every time, or would
+    // have exposed a key to every visitor if one had been added. Anthropic
+    // keys can't be safely used client-side (unlike the Google Maps key,
+    // which is protected by domain restrictions instead), so this now goes
+    // through a Cloud Function that holds the key server-side.
+    const functions = getFunctions();
+    const generateContext = httpsCallable(functions, "generateAttractionContext");
+    const result = await generateContext({ cityName, attractionNames });
+    const parsed = result.data;
 
     sessionStorage.setItem(cacheKey, JSON.stringify(parsed));
     return parsed;
   } catch (err) {
-    console.warn("[AttractionsNearby] Claude context fetch failed:", err);
+    console.warn("[AttractionsNearby] AI context fetch failed:", err);
     return {};
   }
 }
@@ -404,7 +401,14 @@ export default function AttractionsNearby({ pickup, dropoff, location }) {
       setAiContext(ctx);
       setLoadingContext(false);
 
-      cacheSet(city, { attractions: formatted, aiContext: ctx });
+      // Only cache when the AI context genuinely came back with data — an
+      // empty {} means generateAttractionContext() failed (see its own
+      // catch block), and caching that would freeze the failure for a full
+      // hour, silently blocking every retry even after the underlying
+      // issue (e.g. a bad Cloud Function secret) gets fixed.
+      if (ctx && Object.keys(ctx).length > 0) {
+        cacheSet(city, { attractions: formatted, aiContext: ctx });
+      }
     } catch (err) {
       console.error("[AttractionsNearby]", err);
       setError("Failed to load attractions: " + err.message);

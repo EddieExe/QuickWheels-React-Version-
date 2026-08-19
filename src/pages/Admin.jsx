@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   collection, getDocs, query, orderBy, where,
-  doc, updateDoc, onSnapshot, deleteDoc, addDoc,
+  doc, getDoc, updateDoc, onSnapshot, deleteDoc, addDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../context/AuthContext";
@@ -383,6 +383,26 @@ function DealerDetailModal({ dealer, onClose, onAction }) {
             };
           }
         });
+
+        // Profile pictures live on users/{email} docs, not on the bookings,
+        // so fetch them separately and merge in.
+        const emails = Object.keys(userMap);
+        if (emails.length > 0) {
+          const photoEntries = await Promise.all(
+            emails.map(async (email) => {
+              try {
+                const snap = await getDoc(doc(db, "users", email));
+                return [email, snap.exists() ? snap.data().photoURL || null : null];
+              } catch {
+                return [email, null];
+              }
+            }),
+          );
+          photoEntries.forEach(([email, photoURL]) => {
+            if (userMap[email]) userMap[email].photoURL = photoURL;
+          });
+        }
+
         setDealerUsers(Object.values(userMap));
       } catch (err) {
         console.error(err);
@@ -813,7 +833,13 @@ function DealerDetailModal({ dealer, onClose, onAction }) {
                     <div className="dm-user-list">
                       {dealerUsers.map(u => (
                         <div key={u.email} className="dm-user-card">
-                          <div className="dm-user-avatar">{(u.name || u.email)?.[0]?.toUpperCase()}</div>
+                          <div className="dm-user-avatar">
+                            {u.photoURL ? (
+                              <img src={u.photoURL} alt={u.name || "User"} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "inherit" }} />
+                            ) : (
+                              (u.name || u.email)?.[0]?.toUpperCase()
+                            )}
+                          </div>
                           <div className="dm-user-info">
                             <p className="dm-user-name">{u.name}</p>
                             <p className="dm-user-email">{u.email}</p>
@@ -1491,7 +1517,7 @@ async function handleDeleteDealer(dealer) {
       if (isReject) {
         await sendRejectionEmail({ name:adminModal.userName||adminModal.userEmail, email:adminModal.userEmail, carModel:adminModal.carModel, pickup:adminModal.pickup, dropoff:adminModal.dropoff, days:adminModal.days, total:adminModal.total, bookingId:adminModal.bookingId, reason:adminForm.message, currency:adminModal.currency||"USD", currencySymbol:adminModal.currencySymbol||"$" });
       } else {
-        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_RECEIPT_ID, { email:adminModal.userEmail, email_subject:adminForm.subject, header_color:isCancel?"linear-gradient(135deg,#7f0000,#ff4d4d)":"linear-gradient(135deg,#7f4a00,#ffa500)", header_subtitle:isCancel?"Booking Cancelled":"Booking On Hold", email_icon:isCancel?"❌":"⏸️", greeting:`Hi, ${adminModal.userName||adminModal.userEmail}!`, email_subtitle:adminForm.subject, admin_message:adminForm.message, admin_message_bg:isCancel?"#fff5f5":"#fffbf0", admin_message_border:isCancel?"4px solid #ff4d4d":"4px solid #ffa500", admin_message_padding:"20px 24px", admin_message_margin:"0 0 24px", details_title:"Booking Details", car_model:adminModal.carModel, pickup:adminModal.pickup, dropoff:adminModal.dropoff, date_label:"Pickup Date", date_value:adminModal.pickupDate||adminModal.date, extra_label:"📅 Return Date", extra_value:adminModal.dropoffDate||"—", amount_label:"Total", total:`${adminModal.currencySymbol||"$"}${adminModal.total} ${adminModal.currency||"USD"}`, addons_display:"none", addons:"", days:"", car_total:"", addons_total:"", footer_message:"Contact us at support@quickwheels.com", booking_id:adminModal.bookingId }, EMAILJS_PUBLIC_KEY);
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_RECEIPT_ID, { email:adminModal.userEmail, email_subject:adminForm.subject, header_color:isCancel?"linear-gradient(135deg,#7f0000,#ff4d4d)":"linear-gradient(135deg,#7f4a00,#ffa500)", header_subtitle:isCancel?"Booking Cancelled":"Booking On Hold", email_icon:isCancel?"❌":"⏸️", greeting:`Hi, ${adminModal.userName||adminModal.userEmail}!`, email_subtitle:adminForm.subject, admin_message:adminForm.message, admin_message_bg:isCancel?"#fff5f5":"#fffbf0", admin_message_border:isCancel?"4px solid #ff4d4d":"4px solid #ffa500", admin_message_padding:"20px 24px", admin_message_margin:"0 0 24px", details_title:"Booking Details", car_model:adminModal.carModel, pickup:adminModal.pickup, dropoff:adminModal.dropoff, date_label:"Pickup Date", date_value:adminModal.pickupDate||adminModal.date, extra_label:"📅 Return Date", extra_value:adminModal.dropoffDate||"—", amount_label:"Total", total:`${adminModal.currencySymbol||"$"}${adminModal.total} ${adminModal.currency||"USD"}`, addons_display:"none", addons:"", days:"", car_total:"", addons_total:"", footer_message:"Contact us at quickwheels.support@gmail.com", booking_id:adminModal.bookingId }, EMAILJS_PUBLIC_KEY);
       }
       const upd = { ...adminModal, status:ns, ...(isCancel||isReject?{cancelledBy:"admin"}:{}), adminActionReason:adminForm.message };
       setBookings(p=>p.map(b=>b.id===adminModal.id?upd:b));
@@ -1593,7 +1619,7 @@ async function handleDeleteDealer(dealer) {
     d.setFont("helvetica","bold"); d.setFontSize(13); d.text("Total Amount:",20,140);
     d.setTextColor(4,0,255); d.text(`$${booking.total} USD`,80,140);
     d.setTextColor(150,150,150); d.setFontSize(9); d.setFont("helvetica","normal");
-    d.text("Thank you for choosing QuickWheels!",20,270); d.text("For support: support@quickwheels.com",20,278);
+    d.text("Thank you for choosing QuickWheels!",20,270); d.text("For support: quickwheels.support@gmail.com",20,278);
     d.save(`QuickWheels-Receipt-${booking.bookingId}.pdf`);
   }
 
@@ -4782,7 +4808,7 @@ function TrendsSection({ bookings, cars, popularCars, popularLocations }) {
                                 <div 
                                   key={u.id} 
                                   className="user-card-inner"
-                                  onClick={() => viewUserBookings({ id: u.id, uid: u.uid, email: u.email, displayName: u.displayName || u.name || u.fullName || u.userName || "", isAdmin: u.isAdmin })}
+                                  onClick={() => viewUserBookings({ id: u.id, uid: u.uid, email: u.email, displayName: u.displayName || u.name || u.fullName || u.userName || "", isAdmin: u.isAdmin, photoURL: u.photoURL || null })}
                                   style={{ 
                                     display: "flex", 
                                     flexDirection: "row",
@@ -4798,8 +4824,12 @@ function TrendsSection({ bookings, cars, popularCars, popularLocations }) {
                                       display: "flex", alignItems: "center", gap: "14px",
                                       flex: "1 1 260px", minWidth: 0
                                     }}>
-                                    <div style={{ width: "44px", height: "44px", borderRadius: "12px", flexShrink: 0, background: u.isAdmin ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)" : "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", fontWeight: "800", color: "#fff" }}>
-                                      {(u.displayName || u.email || "?")[0].toUpperCase()}
+                                    <div style={{ width: "44px", height: "44px", borderRadius: "12px", flexShrink: 0, background: u.photoURL ? "transparent" : (u.isAdmin ? "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)" : "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)"), display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", fontWeight: "800", color: "#fff", overflow: "hidden" }}>
+                                      {u.photoURL ? (
+                                        <img src={u.photoURL} alt={u.displayName || "User"} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                      ) : (
+                                        (u.displayName || u.email || "?")[0].toUpperCase()
+                                      )}
                                     </div>
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                       <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
@@ -4842,7 +4872,7 @@ function TrendsSection({ bookings, cars, popularCars, popularLocations }) {
                                     <button 
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        viewUserBookings({ id: u.id, uid: u.uid, email: u.email, displayName: u.displayName || u.name || u.fullName || u.userName || "", isAdmin: u.isAdmin });
+                                        viewUserBookings({ id: u.id, uid: u.uid, email: u.email, displayName: u.displayName || u.name || u.fullName || u.userName || "", isAdmin: u.isAdmin, photoURL: u.photoURL || null });
                                       }} 
                                       style={{ 
                                         padding: "7px 16px", 
@@ -7057,7 +7087,11 @@ function TrendsSection({ bookings, cars, popularCars, popularLocations }) {
                       {/* User Profile Card */}
                       <div className="user-profile-card">
                         <div className="user-profile-avatar">
-                          {(selectedUser.displayName || selectedUser.email || "?")[0].toUpperCase()}
+                          {selectedUser.photoURL ? (
+                            <img src={selectedUser.photoURL} alt={selectedUser.displayName || "User"} style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "inherit" }} />
+                          ) : (
+                            (selectedUser.displayName || selectedUser.email || "?")[0].toUpperCase()
+                          )}
                         </div>
                         <div className="user-profile-info">
                           <p className="user-profile-name">{selectedUser.displayName || "Standard Passenger"}</p>

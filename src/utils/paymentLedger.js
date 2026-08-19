@@ -97,6 +97,15 @@ function generateInvoiceNumber() {
  */
 export async function createPaymentRecord(booking, commissionRate) {
 
+  // Guard against duplicate ledger entries: a booking can be confirmed from
+  // several independent places (dealer manual confirm, admin approve, the
+  // client auto-confirm effect, the statusScheduler rule engine). Not all of
+  // those writes are transactional against each other, so it's possible for
+  // two of them to both decide "this booking just became confirmed" and both
+  // call this function. Without this check that would double-count revenue.
+  const existing = await getPaymentByBookingId(booking.id);
+  if (existing) return existing;
+
   // Fetch dealer's specific commission rate if not passed in
   if (commissionRate === undefined) {
     try {
@@ -124,6 +133,14 @@ export async function createPaymentRecord(booking, commissionRate) {
     ...breakdown,
     currency:         booking.currency     || PAYMENT_CONFIG.CURRENCY_DEFAULT,
     currencySymbol:   booking.currencySymbol || PAYMENT_CONFIG.CURRENCY_SYMBOL,
+    // What the customer actually saw/agreed to at booking time, in their
+    // currency — locked in on the booking itself so it never drifts even
+    // if exchange rates move before someone views this later. Bookings
+    // created before this field existed won't have it; fall back to
+    // re-converting at today's rate for those (best effort, may not
+    // exactly match what that customer originally saw).
+    displayAmount:    booking.totalDisplayed ?? null,
+    exchangeRateUsed: booking.exchangeRateAtBooking ?? null,
 
     // Status
     status:           "pending",

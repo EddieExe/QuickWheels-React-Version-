@@ -1,3 +1,5 @@
+// src/components/WeatherWidget.jsx
+
 /**
  * WeatherWidget.jsx — Production Grade
  *

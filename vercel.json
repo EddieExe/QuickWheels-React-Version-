@@ -1,5 +1,8 @@
 {
   "rewrites": [
+    { "source": "/maps-api/:path*", "destination": "https://places.googleapis.com/:path*" },
+    { "source": "/maps-geocode/:path*", "destination": "https://maps.googleapis.com/:path*" },
+    { "source": "/routes-api/:path*", "destination": "https://routes.googleapis.com/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

@@ -1,8 +1,10 @@
+// src/pages/TripDashboard.jsx
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import RouteMap from "../components/RouteMap";
 import WeatherWidget from "../components/WeatherWidget";
 import TripTimeline from "../components/TripTimeline";
@@ -56,8 +58,27 @@ const SECTIONS = [
     icon: "📅",
     label: "Extend Trip",
     accent: "#a855f7",
-    render: ({ b, close }) => (
-      <TripExtensionModal booking={b} onClose={close} onExtended={() => close()} />
+    render: ({ b, close, onBookingUpdate }) => (
+      <TripExtensionModal
+        booking={b}
+        onClose={close}
+        onExtended={(result) => {
+          onBookingUpdate((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  dropoffDate: result.newDropoffDate,
+                  days: result.newDays,
+                  total: result.newTotal,
+                  extensionDays: (prev.extensionDays || 0) + result.extensionDays,
+                  extensionCost: (prev.extensionCost || 0) + result.extensionCost,
+                  lateReturnNotified: false,
+                }
+              : prev,
+          );
+          close();
+        }}
+      />
     ),
   },
   {
@@ -295,7 +316,44 @@ export default function TripDashboard() {
   async function loadActiveBooking() {
     setLoading(true);
     setBooking(null);
-    setLoading(false);
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    try {
+      // No specific bookingId in the URL — find whichever of this user's
+      // bookings is most "in progress" right now. Ordered by urgency: a
+      // trip already underway outranks one still waiting on pickup, which
+      // outranks one that's merely confirmed for a future date.
+      const priorityOrder = [
+        "ongoing_trip",
+        "return_pending",
+        "pickup_awaited",
+        "upcoming_trip",
+        "confirmed",
+      ];
+      const snap = await getDocs(
+        query(
+          collection(db, "bookings"),
+          where("userId", "==", user.uid),
+          where("status", "in", priorityOrder),
+        ),
+      );
+      if (snap.empty) {
+        setBooking(null);
+        return;
+      }
+      const candidates = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      candidates.sort(
+        (a, b) => priorityOrder.indexOf(a.status) - priorityOrder.indexOf(b.status),
+      );
+      setBooking(candidates[0]);
+    } catch (e) {
+      console.error("Failed to load active booking:", e);
+      setBooking(null);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const enableDemoMode = useCallback(() => {
@@ -493,7 +551,7 @@ export default function TripDashboard() {
 
               {/* Body */}
               <div className="tdb-sec-body">
-                {activeSec.render({ b: booking, close: closeSection })}
+                {activeSec.render({ b: booking, close: closeSection, onBookingUpdate: setBooking })}
               </div>
 
             </div>

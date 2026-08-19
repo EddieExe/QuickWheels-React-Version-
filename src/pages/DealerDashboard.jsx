@@ -23,6 +23,7 @@ import { uploadToCloudinary } from "../utils/uploadImage";
 import emailjs from "@emailjs/browser";
 import { useAuth } from "../context/AuthContext";
 import { sendApprovalEmail, sendRejectionEmail } from "../utils/emailService";
+import { createPaymentRecord } from "../utils/paymentLedger";
 import TodaysPickupsCard from "../components/dealer/TodaysPickupsCard";
 import TodaysReturnsCard from "../components/dealer/TodaysReturnsCard";
 import ActiveTripsCard from "../components/dealer/ActiveTripsCard";
@@ -134,7 +135,7 @@ function downloadReceipt(booking) {
   d.setFontSize(9);
   d.setFont("helvetica", "normal");
   d.text("Thank you for choosing QuickWheels!", 20, 270);
-  d.text("For support: support@quickwheels.com", 20, 278);
+  d.text("For support: quickwheels.support@gmail.com", 20, 278);
   d.save(`QuickWheels-Receipt-${booking.bookingId}.pdf`);
 }
 
@@ -3616,6 +3617,7 @@ export default function DealerDashboard() {
   const [mobileSidebar, setMobileSidebar] = useState(false);
   const [cars, setCars] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [customerPhotoMap, setCustomerPhotoMap] = useState({});
   const [carsLoading, setCarsLoading] = useState(true);
   const [showCarModal, setShowCarModal] = useState(false);
   const [showLogoModal, setShowLogoModal] = useState(false);
@@ -3773,6 +3775,35 @@ export default function DealerDashboard() {
   useEffect(() => {
     if (dealerData?.logo) setDealerLogo(dealerData.logo);
   }, [dealerData]);
+
+  // Customer profile pictures live on each user's Firestore doc (users/{email}),
+  // not on the booking records, so fetch them separately and map by email.
+  useEffect(() => {
+    const emails = [...new Set(bookings.map((b) => b.userEmail).filter(Boolean))];
+    if (emails.length === 0) return;
+    let cancelled = false;
+    async function loadCustomerPhotos() {
+      try {
+        const entries = await Promise.all(
+          emails.map(async (email) => {
+            try {
+              const snap = await getDoc(doc(db, "users", email));
+              return [email, snap.exists() ? snap.data().photoURL || null : null];
+            } catch {
+              return [email, null];
+            }
+          }),
+        );
+        if (!cancelled) {
+          setCustomerPhotoMap((prev) => ({ ...prev, ...Object.fromEntries(entries) }));
+        }
+      } catch (err) {
+        console.error("Failed to load customer photos:", err);
+      }
+    }
+    loadCustomerPhotos();
+    return () => { cancelled = true; };
+  }, [bookings]);
   useEffect(
     () => () => {
       if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -3839,6 +3870,14 @@ export default function DealerDashboard() {
         dealerActionSubject: subject || "",
         ...(isCancelled ? { cancelledBy: "dealer" } : {}),
       });
+      if (isConfirmed) {
+        // Ledger entry (payments + commissions docs) — without this the
+        // dealer never gets a payout for this booking and it's missing
+        // from platform revenue reporting.
+        createPaymentRecord({ ...booking, status: "confirmed" }).catch((err) =>
+          console.error("Payment record creation failed:", err),
+        );
+      }
       if (booking.userEmail) {
         if (isConfirmed) {
           await sendApprovalEmail({
@@ -4060,6 +4099,7 @@ export default function DealerDashboard() {
           email: b.userEmail || "—",
           name: b.userName || b.userEmail || "—",
           phone: b.userPhone || "—",
+          photoURL: customerPhotoMap[b.userEmail] || null,
           bookings: [],
           revenue: 0,
         };
@@ -4070,7 +4110,7 @@ export default function DealerDashboard() {
     return Object.values(map).sort(
       (a, b) => b.bookings.length - a.bookings.length,
     );
-  }, [bookings]);
+  }, [bookings, customerPhotoMap]);
   const filteredUsers = useMemo(
     () =>
       allUsers.filter(
@@ -10667,16 +10707,25 @@ return (
                                   width: "56px",
                                   height: "56px",
                                   borderRadius: "18px",
-                                  background: "linear-gradient(135deg,#4f46e5,#6366f1)",
+                                  background: selectedUser.photoURL ? "transparent" : "linear-gradient(135deg,#4f46e5,#6366f1)",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
                                   fontSize: "22px",
                                   fontWeight: "800",
                                   color: "#fff",
+                                  overflow: "hidden",
                                 }}
                               >
-                                {(selectedUser.name || selectedUser.email || "?")[0].toUpperCase()}
+                                {selectedUser.photoURL ? (
+                                  <img
+                                    src={selectedUser.photoURL}
+                                    alt={selectedUser.name || "User"}
+                                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                  />
+                                ) : (
+                                  (selectedUser.name || selectedUser.email || "?")[0].toUpperCase()
+                                )}
                               </div>
                               <div className="selected-user-info">
                                 <h3 style={{ margin: "0 0 4px", fontSize: "15px", color: "#fff", fontWeight: "700" }}>
@@ -10847,16 +10896,25 @@ return (
                                         height: "48px",
                                         borderRadius: "14px",
                                         flexShrink: 0,
-                                        background: "linear-gradient(135deg,#4f46e5,#6366f1)",
+                                        background: u.photoURL ? "transparent" : "linear-gradient(135deg,#4f46e5,#6366f1)",
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
                                         fontSize: "18px",
                                         fontWeight: "800",
                                         color: "#fff",
+                                        overflow: "hidden",
                                       }}
                                     >
-                                      {(u.name || u.email || "?")[0].toUpperCase()}
+                                      {u.photoURL ? (
+                                        <img
+                                          src={u.photoURL}
+                                          alt={u.name || "User"}
+                                          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                        />
+                                      ) : (
+                                        (u.name || u.email || "?")[0].toUpperCase()
+                                      )}
                                     </div>
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                       <h4

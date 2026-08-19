@@ -862,7 +862,7 @@ function formatDateDisplay(dateStr) {
 // ─────────────────────────────────────────────────────────────
 function Payment() {
   const { user } = useAuth();
-  const { currency, symbol, formatPrice } = useCurrency();
+  const { currency, symbol, formatPrice, convertPrice, rates } = useCurrency();
   const [selectedCar, setSelectedCar] = useState(null);
   const [bookingData, setBookingData] = useState(null);
   const [selectedAddons, setSelectedAddons] = useState([]);
@@ -1032,6 +1032,19 @@ function Payment() {
         return;
       }
 
+      // A car should always carry the dealerId of the subcollection it
+      // lives under (dealers/{dealerId}/cars/{carId}) — if it's missing
+      // here, something upstream (car listing/fetch) failed to attach it.
+      // Block the booking instead of silently creating one no dealer can
+      // ever see or act on.
+      if (!selectedCar.dealerId) {
+        alert(
+          "This car listing is missing dealer information and can't be booked right now. Please go back to Fleet and try selecting the car again, or contact support if this keeps happening.",
+        );
+        setIsSubmitting(false);
+        return;
+      }
+
       // ── 2. Create booking ─────────────────────────────────
       const bookingId = "QW-" + Date.now();
       const approvalDeadline = new Date(Date.now() + 60 * 60 * 1000);
@@ -1045,7 +1058,7 @@ function Payment() {
         carId: selectedCar.id,
         carModel: selectedCar.model,
         carImage: selectedCar.image || "",
-        dealerId: selectedCar.dealerId || null,
+        dealerId: selectedCar.dealerId,
         dealerName: dealerInfo?.businessName || null,
         pickup: bookingData.pickup,
         dropoff: bookingData.dropoff,
@@ -1056,6 +1069,14 @@ function Payment() {
         total: finalTotalUSD,
         carTotal: carTotalUSD,
         addonsTotal: addonsTotalUSD,
+        // Locked in at booking time: what the customer actually saw/agreed
+        // to pay, in their currency, plus the exact rate used to get there.
+        // `total` above stays the canonical USD ledger amount forever —
+        // these are for honest display later (dealer payout view, receipts,
+        // emails), so they don't silently drift if exchange rates move
+        // between now and whenever someone looks at this booking again.
+        totalDisplayed: Math.round(convertPrice(finalTotalUSD) * 100) / 100,
+        exchangeRateAtBooking: rates?.[currency]?.rate || 1,
         addons: selectedAddons,
         paymentMethod,
         paymentStatus: "pay_at_pickup",

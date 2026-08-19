@@ -1,3 +1,5 @@
+// src/components/TripExtensionModal.jsx
+
 /**
  * TripExtensionModal.jsx — Production Grade
  *

@@ -5,6 +5,7 @@ import {
   getUserEmergencyContact,
   getCurrentLocation,
   formatLocationMessage,
+  formatSmsMessage,
   sendEmergencySMS,
   sendEmergencyEmail,
   logEmergencyEvent,
@@ -447,7 +448,7 @@ export default function EmergencyHub({ booking, onOpenContactModal }) {
           const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
           if (apiKey && booking?.dropoff) {
             const geo = await fetch(
-              `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(booking.dropoff)}&key=${apiKey}`
+              `/maps-geocode/maps/api/geocode/json?address=${encodeURIComponent(booking.dropoff)}&key=${apiKey}`
             ).then(r => r.json());
             const loc = geo.results?.[0]?.geometry?.location;
             if (loc) { lat = loc.lat; lng = loc.lng; }
@@ -493,10 +494,11 @@ export default function EmergencyHub({ booking, onOpenContactModal }) {
 
     const results = { sms: false, email: false, log: false };
     const message = formatLocationMessage(location, booking);
+    const smsMessage = formatSmsMessage(location, booking);
 
     try {
       if (emergencyContact?.phone) {
-        const r = await sendEmergencySMS(emergencyContact.phone, message);
+        const r = await sendEmergencySMS(emergencyContact.phone, smsMessage);
         results.sms = r.success;
       }
     } catch (e) { console.warn('SMS failed:', e.message); }

@@ -2,17 +2,21 @@
  * emergencyHubService.js — Production Grade
  *
  * KEY FIXES:
- * - getNearbyHospitals / getNearbyPoliceStations: calls the Places API (New)
- *   directly via HTTPS with the API key in the header. This works from browser
- *   as long as your Google Cloud Console has the Places API (New) enabled AND
- *   the API key's HTTP referrer restrictions include your domain.
- *   Remove the /maps-api proxy path — it was causing silent failures if the
- *   Vite proxy wasn't running or misconfigured.
+ * - getNearbyHospitals / getNearbyPoliceStations: routed through the
+ *   /maps-api proxy (see vercel.json), not called directly against
+ *   places.googleapis.com. An earlier version of this file called Places
+ *   API (New) directly to work around vercel.json having no proxy rewrite
+ *   at all — that root cause is now fixed at the vercel.json level, so the
+ *   proxy is the more reliable path again: it works regardless of whether
+ *   Google's CORS policy happens to allow this specific endpoint from a
+ *   browser origin, instead of depending on it.
  *
- * - generateAttractionContext (AttractionsNearby): the Anthropic API cannot be
- *   called directly from the browser due to CORS. Route it through your own
- *   backend: POST /api/claude-proxy. If that endpoint isn't available, the
- *   function silently returns {} — attractions still show without AI context.
+ * - generateAttractionContext (AttractionsNearby): now calls a Firebase
+ *   Cloud Function (generateAttractionContext, functions/index.js) via the
+ *   Firebase client SDK — not a /api/claude-proxy REST endpoint. Anthropic
+ *   keys can't be used client-side at all (unlike Google Maps keys, which
+ *   are protected by domain restrictions), so this has to run server-side
+ *   with the key held in a Cloud Functions secret.
  *
  * - logEmergencyEvent: uses serverTimestamp(), safe top-level imports.
  * - sendEmergencyEmail: POSTs to /api/emergency-email; no mailto fallback.
@@ -21,8 +25,9 @@
 
 import { db } from '../firebase';
 import { doc, getDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFunctions, httpsCallable } from 'firebase/functions';
 
-const PLACES_API_BASE = 'https://places.googleapis.com/v1/places:searchText';
+const PLACES_API_BASE = '/maps-api/v1/places:searchText';
 
 // ── Emergency Services (India) ────────────────────────────────────────────────
 export const EMERGENCY_SERVICES = {
@@ -111,43 +116,84 @@ export function formatLocationMessage(location, bookingInfo = null) {
   return msg;
 }
 
+// Short, plain-ASCII version for SMS specifically. Emoji force SMS into
+// UCS2 encoding (~70 chars/segment instead of 160), and Twilio trial
+// accounts reject anything beyond a small segment count ("Trial Message
+// Length Exceeded") — the full formatLocationMessage() output was 6
+// segments and got silently rejected every time. Keeps only what's
+// actually actionable in a text: the location link and vehicle/plate.
+export function formatSmsMessage(location, bookingInfo = null) {
+  const parts = ['EMERGENCY ALERT.'];
+  if (location) {
+    parts.push(`Location: ${location.googleMapsUrl}`);
+  } else {
+    parts.push('Location unavailable.');
+  }
+  if (bookingInfo) {
+    parts.push(`${bookingInfo.carModel || 'Vehicle'} (${bookingInfo.carNumberPlate || 'N/A'}), Booking ${bookingInfo.bookingId || 'N/A'}.`);
+  }
+  parts.push('Please send help immediately.');
+  return parts.join(' ');
+}
+
 // ── Send SMS ──────────────────────────────────────────────────────────────────
+// Used to POST to /api/send-sms, a Vercel serverless function that was never
+// actually built — every SOS activation's SMS step was silently 404ing.
+// Routed through a real Cloud Function (sendEmergencySMS) that calls Twilio
+// server-side, with credentials held in Cloud Functions secrets — never
+// touching the client. Falls back to opening the phone's native SMS app if
+// the Cloud Function call fails for any reason (trial-account recipient
+// restrictions, network issues, etc.) so the user always has *some* way to
+// reach their contact.
 export async function sendEmergencySMS(phoneNumber, message) {
   try {
-    const res = await fetch('/api/send-sms', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ to: phoneNumber, message }),
-    });
-    if (res.ok) return { success: true, method: 'backend_sms' };
-  } catch (_) { /* fallthrough */ }
+    const functions = getFunctions();
+    const sendSMS = httpsCallable(functions, 'sendEmergencySMS');
+    await sendSMS({ to: phoneNumber, message });
+    return { success: true, method: 'cloud_function_sms' };
+  } catch (err) {
+    console.warn('[sendEmergencySMS] Cloud Function send failed:', err.message);
 
-  // Mobile fallback: open native SMS app
-  try {
-    window.open(`sms:${phoneNumber}?body=${encodeURIComponent(message)}`, '_blank');
-    return { success: true, method: 'sms_uri' };
-  } catch (_) {}
+    // sms: URIs only do anything on a phone with a native texting app —
+    // opening one on desktop silently does nothing, which was previously
+    // being reported as "success" regardless of platform. Only attempt
+    // (and only report success for) this fallback on an actual mobile
+    // device, so the UI never claims something happened when it didn't.
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobile) {
+      try {
+        window.open(`sms:${phoneNumber}?body=${encodeURIComponent(message)}`, '_blank');
+        return { success: true, method: 'sms_uri' };
+      } catch (_) {}
+    }
 
-  return { success: false };
+    return { success: false, error: err.message };
+  }
 }
 
 // ── Send Emergency Email ──────────────────────────────────────────────────────
+// Used to POST to /api/emergency-email, a Vercel serverless function that was
+// never actually built — every real SOS activation was silently failing this
+// step with a 404. Routed through the same email_queue + processEmailQueue
+// Cloud Function pipeline already used (and proven) for booking emails —
+// durable, retried automatically, logged to system_logs on failure — instead
+// of a brand-new, untested delivery path.
 export async function sendEmergencyEmail(userInfo, location, bookingInfo) {
-  const body = formatLocationMessage(location, bookingInfo);
   try {
-    const res = await fetch('/api/emergency-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        to: 'support@quickwheels.com',
-        subject: '🚨 EMERGENCY — QuickWheels SOS Alert',
-        body,
-        userId: userInfo?.uid,
-        userEmail: userInfo?.email,
-      }),
+    await addDoc(collection(db, 'email_queue'), {
+      to: 'quickwheels.support@gmail.com',
+      type: 'emergency_sos',
+      sent: false,
+      createdAt: serverTimestamp(),
+      bookingId: bookingInfo?.bookingId || null,
+      userEmail: userInfo?.email || null,
+      userName: userInfo?.displayName || userInfo?.email || null,
+      locationUrl: location?.googleMapsUrl || null,
+      coordinates: location ? `${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}` : null,
+      carModel: bookingInfo?.carModel || null,
+      numberPlate: bookingInfo?.carNumberPlate || null,
     });
-    if (res.ok) return { success: true };
-    return { success: false, error: `HTTP ${res.status}` };
+    return { success: true };
   } catch (err) {
     console.warn('[sendEmergencyEmail] failed:', err.message);
     return { success: false, error: err.message };
@@ -157,9 +203,18 @@ export async function sendEmergencyEmail(userInfo, location, bookingInfo) {
 // ── Log Emergency Event ───────────────────────────────────────────────────────
 export async function logEmergencyEvent(userId, eventData) {
   try {
+    // Firestore rejects `undefined` field values outright (unlike `null`,
+    // which is fine) — this was crashing every SOS activation whenever the
+    // caller passed something like emergencyContactId: undefined (e.g. no
+    // contact set yet). Strip undefined keys defensively here instead of
+    // relying on every call site to always remember to guard this.
+    const clean = Object.fromEntries(
+      Object.entries(eventData).filter(([, v]) => v !== undefined)
+    );
+
     await addDoc(collection(db, 'emergency_events'), {
       userId,
-      ...eventData,
+      ...clean,
       location: eventData.location
         ? {
             lat: eventData.location.lat,
@@ -190,17 +245,13 @@ function haversine(lat1, lng1, lat2, lng2) {
 
 // ── Nearby Hospitals ──────────────────────────────────────────────────────────
 /**
- * FIX: calls Places API (New) directly via HTTPS — not through /maps-api proxy.
- * The proxy path was the root cause of the blank EmergencyHub:
- *   - Vite's dev proxy rewrites /maps-api → https://places.googleapis.com but
- *     only when `server.proxy` is configured in vite.config.js
- *   - In production builds or missing proxy config the request goes to
- *     /maps-api on the same origin → 404 → fetch throws → loadEmergencyData
- *     never resolves → stuck on "Loading emergency data..."
- *
- * Direct HTTPS call works in all environments as long as:
- *   1. Places API (New) is enabled in Google Cloud Console
- *   2. The API key's HTTP referrer includes your domain (or is unrestricted for dev)
+ * Routed through /maps-api (see vercel.json) rather than calling
+ * places.googleapis.com directly. This used to hit the raw domain because
+ * vercel.json had no proxy rewrite at all in production, causing this to
+ * 404 silently and leave EmergencyHub stuck on "Loading emergency data...".
+ * That's fixed at the vercel.json level now, so routing through the proxy
+ * is reliable again — and safer than depending on Google's CORS policy
+ * allowing a direct browser call to this specific endpoint.
  */
 export async function getNearbyHospitals(lat, lng) {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -265,7 +316,7 @@ export async function getNearbyHospitals(lat, lng) {
           lat:           place.location.latitude,
           lng:           place.location.longitude,
           photoUrl:      photoName
-            ? `https://places.googleapis.com/v1/${photoName}/media?maxWidthPx=400&key=${apiKey}`
+            ? `/maps-api/v1/${photoName}/media?maxWidthPx=400&key=${apiKey}`
             : null,
           // ✅ GPS-aware directions URL is built in the component using passed userLocation
           directionsUrl: `https://www.google.com/maps/dir/?api=1&destination_place_id=${place.id}&travelmode=driving`,

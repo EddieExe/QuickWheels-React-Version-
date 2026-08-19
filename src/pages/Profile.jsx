@@ -15,6 +15,9 @@ import {
   where,
   doc,
   updateDoc,
+  setDoc,
+  getDoc,
+  runTransaction,
   onSnapshot,
   getDocs,
 } from "firebase/firestore";
@@ -89,7 +92,7 @@ function downloadReceipt(booking) {
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
   doc.text("Thank you for choosing QuickWheels!", 20, 270);
-  doc.text("For support: support@quickwheels.com", 20, 278);
+  doc.text("For support: quickwheels.support@gmail.com", 20, 278);
   doc.save(`QuickWheels-Receipt-${booking.bookingId}.pdf`);
 }
 
@@ -522,8 +525,26 @@ function Profile() {
         if (contact) setEmergencyContact(contact);
       } catch (err) { console.error(err); }
     }
+    // Show whatever's cached locally first so the avatar doesn't flash empty
     const savedImage = localStorage.getItem(`profileImage_${user.uid}`);
     if (savedImage) setProfileImage(savedImage);
+
+    // Firestore is the source of truth (readable by dealer/admin dashboards too),
+    // so it overrides the local cache once it comes back.
+    async function loadProfileImageFromCloud() {
+      try {
+        const userDocRef = doc(db, "users", user.email);
+        const snap = await getDoc(userDocRef);
+        if (snap.exists() && snap.data().photoURL) {
+          const cloudUrl = snap.data().photoURL;
+          setProfileImage(cloudUrl);
+          localStorage.setItem(`profileImage_${user.uid}`, cloudUrl);
+        }
+      } catch (err) {
+        console.error("Failed to load profile photo:", err);
+      }
+    }
+    loadProfileImageFromCloud();
     loadEmergencyContact();
   }, [user]);
 
@@ -536,7 +557,7 @@ function Profile() {
     const q = query(collection(db, "bookings"), where("userId", "==", user.uid));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const bookings = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      bookings.sort((a, b) => b.createdAt?.toDate() - a.createdAt?.toDate());
+      bookings.sort((a, b) => (b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0)) - (a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0)));
       const now = new Date();
       const updatePromises = [];
       for (const booking of bookings) {
@@ -544,8 +565,20 @@ function Profile() {
         const deadline = booking.approvalDeadline?.toDate ? booking.approvalDeadline.toDate() : new Date(booking.approvalDeadline);
         if (now >= deadline) {
           updatePromises.push(
-            updateDoc(doc(db, "bookings", booking.id), { status: "confirmed", autoConfirmedAt: new Date() })
-              .then(() => {
+            runTransaction(db, async (tx) => {
+              const ref = doc(db, "bookings", booking.id);
+              const snap = await tx.get(ref);
+              // If a dealer/admin already actioned this booking (or another
+              // tab already auto-confirmed it) since we last read it, back off
+              // instead of silently overwriting their decision.
+              if (!snap.exists() || snap.data().status !== "pending_approval") {
+                return { applied: false };
+              }
+              tx.update(ref, { status: "confirmed", autoConfirmedAt: new Date() });
+              return { applied: true };
+            })
+              .then((result) => {
+                if (!result.applied) return;
                 booking.status = "confirmed";
                 createPaymentRecord(booking).catch(err => console.error(err));
                 return sendAutoConfirmEmail({ name: booking.userName || booking.userEmail, email: booking.userEmail, carModel: booking.carModel, pickup: booking.pickup, dropoff: booking.dropoff, days: booking.days, tripType: booking.tripType || "One Way", carTotal: booking.carTotal || booking.total, addonsTotal: booking.addonsTotal || 0, total: booking.total, bookingId: booking.bookingId, addons: booking.addons || [] });
@@ -556,7 +589,7 @@ function Profile() {
       }
       Promise.all(updatePromises).then(() => {
         const upd = [...bookings];
-        upd.sort((a, b) => b.createdAt?.toDate() - a.createdAt?.toDate());
+        upd.sort((a, b) => (b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0)) - (a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt || 0)));
         setBookingHistory(upd);
       }).catch(() => setBookingHistory(bookings));
     }, err => console.error("Error fetching bookings:", err));
@@ -985,10 +1018,31 @@ function Profile() {
                     </div>
                     <ProfileImageUpload
                       currentImageUrl={profileImage}
-                      onImageUpdate={(url) => {
+                      onImageUpdate={async (url) => {
                         setProfileImage(url);
                         if (url) localStorage.setItem(`profileImage_${user.uid}`, url);
                         else localStorage.removeItem(`profileImage_${user.uid}`);
+
+                        // Persist to Firestore so dealers/admin (and any other
+                        // device) can see this photo too — localStorage alone
+                        // is only visible on this browser.
+                        try {
+                          await setDoc(
+                            doc(db, "users", user.email),
+                            { photoURL: url || null, photoUpdatedAt: new Date() },
+                            { merge: true }
+                          );
+                        } catch (err) {
+                          console.error("Failed to save profile photo to cloud:", err);
+                          setError("Photo uploaded, but we couldn't sync it to your account. Please try again.");
+                        }
+
+                        try {
+                          await updateProfile(user, { photoURL: url || "" });
+                        } catch (err) {
+                          console.error("Failed to update auth profile photo:", err);
+                        }
+
                         setShowAvatarUpload(false);
                       }}
                     />
@@ -1590,7 +1644,7 @@ function Profile() {
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                       <polyline points="22,6 12,13 2,6" />
                     </svg>
-                    support@quickwheels.com · Typical response within 24 hours
+                    quickwheels.support@gmail.com · Typical response within 24 hours
                   </p>
                 </div>
               </div>

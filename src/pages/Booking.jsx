@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useCurrency } from "../context/CurrencyContext";
 import { useNavigate } from "react-router-dom";
 import "../styles/booking.css";
 
@@ -472,6 +473,7 @@ function CrossBorderWarningModal({ pickupCountry, onClose, onConfirm }) {
 
 function Booking() {
   const { user } = useAuth();
+  const { formatPrice } = useCurrency();
   const [selectedCar, setSelectedCar] = useState(null);
   const [formData, setFormData] = useState({
     country: "",
@@ -890,7 +892,7 @@ function Booking() {
                     <p style={{ margin: 0 }}>
                       Price:{" "}
                       <strong style={{ color: "#22c55e" }}>
-                        {selectedCar.price} USD/Day
+                        {formatPrice(selectedCar.price)}/Day
                       </strong>
                     </p>
                   </div>

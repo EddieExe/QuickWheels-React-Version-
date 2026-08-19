@@ -30,6 +30,7 @@ import {
 import { notify } from "../utils/notificationService";
 import { sendAutoConfirmEmail } from "../utils/emailService";
 import { logSystemEvent } from "../utils/systemLogger";
+import { createPaymentRecord } from "../utils/paymentLedger";
 
 // ── State ────────────────────────────────────────────────────
 const schedulerTimers = new Map(); // userId → timeoutId
@@ -127,6 +128,18 @@ async function processBooking(booking, userId) {
 
         if (rule.notifyUser) {
           await fireNotification(rule.key, userId, booking);
+        }
+
+        // Ledger entry for the auto-confirm — without this the dealer never
+        // gets a payout for this booking and platform revenue undercounts it.
+        // createPaymentRecord() itself is idempotent (checks for an existing
+        // payment doc first), so this is safe even if another path (dealer/
+        // admin/Profile's own auto-confirm effect) handles the same booking
+        // at nearly the same moment.
+        if (rule.key === "pendingToConfirmed") {
+          createPaymentRecord(booking).catch((err) =>
+            console.error("[Scheduler] Payment record creation failed:", err.message),
+          );
         }
 
         // Send auto-confirm email when dealer deadline expires

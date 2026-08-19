@@ -337,10 +337,10 @@
 .fleet_category_btn {
     font-family: 'Quicksand', sans-serif;
     color: rgba(255, 255, 255, 0.7);
-    font-size: 0.95rem;
+    font-size: 13.5px;
     font-weight: 600;
     height: 40px;
-    padding: 0 28px;
+    padding: 0 20px;
     border-radius: 40px;
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1569,10 +1569,12 @@
     padding: 12px 24px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    /* gap: 12px; */
     flex-wrap: wrap;
     flex: 1;
     min-width: 260px;
+    margin-top: 6px;
+    height: fit-content;
     box-shadow: var(--fl-shadow-lg);
     transition: border-color 0.3s var(--fl-ease-smooth), box-shadow 0.3s var(--fl-ease-smooth);
     animation: fadeInUp 0.4s var(--fl-ease-out);
@@ -1585,6 +1587,20 @@
 .fl-summary-bar .label {
     color: var(--fl-purple-bright);
     font-weight: 700;
+}
+
+.fl-summary-details {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.fl-summary-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
 }
 
 .fl-summary-bar .detail {
